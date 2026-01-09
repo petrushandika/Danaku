@@ -15,11 +15,11 @@ export default function ReportPage() {
           </h1>
           <p className="text-slate-500 font-medium mt-2">Deep dive into your financial habits and trends.</p>
         </div>
-        <div className="flex gap-3">
-          <Button variant="outline" className="rounded-full px-6 border-slate-200 bg-white text-slate-700 font-bold hover:bg-slate-50 shadow-sm">
+        <div className="flex flex-col sm:flex-row gap-3">
+          <Button variant="outline" className="w-full sm:w-auto rounded-full px-6 border-slate-200 bg-white text-slate-700 font-bold hover:bg-slate-50 shadow-sm">
             <Calendar className="mr-2 h-4 w-4 text-slate-400" /> This Month
           </Button>
-          <Button className="rounded-full px-6 bg-linear-to-r from-emerald-600 to-emerald-700 text-white font-bold shadow-sm">
+          <Button className="w-full sm:w-auto rounded-full px-6 bg-linear-to-r from-emerald-600 to-emerald-700 text-white font-bold shadow-sm">
             <Download className="mr-2 h-4 w-4" /> Download PDF
           </Button>
         </div>
@@ -27,7 +27,7 @@ export default function ReportPage() {
 
       <div className="grid gap-8 md:grid-cols-2">
         <Card className="border-slate-200 shadow-none rounded-3xl bg-white overflow-hidden border group transition-all hover:border-slate-300">
-          <CardHeader className="p-10">
+          <CardHeader className="p-6 md:p-10">
             <div className="flex items-center gap-5 mb-5">
               <div className="w-14 h-14 rounded-2xl bg-violet-50 border border-violet-100 flex items-center justify-center transition-transform group-hover:scale-105">
                 <FileText className="w-7 h-7 text-violet-600" />
@@ -38,7 +38,7 @@ export default function ReportPage() {
               </div>
             </div>
           </CardHeader>
-          <CardContent className="p-10 pt-0">
+          <CardContent className="p-6 md:p-10 pt-0">
              <div className="aspect-video flex items-center justify-center border-2 border-dashed border-slate-100 rounded-3xl text-sm text-slate-400 bg-slate-50/50 font-medium italic">
                Comparison Chart Placeholder
              </div>
@@ -49,7 +49,7 @@ export default function ReportPage() {
         </Card>
 
         <Card className="border-slate-200 shadow-none rounded-3xl bg-white overflow-hidden border group transition-all hover:border-slate-300">
-          <CardHeader className="p-10">
+          <CardHeader className="p-6 md:p-10">
             <div className="flex items-center gap-5 mb-5">
               <div className="w-14 h-14 rounded-2xl bg-rose-50 border border-rose-100 flex items-center justify-center transition-transform group-hover:scale-105">
                 <FileText className="w-7 h-7 text-rose-600" />
@@ -60,7 +60,7 @@ export default function ReportPage() {
               </div>
             </div>
           </CardHeader>
-          <CardContent className="p-10 pt-0">
+          <CardContent className="p-6 md:p-10 pt-0">
              <div className="aspect-video flex items-center justify-center border-2 border-dashed border-slate-100 rounded-3xl text-sm text-slate-400 bg-slate-50/50 font-medium italic">
                Pie Chart Placeholder
              </div>
@@ -71,7 +71,7 @@ export default function ReportPage() {
         </Card>
       </div>
 
-      <Card className="border-indigo-700 shadow-none rounded-3xl bg-linear-to-r from-indigo-600 to-violet-700 p-12 text-white overflow-hidden relative border shadow-sm">
+      <Card className="border-indigo-700 shadow-none rounded-3xl bg-linear-to-r from-indigo-600 to-violet-700 p-8 md:p-12 text-white overflow-hidden relative border shadow-sm">
          <div className="absolute top-0 right-0 p-12 opacity-10">
             <FileText className="w-64 h-64 text-white" />
          </div>

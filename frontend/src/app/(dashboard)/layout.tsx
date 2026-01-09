@@ -71,7 +71,7 @@ export default function DashboardLayout({
         </header>
 
         {/* Content */}
-        <div className="flex-1 overflow-y-auto p-4 md:p-8 lg:p-10 bg-background">
+        <div className="flex-1 overflow-y-auto p-5 md:p-10 bg-background">
           <div className="max-w-7xl mx-auto space-y-8">
             {children}
           </div>

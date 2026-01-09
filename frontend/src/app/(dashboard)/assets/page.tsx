@@ -16,7 +16,7 @@ export default function AssetsPage() {
           </h1>
           <p className="text-slate-500 font-medium mt-2">Monitor your long-term wealth and portfolio growth.</p>
         </div>
-        <Button className="rounded-full px-6 bg-linear-to-r from-emerald-600 to-emerald-700 text-white font-bold shadow-sm">
+        <Button className="w-full sm:w-auto rounded-full px-6 bg-linear-to-r from-emerald-600 to-emerald-700 text-white font-bold shadow-sm">
           <Plus className="mr-2 h-4 w-4" /> Add Asset
         </Button>
       </div>
@@ -28,7 +28,7 @@ export default function AssetsPage() {
       </div>
 
       <Card className="border-slate-200 shadow-none rounded-3xl bg-white overflow-hidden border">
-        <CardHeader className="p-10 pb-4">
+        <CardHeader className="p-6 md:p-10 pb-4">
           <div className="flex items-center gap-5">
              <div className="w-14 h-14 rounded-2xl bg-emerald-50 border border-emerald-100 flex items-center justify-center">
                 <PiggyBank className="w-8 h-8 text-emerald-600" />
@@ -39,7 +39,7 @@ export default function AssetsPage() {
              </div>
           </div>
         </CardHeader>
-        <CardContent className="p-10 pt-6">
+        <CardContent className="p-6 md:p-10 pt-6">
            <div className="h-96 flex items-center justify-center border-2 border-dashed border-slate-100 rounded-3xl text-sm text-slate-400 font-medium italic bg-slate-50/50">
              Asset Portfolio Details Table Placeholder
            </div>

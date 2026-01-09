@@ -15,11 +15,11 @@ export default function BudgetingPage() {
           </h1>
           <p className="text-slate-500 font-medium mt-2">Plan your income allocation for the next cycle.</p>
         </div>
-        <div className="flex gap-3">
-          <Button variant="outline" className="rounded-full px-6 border-slate-200 bg-white text-slate-700 font-bold hover:bg-slate-50 shadow-sm">
+        <div className="flex flex-col sm:flex-row gap-3">
+          <Button variant="outline" className="w-full sm:w-auto rounded-full px-6 border-slate-200 bg-white text-slate-700 font-bold hover:bg-slate-50 shadow-sm">
             <Info className="mr-2 h-4 w-4" /> Guidelines
           </Button>
-          <Button className="rounded-full px-6 bg-linear-to-r from-emerald-600 to-emerald-700 text-white font-bold shadow-sm">
+          <Button className="w-full sm:w-auto rounded-full px-6 bg-linear-to-r from-emerald-600 to-emerald-700 text-white font-bold shadow-sm">
             <Plus className="mr-2 h-4 w-4" /> Create Plan
           </Button>
         </div>
@@ -27,7 +27,7 @@ export default function BudgetingPage() {
 
       <div className="grid gap-8 grid-cols-1 xl:grid-cols-12">
         <Card className="xl:col-span-8 border-slate-200 shadow-none rounded-3xl bg-white overflow-hidden border">
-          <CardHeader className="p-10">
+          <CardHeader className="p-6 md:p-10">
             <div className="flex items-center gap-5 mb-4">
               <div className="w-12 h-12 rounded-2xl bg-emerald-50 border border-emerald-100 flex items-center justify-center">
                 <Wallet className="w-6 h-6 text-emerald-600" />
@@ -38,7 +38,7 @@ export default function BudgetingPage() {
               </div>
             </div>
           </CardHeader>
-          <CardContent className="p-10 pt-0">
+          <CardContent className="p-6 md:p-10 pt-0">
              <div className="aspect-video flex items-center justify-center border-2 border-dashed border-slate-100 rounded-3xl text-slate-400 bg-slate-50/50 font-medium italic">
                Interactive Budgeting Board Placeholder
              </div>
@@ -49,11 +49,11 @@ export default function BudgetingPage() {
           <div className="absolute top-0 right-0 p-8 opacity-10">
             <Target className="w-32 h-32 text-white" />
           </div>
-          <CardHeader className="p-10 relative z-10">
+          <CardHeader className="p-6 md:p-10 relative z-10">
             <CardTitle className="text-2xl font-bold">Goal Tracker</CardTitle>
             <CardDescription className="text-emerald-100/80 font-medium">Monthly saving target status</CardDescription>
           </CardHeader>
-          <CardContent className="p-10 pt-0 relative z-10 space-y-8">
+          <CardContent className="p-6 md:p-10 pt-0 relative z-10 space-y-8">
             <div className="space-y-3">
               <div className="flex justify-between text-sm font-black uppercase tracking-wider">
                 <span>Saving Target</span>

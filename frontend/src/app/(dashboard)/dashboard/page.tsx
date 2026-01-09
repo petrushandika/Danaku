@@ -68,11 +68,11 @@ export default function DashboardPage() {
           </h1>
           <p className="text-slate-500 font-medium mt-2">Welcome back, Pandawa! Here's what's happening today.</p>
         </div>
-        <div className="flex items-center gap-3">
-          <Button variant="outline" className="rounded-full px-6 border-slate-200 bg-white hover:bg-slate-50 hover:border-slate-300 text-slate-700 font-semibold shadow-sm">
+        <div className="flex flex-col sm:flex-row gap-3">
+          <Button variant="outline" className="w-full sm:w-auto rounded-full px-6 border-slate-200 bg-white hover:bg-slate-50 hover:border-slate-300 text-slate-700 font-semibold shadow-sm">
             <Download className="mr-2 h-4 w-4" /> Export Data
           </Button>
-          <Button className="rounded-full px-6 bg-linear-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 text-white font-bold shadow-sm">
+          <Button className="w-full sm:w-auto rounded-full px-6 bg-linear-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 text-white font-bold shadow-sm">
             <Plus className="mr-2 h-4 w-4" /> Add Transaction
           </Button>
         </div>
@@ -127,22 +127,22 @@ export default function DashboardPage() {
 
       <div className="grid gap-8 grid-cols-1 lg:grid-cols-1 xl:grid-cols-7">
         <Card className="xl:col-span-4 border-slate-200 shadow-none rounded-3xl overflow-hidden bg-white">
-          <CardHeader className="p-8 pb-0">
-            <div className="flex items-center justify-between">
+          <CardHeader className="p-6 md:p-8 pb-0">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div>
                 <CardTitle className="text-2xl font-bold text-slate-800">Cash Flow</CardTitle>
-                <CardDescription className="text-slate-500 font-medium">Visualizing your income vs expenses</CardDescription>
+                <CardDescription className="text-slate-500 font-medium tracking-tight">Income vs expenses</CardDescription>
               </div>
-              <Tabs defaultValue="6m" className="w-fit">
-                <TabsList className="rounded-full bg-slate-100 p-1 border border-slate-200">
-                  <TabsTrigger value="1m" className="rounded-full px-4 text-xs font-bold data-[state=active]:shadow-sm">1M</TabsTrigger>
-                  <TabsTrigger value="6m" className="rounded-full px-4 text-xs font-bold data-[state=active]:shadow-sm">6M</TabsTrigger>
-                  <TabsTrigger value="1y" className="rounded-full px-4 text-xs font-bold data-[state=active]:shadow-sm">1Y</TabsTrigger>
+              <Tabs defaultValue="6m" className="w-full sm:w-fit">
+                <TabsList className="w-full sm:w-fit rounded-full bg-slate-100 p-1 border border-slate-200">
+                  <TabsTrigger value="1m" className="flex-1 sm:flex-none rounded-full px-4 text-xs font-bold data-[state=active]:shadow-sm">1M</TabsTrigger>
+                  <TabsTrigger value="6m" className="flex-1 sm:flex-none rounded-full px-4 text-xs font-bold data-[state=active]:shadow-sm">6M</TabsTrigger>
+                  <TabsTrigger value="1y" className="flex-1 sm:flex-none rounded-full px-4 text-xs font-bold data-[state=active]:shadow-sm">1Y</TabsTrigger>
                 </TabsList>
               </Tabs>
             </div>
           </CardHeader>
-          <CardContent className="p-8 pt-6">
+          <CardContent className="p-6 md:p-8 pt-6">
             <ChartContainer config={chartConfig} className="h-[350px] w-full">
               <BarChart data={chartData}>
                 <CartesianGrid vertical={false} strokeDasharray="3 3" stroke="#f1f5f9" />
@@ -162,7 +162,7 @@ export default function DashboardPage() {
         </Card>
 
         <Card className="xl:col-span-3 border-slate-200 shadow-none rounded-3xl bg-white overflow-hidden">
-          <CardHeader className="p-8 pb-4">
+          <CardHeader className="p-6 md:p-8 pb-4">
             <div className="flex items-center justify-between">
               <CardTitle className="text-2xl font-bold text-slate-800">Recent Activity</CardTitle>
               <Button variant="ghost" size="sm" className="rounded-full text-emerald-600 font-bold hover:bg-emerald-50 border border-transparent hover:border-emerald-100">
@@ -170,7 +170,7 @@ export default function DashboardPage() {
               </Button>
             </div>
           </CardHeader>
-          <CardContent className="p-8 pt-0 space-y-6">
+          <CardContent className="p-6 md:p-8 pt-0 space-y-6">
             {[
               { name: "Sembako Bulanan", category: "Needs", amount: "- Rp 850,000", date: "Today, 14:20", color: "text-orange-500", icon: Wallet, bg: "bg-orange-50" },
               { name: "Coffee & Chill", category: "Wants", amount: "- Rp 45,000", date: "Today, 10:15", color: "text-violet-500", icon: TrendingDown, bg: "bg-violet-50" },
@@ -213,22 +213,22 @@ function StatsCard({
   return (
     <Card className={cn("border bg-white shadow-none rounded-3xl overflow-hidden relative group transition-all hover:border-slate-300 cursor-pointer", borderColor)}>
       <div className={cn("absolute inset-0 opacity-40 transition-opacity", gradient)} />
-      <CardHeader className="p-6 relative z-10 pb-2">
+      <CardHeader className="p-5 md:p-6 relative z-10 pb-2">
         <div className="flex items-center justify-between mb-3">
           <div className={cn("w-11 h-11 rounded-2xl flex items-center justify-center border border-white/50 shadow-sm", iconBg)}>
             <Icon className={cn("w-5.5 h-5.5", textColor)} />
           </div>
           <div className={cn(
-            "text-[11px] font-bold px-2.5 py-1 rounded-full border shadow-xs transition-transform group-hover:scale-105",
+            "text-[10px] sm:text-[11px] font-bold px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full border shadow-xs transition-transform group-hover:scale-105",
             positive ? "bg-emerald-50 text-emerald-700 border-emerald-100" : "bg-rose-50 text-rose-700 border-rose-100"
           )}>
             {trend}
           </div>
         </div>
-        <CardTitle className="text-[11px] font-bold text-slate-500 uppercase tracking-widest">{title}</CardTitle>
+        <CardTitle className="text-[10px] sm:text-[11px] font-bold text-slate-500 uppercase tracking-widest">{title}</CardTitle>
       </CardHeader>
-      <CardContent className="p-6 pt-0 relative z-10">
-        <div className="text-2xl font-black text-slate-900 tracking-tight">{amount}</div>
+      <CardContent className="p-5 md:p-6 pt-0 relative z-10">
+        <div className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">{amount}</div>
         {subtitle && <p className="text-[10px] font-bold text-slate-400 mt-1.5 uppercase tracking-wide">{subtitle}</p>}
       </CardContent>
     </Card>

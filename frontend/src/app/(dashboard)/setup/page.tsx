@@ -24,7 +24,7 @@ export default function SetupPage() {
           </h1>
           <p className="text-slate-500 font-medium mt-2">Configure your financial workspace and categories.</p>
         </div>
-        <Button className="rounded-full px-6 bg-linear-to-r from-emerald-600 to-emerald-700 text-white font-bold shadow-sm">
+        <Button className="w-full sm:w-auto rounded-full px-6 bg-linear-to-r from-emerald-600 to-emerald-700 text-white font-bold shadow-sm">
           <Plus className="mr-2 h-4 w-4" /> New Category
         </Button>
       </div>
@@ -32,7 +32,7 @@ export default function SetupPage() {
       <div className="grid gap-6 grid-cols-1 md:grid-cols-2 xl:grid-cols-3">
         {setupItems.map((item) => (
           <Card key={item.title} className={`border-slate-200 shadow-none rounded-3xl bg-white overflow-hidden group transition-all cursor-pointer border hover:shadow-sm ${item.borderColor}`}>
-            <CardHeader className="p-8">
+            <CardHeader className="p-6 md:p-8">
               <div className="flex items-center gap-5">
                 <div className={`w-14 h-14 rounded-2xl ${item.bg} flex items-center justify-center transition-all border border-transparent group-hover:border-slate-100 group-hover:scale-105`}>
                   <item.icon className={`w-7 h-7 ${item.color}`} />
@@ -43,8 +43,8 @@ export default function SetupPage() {
                 </div>
               </div>
             </CardHeader>
-            <CardContent className="p-8 pt-0">
-               <div className="p-10 flex items-center justify-center border-2 border-dashed border-slate-100 rounded-3xl text-sm text-slate-400 group-hover:text-slate-600 font-medium italic bg-slate-50/50 group-hover:bg-white transition-all">
+            <CardContent className="p-6 md:p-8 pt-0">
+               <div className="p-6 md:p-10 flex items-center justify-center border-2 border-dashed border-slate-100 rounded-3xl text-sm text-slate-400 group-hover:text-slate-600 font-medium italic bg-slate-50/50 group-hover:bg-white transition-all">
                  Configure {item.title}
                </div>
             </CardContent>
