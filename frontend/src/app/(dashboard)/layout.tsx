@@ -22,17 +22,17 @@ export default function DashboardLayout({
   return (
     <div className="flex h-screen overflow-hidden bg-background">
       {/* Desktop Sidebar */}
-      <Sidebar className="hidden lg:flex" />
+      <Sidebar className="hidden xl:flex" />
 
       <main className="flex-1 flex flex-col overflow-hidden relative">
         {/* Header */}
-        <header className="h-20 flex items-center px-6 border-b bg-white/80 backdrop-blur-md sticky top-0 z-30">
+        <header className="h-20 flex items-center px-6 border-b border-slate-200 bg-white/95 backdrop-blur-sm sticky top-0 z-30">
           <div className="flex items-center gap-4 flex-1">
              {/* Mobile Menu Trigger */}
              <Sheet open={open} onOpenChange={setOpen}>
                <SheetTrigger asChild>
-                 <Button variant="ghost" size="icon" className="lg:hidden hover:bg-primary/10">
-                   <Menu className="w-6 h-6 text-primary" />
+                 <Button variant="ghost" size="icon" className="xl:hidden hover:bg-slate-100 border border-transparent hover:border-slate-200">
+                   <Menu className="w-6 h-6 text-slate-600" />
                  </Button>
                </SheetTrigger>
                <SheetContent side="left" className="p-0 w-72">
@@ -40,38 +40,38 @@ export default function DashboardLayout({
                </SheetContent>
              </Sheet>
 
-             <div className="hidden md:flex items-center gap-2 px-3 py-2 bg-muted/50 rounded-full w-72 border border-transparent focus-within:border-primary/20 transition-all">
-                <Search className="w-4 h-4 text-muted-foreground" />
+             <div className="hidden md:flex items-center gap-2 px-4 py-2 bg-slate-50 rounded-full w-72 border border-slate-200 focus-within:border-primary/40 focus-within:bg-white transition-all">
+                <Search className="w-4 h-4 text-slate-400" />
                 <input 
                   type="text" 
                   placeholder="Quick search..." 
-                  className="bg-transparent border-none outline-none text-sm w-full"
+                  className="bg-transparent border-none outline-none text-sm w-full text-slate-700 placeholder:text-slate-400"
                 />
              </div>
           </div>
 
           <div className="flex items-center gap-4">
-             <Button variant="ghost" size="icon" className="relative hover:bg-primary/10 rounded-full">
-                <Bell className="w-5 h-5 text-muted-foreground" />
-                <span className="absolute top-2 right-2 w-2 h-2 bg-destructive rounded-full border-2 border-white" />
+             <Button variant="ghost" size="icon" className="relative hover:bg-slate-100 rounded-full border border-transparent hover:border-slate-200">
+                <Bell className="w-5 h-5 text-slate-500" />
+                <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-rose-500 rounded-full border-2 border-white" />
              </Button>
              <Separator orientation="vertical" className="h-6" />
-             <div className="flex items-center gap-3 pl-2">
-                <div className="w-10 h-10 rounded-full bg-gradient-vibrant p-[2px]">
-                   <div className="w-full h-full rounded-full bg-white flex items-center justify-center overflow-hidden">
-                      <div className="w-full h-full bg-linear-to-tr from-primary to-savings" />
+             <div className="flex items-center gap-3 pl-2 cursor-pointer group">
+                <div className="w-10 h-10 rounded-full border border-slate-200 p-0.5 group-hover:border-primary/30 transition-colors">
+                   <div className="w-full h-full rounded-full bg-slate-100 flex items-center justify-center overflow-hidden">
+                      <div className="w-full h-full bg-linear-to-tr from-emerald-500 to-emerald-700" />
                    </div>
                 </div>
                 <div className="hidden sm:flex flex-col">
-                   <span className="text-sm font-bold">Pandawa</span>
-                   <span className="text-[10px] text-muted-foreground font-medium">Verified User</span>
+                   <span className="text-sm font-bold text-slate-800">Pandawa</span>
+                   <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Verified User</span>
                 </div>
              </div>
           </div>
         </header>
 
         {/* Content */}
-        <div className="flex-1 overflow-y-auto p-4 md:p-8 lg:p-10">
+        <div className="flex-1 overflow-y-auto p-4 md:p-8 lg:p-10 bg-background">
           <div className="max-w-7xl mx-auto space-y-8">
             {children}
           </div>

@@ -6,6 +6,7 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
+  --font-sans: var(--font-roboto), ui-sans-serif, system-ui, sans-serif;
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
@@ -57,26 +58,25 @@
 
 :root {
   --radius: 1rem;
-  --background: #fdfdfd;
-  --foreground: #022c22;
+  --background: #f8fafc; /* Softer slate-50 background to reduce eye strain */
+  --foreground: #0f172a; /* Darker slate-900 */
   --card: #ffffff;
-  --card-foreground: #022c22;
+  --card-foreground: #0f172a;
   --popover: #ffffff;
-  --popover-foreground: #022c22;
-  --primary: #059669; /* Emerald 600 */
+  --popover-foreground: #0f172a;
+  --primary: #059669;
   --primary-foreground: #ffffff;
-  --secondary: #f0fdf4; /* Emerald 50 */
-  --secondary-foreground: #065f46; /* Emerald 800 */
+  --secondary: #f1f5f9;
+  --secondary-foreground: #0f172a;
   --muted: #f1f5f9;
   --muted-foreground: #64748b;
   --accent: #f0fdf4;
   --accent-foreground: #059669;
   --destructive: #ef4444;
-  --border: #e2e8f0;
+  --border: #e2e8f0; /* Clearer border color */
   --input: #e2e8f0;
   --ring: #10b981;
   
-  /* Vibrant Category Colors */
   --income: #10b981;
   --savings: #059669;
   --needs: #f97316;
@@ -93,9 +93,9 @@
   --sidebar-foreground: #0f172a;
   --sidebar-primary: #059669;
   --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #f0fdf4;
+  --sidebar-accent: #f8fafc;
   --sidebar-accent-foreground: #059669;
-  --sidebar-border: #f1f5f9;
+  --sidebar-border: #e2e8f0;
   --sidebar-ring: #059669;
 }
 
@@ -138,7 +138,7 @@
   }
 }
 
-/* Modern Gradient Utilities */
+/* Updated Utility Classes */
 @utility bg-gradient-money {
   background-image: linear-gradient(135deg, #10b981 0%, #059669 100%);
 }
@@ -148,11 +148,11 @@
 }
 
 @utility bg-gradient-soft {
-  background-image: linear-gradient(135deg, #f0fdf4 0%, #e0f2fe 100%);
+  background-image: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
 }
 
 @utility text-gradient-money {
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  background: linear-gradient(135deg, #059669 0%, #10b981 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
