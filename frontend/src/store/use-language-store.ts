@@ -136,7 +136,29 @@ export const translations = {
       solution: "Solusi",
       company: "Perusahaan",
       support: "Dukungan",
-      rights: "© 2026 Home Sweet Loan. Hak cipta dilindungi undang-undang.",
+      rights: "© 2026 Copyright By Petrus Handika",
+    },
+    legal: {
+      terms: {
+        title: "Syarat Ketentuan Layanan",
+        sections: [
+          { title: "1. Penerimaan Ketentuan", content: "Dengan mengakses dan menggunakan Home Sweet Loan, Anda setuju untuk terikat oleh Syarat Ketentuan Layanan ini. Jika Anda tidak setuju, mohon untuk tidak menggunakan layanan kami." },
+          { title: "2. Akun Pengguna", content: "Anda bertanggung jawab untuk menjaga kerahasiaan akun dan kata sandi Anda. Anda menyetujui untuk menerima tanggung jawab atas semua aktivitas yang terjadi di bawah akun Anda." },
+          { title: "3. Layanan Keuangan", content: "Home Sweet Loan menyediakan alat manajemen keuangan. Kami bukan penasihat keuangan berlisensi. Harap konsultasikan dengan profesional sebelum membuat keputusan keuangan besar." },
+          { title: "4. Batasan Tanggung Jawab", content: "Kami berusaha memberikan data yang paling akurat, namun kami tidak bertanggung jawab atas kerugian finansial yang mungkin terjadi akibat penggunaan aplikasi ini." },
+          { title: "5. Perubahan Layanan", content: "Kami berhak untuk mengubah atau menghentikan layanan (atau bagian mana pun darinya) kapan saja tanpa pemberitahuan sebelumnya." }
+        ]
+      },
+      privacy: {
+        title: "Kebijakan Privasi",
+        sections: [
+          { title: "1. Pengumpulan Data", content: "Kami mengumpulkan informasi yang Anda berikan saat mendaftar, seperti nama, email, dan data transaksi keuangan yang Anda masukkan secara manual." },
+          { title: "2. Penggunaan Informasi", content: "Data Anda digunakan untuk memberikan analisis keuangan yang dipersonalisasi dan meningkatkan pengalaman pengguna di dalam aplikasi." },
+          { title: "3. Keamanan Data", content: "Kami menggunakan enkripsi tingkat institusi untuk melindungi data sensitif Anda. Keamanan privasi Anda adalah prioritas utama kami." },
+          { title: "4. Berbagi Data", content: "Kami tidak menjual data pribadi Anda kepada pihak ketiga. Data hanya dibagikan jika diperlukan oleh hukum atau untuk menyediakan layanan inti kami." },
+          { title: "5. Hak Pengguna", content: "Anda memiliki hak untuk mengakses, memperbarui, atau menghapus data pribadi Anda kapan saja melalui pengaturan profil Anda." }
+        ]
+      }
     }
   },
   en: {
@@ -252,7 +274,29 @@ export const translations = {
       solution: "Solution",
       company: "Company",
       support: "Support",
-      rights: "© 2026 Home Sweet Loan. All rights reserved.",
+      rights: "© 2026 Copyright By Petrus Handika",
+    },
+    legal: {
+      terms: {
+        title: "Terms of Service",
+        sections: [
+          { title: "1. Acceptance of Terms", content: "By accessing and using Home Sweet Loan, you agree to be bound by these Terms of Service. If you do not agree, please do not use our services." },
+          { title: "2. User Accounts", content: "You are responsible for maintaining the confidentiality of your account and password. You agree to accept responsibility for all activities that occur under your account." },
+          { title: "3. Financial Services", content: "Home Sweet Loan provides financial management tools. We are not licensed financial advisors. Please consult with a professional before making major financial decisions." },
+          { title: "4. Limitation of Liability", content: "We strive to provide the most accurate data, but we are not responsible for any financial losses that may occur from using this application." },
+          { title: "5. Changes to Service", content: "We reserve the right to modify or discontinue the service (or any part thereof) at any time without prior notice." }
+        ]
+      },
+      privacy: {
+        title: "Privacy Policy",
+        sections: [
+          { title: "1. Data Collection", content: "We collect information you provide when registering, such as name, email, and financial transaction data that you enter manually." },
+          { title: "2. Use of Information", content: "Your data is used to provide personalized financial analysis and improve the user experience within the application." },
+          { title: "3. Data Security", content: "We use institution-grade encryption to protect your sensitive data. Your privacy security is our top priority." },
+          { title: "4. Data Sharing", content: "We do not sell your personal data to third parties. Data is only shared if required by law or to provide our core services." },
+          { title: "5. User Rights", content: "You have the right to access, update, or delete your personal data at any time via your profile settings." }
+        ]
+      }
     }
   }
 }

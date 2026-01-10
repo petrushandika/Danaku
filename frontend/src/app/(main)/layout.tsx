@@ -160,9 +160,11 @@ export default function MainLayout({
             <div>
               <h4 className="font-black uppercase tracking-widest text-emerald-600 text-[10px] mb-6 italic">{t.footer.support}</h4>
               <ul className="space-y-3">
-                {["Help Center", "Status Area", "Privacy Policy", "Term of Service"].map((item) => (
+                {["Help Center", "Status Area"].map((item) => (
                   <li key={item}><Link href="#" className="text-slate-500 dark:text-slate-400 hover:text-emerald-600 transition-colors text-sm font-bold">{item}</Link></li>
                 ))}
+                <li><Link href="/privacy" className="text-slate-500 dark:text-slate-400 hover:text-emerald-600 transition-colors text-sm font-bold">Privacy Policy</Link></li>
+                <li><Link href="/terms" className="text-slate-500 dark:text-slate-400 hover:text-emerald-600 transition-colors text-sm font-bold">Terms of Service</Link></li>
               </ul>
             </div>
           </div>

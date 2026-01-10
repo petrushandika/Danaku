@@ -40,14 +40,14 @@ export function HeroSection() {
       <div className="absolute bottom-0 left-0 -ml-40 -mb-20 w-[600px] h-[600px] bg-blue-50/40 dark:bg-blue-900/10 rounded-full blur-[120px] opacity-60 -z-10 float" />
       
       <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-        <div className="space-y-8 animate-smooth-in">
+        <div className="space-y-8 animate-smooth-in pr-4">
           <div className="inline-flex items-center gap-2 px-2 sm:px-3 py-1 rounded-full bg-emerald-50 dark:bg-emerald-900/30 border border-emerald-100 dark:border-emerald-800/50 animate-bounce transition-colors">
             <Badge className="bg-emerald-600 font-black tracking-widest text-[9px] sm:text-[10px] uppercase border-none">{t.new}</Badge>
             <span className="text-[9px] sm:text-[11px] font-black uppercase tracking-widest text-emerald-800 dark:text-emerald-400">{t.ai}</span>
           </div>
           
           <h1 
-            className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black tracking-tighter leading-[0.95] md:leading-[0.9] text-slate-900 dark:text-white transition-colors"
+            className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black tracking-tighter leading-[0.95] md:leading-[0.9] text-slate-900 dark:text-white transition-colors overflow-wrap-anywhere"
             dangerouslySetInnerHTML={{ __html: t.title }}
           />
           
