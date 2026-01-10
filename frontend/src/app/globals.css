@@ -136,6 +136,7 @@
   html {
     scroll-behavior: smooth;
     @apply emerald-scrollbar;
+    overflow-x: hidden;
   }
   body {
     @apply bg-background text-foreground selection:bg-primary/20 antialiased;
@@ -168,6 +169,21 @@ a, button, div, span, input, select {
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.animate-marquee {
+  display: flex;
+  width: fit-content;
+  animation: marquee 30s linear infinite;
+}
+
+.pause-on-hover:hover .animate-marquee {
+  animation-play-state: paused;
 }
 
 .bottom-sheet-handle {

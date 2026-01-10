@@ -1,6 +1,7 @@
 
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
+import { Facebook, Twitter, Instagram, Linkedin, Github } from "lucide-react"
 
 export default function MainLayout({
   children,
@@ -22,10 +23,10 @@ export default function MainLayout({
           </Link>
 
           <nav className="hidden md:flex items-center gap-10">
-            {["Features", "Pricing", "Testimonials", "About"].map((item) => (
+            {["Features", "Products", "Testimonials", "About"].map((item) => (
               <Link 
                 key={item} 
-                href={`#${item.toLowerCase()}`} 
+                href={`/${item.toLowerCase()}`} 
                 className="text-sm font-bold text-slate-600 hover:text-emerald-600 transition-colors uppercase tracking-widest"
               >
                 {item}
@@ -35,9 +36,12 @@ export default function MainLayout({
 
           <div className="flex items-center gap-4">
              <Link href="/dashboard" className="hidden sm:block text-sm font-bold text-slate-600 hover:text-emerald-600 px-4 transition-colors">
+                Dashboard
+             </Link>
+             <Link href="/auth/login" className="hidden sm:block text-sm font-bold text-slate-600 hover:text-emerald-600 px-4 transition-colors">
                 Sign In
              </Link>
-             <Link href="/dashboard">
+             <Link href="/auth/register">
                 <Button className="rounded-full px-8 bg-emerald-600 hover:bg-emerald-700 text-white font-black shadow-lg shadow-emerald-100 transition-all hover:scale-105 active:scale-95">
                   Get Started
                 </Button>
@@ -99,17 +103,22 @@ export default function MainLayout({
           <p className="text-slate-500 text-xs font-bold uppercase tracking-widest">
             © 2026 Home Sweet Loan. All rights reserved. Built for Financial Freedom.
           </p>
-          <div className="flex items-center gap-6">
-             {/* Social Mockups */}
-             <div className="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center hover:bg-emerald-600 cursor-pointer transition-colors shadow-sm">
-                <div className="w-3 h-3 bg-white rounded-xs" />
-             </div>
-             <div className="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center hover:bg-emerald-600 cursor-pointer transition-colors shadow-sm">
-                <div className="w-3 h-3 bg-white rounded-full" />
-             </div>
-             <div className="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center hover:bg-emerald-600 cursor-pointer transition-colors shadow-sm">
-                <div className="w-3 h-1 bg-white" />
-             </div>
+          <div className="flex items-center gap-4">
+             <Link href="#" className="w-10 h-10 rounded-full bg-slate-900 border border-slate-800 flex items-center justify-center hover:bg-emerald-600 hover:border-emerald-500 transition-all group">
+                <Facebook className="w-4 h-4 text-slate-400 group-hover:text-white" />
+             </Link>
+             <Link href="#" className="w-10 h-10 rounded-full bg-slate-900 border border-slate-800 flex items-center justify-center hover:bg-emerald-600 hover:border-emerald-500 transition-all group">
+                <Twitter className="w-4 h-4 text-slate-400 group-hover:text-white" />
+             </Link>
+             <Link href="#" className="w-10 h-10 rounded-full bg-slate-900 border border-slate-800 flex items-center justify-center hover:bg-emerald-600 hover:border-emerald-500 transition-all group">
+                <Instagram className="w-4 h-4 text-slate-400 group-hover:text-white" />
+             </Link>
+             <Link href="#" className="w-10 h-10 rounded-full bg-slate-900 border border-slate-800 flex items-center justify-center hover:bg-emerald-600 hover:border-emerald-500 transition-all group">
+                <Linkedin className="w-4 h-4 text-slate-400 group-hover:text-white" />
+             </Link>
+             <Link href="#" className="w-10 h-10 rounded-full bg-slate-900 border border-slate-800 flex items-center justify-center hover:bg-emerald-600 hover:border-emerald-500 transition-all group">
+                <Github className="w-4 h-4 text-slate-400 group-hover:text-white" />
+             </Link>
           </div>
         </div>
       </footer>

@@ -8,14 +8,25 @@ import {
   CheckCircle2, 
   BarChart3, 
   ShieldCheck, 
-  Zap, 
   Target, 
   Users, 
   Star,
-  Sparkles
+  Sparkles,
+  TrendingUp,
+  Wallet,
+  PieChart,
+  Briefcase
 } from "lucide-react"
 import Link from "next/link"
-import Image from "next/image"
+
+const financeLogos = [
+  { name: "Bank Central", icon: Wallet },
+  { name: "Global Equity", icon: TrendingUp },
+  { name: "Secure Asset", icon: ShieldCheck },
+  { name: "Smart Wealth", icon: PieChart },
+  { name: "Elite Loan", icon: Briefcase },
+  { name: "Wealth Flow", icon: BarChart3 },
+];
 
 export default function LandingPage() {
   return (
@@ -42,12 +53,12 @@ export default function LandingPage() {
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4 pt-4">
-              <Link href="/dashboard">
+              <Link href="/auth/register">
                 <Button size="lg" className="w-full sm:w-auto rounded-full px-10 h-16 text-lg bg-emerald-600 hover:bg-emerald-700 text-white font-black shadow-2xl shadow-emerald-200 transition-all hover:scale-105 active:scale-95 group">
                   Start Your Journey <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
                 </Button>
               </Link>
-              <Link href="#product">
+              <Link href="/dashboard">
                 <Button variant="outline" size="lg" className="w-full sm:w-auto rounded-full px-10 h-16 text-lg border-slate-200 bg-white text-slate-700 font-bold hover:bg-slate-50 shadow-sm transition-all active:scale-95">
                   Watch Demo
                 </Button>
@@ -57,7 +68,7 @@ export default function LandingPage() {
             <div className="flex items-center gap-6 pt-10">
                <div className="flex -space-x-4">
                   {[1,2,3,4].map(i => (
-                    <div key={i} className="w-12 h-12 rounded-full border-4 border-white bg-slate-100 flex items-center justify-center overflow-hidden shadow-sm">
+                    <div key={i} className="w-12 h-12 rounded-full border-4 border-white bg-slate-100 flex items-center justify-center overflow-hidden shadow-sm hover:z-10 hover:scale-110 transition-all">
                        <Users className="w-6 h-6 text-slate-400" />
                     </div>
                   ))}
@@ -73,8 +84,7 @@ export default function LandingPage() {
           
           <div className="relative lg:block hidden animate-smooth-in" style={{ animationDelay: '0.2s' }}>
              <div className="bg-slate-900 rounded-[2rem] p-4 shadow-3xl rotate-2 relative z-10 overflow-hidden border-8 border-slate-800">
-                <div className="aspect-[4/3] bg-slate-800 rounded-[1.5rem] relative overflow-hidden">
-                   {/* This is where the generated mockup image goes */}
+                <div className="aspect-4/3 bg-slate-800 rounded-[1.5rem] relative overflow-hidden">
                    <div className="absolute inset-0 bg-linear-to-tr from-emerald-500/20 to-blue-500/20" />
                    <Sparkles className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-20 h-20 text-emerald-400/30 animate-pulse" />
                    <p className="absolute inset-x-0 bottom-8 text-center text-white/50 font-black text-xs uppercase tracking-[0.3em]">System Interactive Proof</p>
@@ -83,27 +93,32 @@ export default function LandingPage() {
              {/* Decorative Elements */}
              <div className="absolute top-1/2 -left-12 -translate-y-1/2 bg-white rounded-3xl p-6 shadow-2xl border border-slate-100 space-y-3 z-20 -rotate-6 animate-bounce">
                 <div className="flex items-center gap-3">
-                   <div className="w-8 h-8 rounded-lg bg-emerald-100 flex items-center justify-center">
-                      <Zap className="w-4 h-4 text-emerald-600" />
+                   <div className="w-8 h-8 rounded-lg bg-emerald-100 flex items-center justify-center transition-transform hover:scale-110">
+                      <TrendingUp className="w-4 h-4 text-emerald-600" />
                    </div>
-                   <span className="text-sm font-black text-slate-800 uppercase tracking-tighter">Instant Save</span>
+                   <span className="text-sm font-black text-slate-800 uppercase tracking-tighter">Profit Grow</span>
                 </div>
                 <div className="h-1.5 w-32 bg-slate-100 rounded-full overflow-hidden">
-                   <div className="h-full bg-emerald-500 w-2/3" />
+                   <div className="h-full bg-emerald-500 w-3/4 animate-[shimmer_2s_infinite]" />
                 </div>
              </div>
           </div>
         </div>
       </section>
 
-      {/* Trust Section */}
-      <section className="py-20 bg-slate-50 border-y border-slate-100">
-        <div className="max-w-7xl mx-auto px-6 text-center">
-          <p className="text-xs font-black uppercase tracking-[0.4em] text-slate-400 mb-12 italic">Powered by Advanced Technologies</p>
-          <div className="flex flex-wrap justify-center gap-12 md:gap-24 opacity-50 grayscale hover:grayscale-0 transition-all">
-             {["NEXT.JS 15", "PRISMA ORM", "TAILWIND CSS", "SHADCN UI", "RADIX PRIMITIVES"].map((t) => (
-                <span key={t} className="text-xl font-black text-slate-800 italic tracking-tighter">{t}</span>
-             ))}
+      {/* Marquee Financial Partners Section */}
+      <section className="py-20 bg-slate-50 border-y border-slate-100 overflow-hidden pause-on-hover">
+        <div className="max-w-7xl mx-auto px-6 relative">
+          <p className="text-center text-xs font-black uppercase tracking-[0.4em] text-slate-400 mb-12 italic">Trusted by Global Financial Institutions</p>
+          <div className="animate-marquee whitespace-nowrap">
+            {[...financeLogos, ...financeLogos].map((logo, idx) => (
+              <div key={idx} className="inline-flex items-center gap-4 mx-12 md:mx-20 opacity-40 hover:opacity-100 transition-opacity group cursor-pointer">
+                 <div className="w-10 h-10 rounded-xl bg-slate-200 flex items-center justify-center group-hover:bg-emerald-100 transition-colors">
+                    <logo.icon className="w-6 h-6 text-slate-800 group-hover:text-emerald-600" />
+                 </div>
+                 <span className="text-2xl font-black text-slate-800 italic tracking-tighter uppercase">{logo.name}</span>
+              </div>
+            ))}
           </div>
         </div>
       </section>
@@ -146,8 +161,8 @@ export default function LandingPage() {
       </section>
 
       {/* Product Preview Section */}
-      <section id="product" className="py-32 bg-slate-900 relative overflow-hidden">
-         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-emerald-600/10 via-transparent to-transparent opacity-50" />
+      <section id="products" className="py-32 bg-slate-900 relative overflow-hidden">
+         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full bg-[radial-gradient(circle_at_center,var(--tw-gradient-stops))] from-emerald-600/10 via-transparent to-transparent opacity-50" />
          
          <div className="max-w-7xl mx-auto px-6 relative z-10">
             <div className="flex flex-col lg:flex-row items-center gap-20">
@@ -168,7 +183,7 @@ export default function LandingPage() {
                        </div>
                      ))}
                   </div>
-                  <Link href="/dashboard" className="inline-block">
+                  <Link href="/auth/register" className="inline-block">
                     <Button className="rounded-full px-10 h-14 bg-white text-slate-900 font-black hover:bg-emerald-50 transition-all hover:scale-105">
                        Go To Dashboard
                     </Button>
