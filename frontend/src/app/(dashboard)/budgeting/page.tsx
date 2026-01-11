@@ -58,7 +58,7 @@ export default function BudgetingPage() {
             title="Budgeting Guidelines"
             description="Master the art of financial management with our expert rules."
             trigger={
-              <Button variant="outline" className="w-full sm:w-auto rounded-full px-6 border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 font-bold hover:bg-slate-50 dark:hover:bg-slate-800 shadow-sm transition-all border">
+              <Button variant="outline" className="w-full sm:w-auto rounded-full px-6 border-border bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 font-bold hover:bg-slate-50 dark:hover:bg-slate-800 shadow-sm transition-all border">
                 <Info className="mr-2 h-4 w-4" /> {t.guidelines}
               </Button>
             }
@@ -109,10 +109,10 @@ export default function BudgetingPage() {
               <div className="grid gap-2">
                 <Label htmlFor="plan-month" className="text-slate-700 dark:text-slate-300 font-bold ml-1">{t.periodLabel}</Label>
                 <Select defaultValue="current">
-                  <SelectTrigger className="rounded-2xl border-slate-200 dark:border-slate-800 dark:bg-slate-900 focus:ring-emerald-500 h-11">
+                  <SelectTrigger className="rounded-2xl border-border dark:bg-slate-900 focus:ring-emerald-500 h-11">
                     <SelectValue placeholder="Select month" />
                   </SelectTrigger>
-                  <SelectContent className="rounded-2xl border-slate-200 dark:border-slate-800 dark:bg-slate-900">
+                  <SelectContent className="rounded-2xl border-border dark:bg-slate-900">
                     <SelectItem value="current" className="cursor-pointer">{t.currentMonth}</SelectItem>
                     <SelectItem value="next" className="cursor-pointer">{t.nextMonth}</SelectItem>
                   </SelectContent>
@@ -122,7 +122,7 @@ export default function BudgetingPage() {
                 <Label htmlFor="total-income" className="text-slate-700 dark:text-slate-300 font-bold ml-1">{t.incomeLabel}</Label>
                 <div className="relative">
                   <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold text-sm">Rp</span>
-                  <Input id="total-income" placeholder="0" className="rounded-2xl border-slate-200 dark:border-slate-800 dark:bg-slate-900 focus-visible:ring-emerald-500 pl-11 h-11" />
+                  <Input id="total-income" placeholder="0" className="rounded-2xl border-border dark:bg-slate-900 focus-visible:ring-emerald-500 pl-11 h-11" />
                 </div>
               </div>
               <div className="p-5 bg-emerald-50 dark:bg-emerald-950/20 rounded-2xl border border-emerald-100 dark:border-emerald-800 flex gap-4 animate-smooth-in transition-colors">
@@ -146,9 +146,9 @@ export default function BudgetingPage() {
       </div>
 
       <div className="grid gap-8 grid-cols-1 xl:grid-cols-12">
-        <Card className="xl:col-span-8 border-slate-200 dark:border-slate-800 shadow-none rounded-[2rem] bg-white dark:bg-slate-900 overflow-hidden border transition-colors duration-300">
-          <CardHeader className="p-6 md:p-10">
-            <div className="flex items-center gap-5 mb-4">
+        <Card className="xl:col-span-8 border-border shadow-none rounded-[2rem] bg-white dark:bg-slate-900 overflow-hidden border transition-colors duration-300">
+          <CardHeader className="p-4 md:px-10 md:pt-8 md:pb-6">
+            <div className="flex items-center gap-4 md:gap-5 mb-2 md:mb-4">
               <div className="w-12 h-12 rounded-2xl bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-100 dark:border-emerald-800 flex items-center justify-center transition-colors">
                 <Wallet className="w-6 h-6 text-emerald-600 dark:text-emerald-400" />
               </div>
@@ -158,8 +158,8 @@ export default function BudgetingPage() {
               </div>
             </div>
           </CardHeader>
-          <CardContent className="p-6 md:p-10 pt-0">
-             <div className="space-y-6 lg:max-h-[500px] overflow-y-auto pr-4 emerald-scrollbar">
+          <CardContent className="px-6 pb-6 md:px-10 md:pb-8 pt-0">
+             <div className="space-y-2 lg:max-h-[500px] overflow-y-auto pr-4 emerald-scrollbar">
                 {[
                   { name: "Housing & Utilities", allocated: "Rp 3,500,000", spent: "Rp 3,200,000", percent: 91, color: "bg-orange-500", icon: Wallet, bg: "bg-orange-50 dark:bg-orange-950/20" },
                   { name: "Groceries & Food", allocated: "Rp 4,000,000", spent: "Rp 1,850,000", percent: 46, color: "bg-emerald-500", icon: ShieldCheck, bg: "bg-emerald-50 dark:bg-emerald-950/20" },
@@ -167,17 +167,21 @@ export default function BudgetingPage() {
                   { name: "Entertainment", allocated: "Rp 1,000,000", spent: "Rp 420,000", percent: 42, color: "bg-violet-500", icon: Heart, bg: "bg-violet-50 dark:bg-violet-950/20" },
                   { name: "Other Spending", allocated: "Rp 1,400,000", spent: "Rp 50,000", percent: 3, color: "bg-slate-400", icon: Target, bg: "bg-slate-50 dark:bg-slate-950/20" },
                 ].map((item, idx) => (
-                  <div key={idx} className="group p-5 rounded-3xl border border-transparent hover:border-slate-100 dark:hover:border-slate-800 hover:bg-slate-50/50 dark:hover:bg-slate-950/50 transition-all">
-                    <div className="flex justify-between items-center mb-4">
+                  <div key={idx} className="group py-2 md:py-3 px-3 md:px-5 rounded-2xl md:rounded-3xl border border-transparent hover:border-slate-100 dark:hover:border-slate-800 hover:bg-slate-50/50 dark:hover:bg-slate-950/50 transition-all">
+                    <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 mb-3 sm:mb-2">
                        <div className="flex items-center gap-3">
-                          <div className={cn("w-10 h-10 rounded-xl flex items-center justify-center border border-transparent group-hover:border-slate-200 dark:group-hover:border-slate-700 transition-all", item.bg)}>
+                          <div className={cn("w-10 h-10 rounded-xl flex items-center justify-center shrink-0 border border-transparent group-hover:border-slate-200 dark:group-hover:border-slate-700 transition-all", item.bg)}>
                              <item.icon className={cn("w-5 h-5", item.color.replace('bg-', 'text-'))} />
                           </div>
-                          <h4 className="font-bold text-slate-800 dark:text-white uppercase tracking-tight text-sm">{item.name}</h4>
+                          <h4 className="font-bold text-slate-800 dark:text-white uppercase tracking-tight text-xs md:text-sm leading-tight">{item.name}</h4>
                        </div>
-                       <span className="text-xs font-black text-slate-500 dark:text-slate-400">{item.spent} / {item.allocated}</span>
+                       <div className="flex flex-col items-start sm:items-end pl-13 sm:pl-0">
+                          <span className="text-[10px] font-black text-slate-500 dark:text-slate-400 tabular-nums leading-none">
+                             {item.spent} <span className="text-slate-300 dark:text-slate-600 mx-1">/</span> {item.allocated}
+                          </span>
+                       </div>
                     </div>
-                    <div className="h-2.5 w-full bg-slate-100 dark:bg-slate-800/50 rounded-full overflow-hidden p-0.5 border border-slate-200 dark:border-slate-800 transition-colors">
+                    <div className="h-1.5 md:h-2.5 w-full bg-slate-100 dark:bg-slate-800/50 rounded-full overflow-hidden p-0.5 border border-border transition-colors">
                       <div 
                         className={cn("h-full rounded-full transition-all duration-1000", item.color)} 
                         style={{ width: `${item.percent}%` }} 
@@ -193,11 +197,11 @@ export default function BudgetingPage() {
           <div className="absolute top-0 right-0 p-8 opacity-10 transition-transform group-hover:scale-110 pointer-events-none">
             <Target className="w-32 h-32 text-white" />
           </div>
-          <CardHeader className="p-6 md:p-10 relative z-10">
+          <CardHeader className="p-6 md:px-10 md:pt-8 md:pb-6 relative z-10">
             <CardTitle className="text-2xl font-bold">{t.goalTrackerTitle}</CardTitle>
             <CardDescription className="text-emerald-100/80 dark:text-emerald-400/60 font-medium tracking-tight">{t.goalTrackerDesc}</CardDescription>
           </CardHeader>
-          <CardContent className="p-6 md:p-10 pt-0 relative z-10 space-y-8">
+          <CardContent className="px-6 pb-6 md:px-10 md:pb-8 pt-0 relative z-10 space-y-8">
             <div className="space-y-3">
               <div className="flex justify-between text-sm font-black uppercase tracking-wider">
                 <span>{t.savingTarget}</span>

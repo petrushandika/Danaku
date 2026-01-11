@@ -72,15 +72,15 @@ export default function SetupPage() {
           <div className="grid gap-6">
             <div className="grid gap-2">
               <Label htmlFor="name" className="text-slate-700 dark:text-slate-300 font-bold ml-1">{t.form.name}</Label>
-              <Input id="name" placeholder={t.form.namePlaceholder} className="rounded-2xl border-slate-200 dark:border-slate-800 dark:bg-slate-900 focus-visible:ring-emerald-500 h-11" />
+              <Input id="name" placeholder={t.form.namePlaceholder} className="rounded-2xl border-border dark:bg-slate-900 focus-visible:ring-emerald-500 h-11" />
             </div>
             <div className="grid gap-2">
               <Label htmlFor="type" className="text-slate-700 dark:text-slate-300 font-bold ml-1">{t.form.type}</Label>
               <Select>
-                <SelectTrigger className="rounded-2xl border-slate-200 dark:border-slate-800 dark:bg-slate-900 focus:ring-emerald-500 h-11">
+                <SelectTrigger className="rounded-2xl border-border dark:bg-slate-900 focus:ring-emerald-500 h-11">
                   <SelectValue placeholder={t.form.typePlaceholder} />
                 </SelectTrigger>
-                <SelectContent className="rounded-2xl border-slate-200 dark:border-slate-800 dark:bg-slate-900">
+                <SelectContent className="rounded-2xl border-border dark:bg-slate-900">
                   <SelectItem value="income" className="cursor-pointer">Income Source</SelectItem>
                   <SelectItem value="needs" className="cursor-pointer">Needs (Fixed)</SelectItem>
                   <SelectItem value="wants" className="cursor-pointer">Wants (Flex)</SelectItem>
@@ -107,7 +107,7 @@ export default function SetupPage() {
             title={`${item.title} Settings`}
             description={`Manage your ${item.title.toLowerCase()} list and configurations.`}
             trigger={
-              <Card className={`border-slate-200 dark:border-slate-800 shadow-none rounded-3xl bg-white dark:bg-slate-900 overflow-hidden group transition-all cursor-pointer border hover:shadow-md ${item.borderColor}`}>
+              <Card className={`border-border shadow-none rounded-3xl bg-white dark:bg-slate-900 overflow-hidden group transition-all cursor-pointer border hover:shadow-md ${item.borderColor}`}>
                 <CardHeader className="p-6 md:p-8">
                   <div className="flex items-center gap-5">
                     <div className={`w-14 h-14 rounded-2xl ${item.bg} flex items-center justify-center transition-all border border-transparent group-hover:border-slate-100 dark:group-hover:border-slate-700 group-hover:scale-105 shadow-xs`}>

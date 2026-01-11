@@ -23,6 +23,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { toast } from "sonner"
 import { useLanguageStore, translations } from "@/store/use-language-store"
+import { useSearchStore } from "@/store/use-search-store"
 import { cn } from "@/lib/utils"
 import { useEffect, useState, useMemo } from "react"
 
@@ -42,8 +43,8 @@ const ALL_TRANSACTIONS = [
 export default function SpendingPage() {
   const { language } = useLanguageStore()
   const t = translations[language].dashboard.spending
+  const { query: searchQuery, setQuery: setSearchQuery, clearQuery } = useSearchStore()
   const [mounted, setMounted] = useState(false)
-  const [searchQuery, setSearchQuery] = useState("")
   const [filterCategory, setFilterCategory] = useState("All")
 
   useEffect(() => {
@@ -51,9 +52,9 @@ export default function SpendingPage() {
   }, [])
 
   const filteredTransactions = useMemo(() => {
-    return ALL_TRANSACTIONS.filter(t => {
-      const matchesSearch = t.name.toLowerCase().includes(searchQuery.toLowerCase())
-      const matchesCategory = filterCategory === "All" || t.category === filterCategory
+    return ALL_TRANSACTIONS.filter(item => {
+      const matchesSearch = item.name.toLowerCase().includes(searchQuery.toLowerCase())
+      const matchesCategory = filterCategory === "All" || item.category === filterCategory
       return matchesSearch && matchesCategory
     })
   }, [searchQuery, filterCategory])
@@ -73,17 +74,17 @@ export default function SpendingPage() {
   if (!mounted) return null
 
   return (
-    <div className="space-y-10 pb-10 transition-colors duration-300">
+    <div className="space-y-10 pb-10 transition-colors duration-500 animate-in fade-in duration-700">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h1 
             className="text-4xl font-black tracking-tight text-slate-900 dark:text-white"
             dangerouslySetInnerHTML={{ __html: t.title }}
           />
-          <p className="text-slate-500 dark:text-slate-400 font-medium mt-2">{t.desc}</p>
+          <p className="text-slate-500 dark:text-slate-400 font-medium mt-2 transition-colors duration-300">{t.desc}</p>
         </div>
         <div className="flex flex-col sm:flex-row gap-3">
-           <div className="flex items-center gap-3 px-5 py-2.5 bg-white dark:bg-slate-900 rounded-full border border-slate-200 dark:border-slate-800 shadow-sm focus-within:border-emerald-500/40 focus-within:ring-2 focus-within:ring-emerald-500/5 transition-all">
+           <div className="flex items-center gap-3 px-5 py-2.5 bg-white dark:bg-slate-900 rounded-full border border-border hover:shadow-sm focus-within:border-emerald-500/40 focus-within:ring-2 focus-within:ring-emerald-500/5 transition-all duration-300">
               <Search className="w-4 h-4 text-slate-400" />
               <input 
                 type="text" 
@@ -93,7 +94,7 @@ export default function SpendingPage() {
                 className="bg-transparent border-none outline-none text-sm w-full sm:w-32 text-slate-700 dark:text-slate-300 placeholder:text-slate-400 font-medium" 
               />
               {searchQuery && (
-                <button onClick={() => setSearchQuery("")} className="p-1 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full">
+                <button onClick={() => clearQuery()} className="p-1 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-colors duration-300">
                   <X className="w-3 h-3 text-slate-400" />
                 </button>
               )}
@@ -121,7 +122,7 @@ export default function SpendingPage() {
       </div>
 
       <div className="grid gap-8 grid-cols-1 xl:grid-cols-12">
-        <Card className="xl:col-span-4 border-slate-200 dark:border-slate-800 shadow-none rounded-3xl bg-white dark:bg-slate-900 overflow-hidden border transition-colors">
+        <Card className="xl:col-span-4 border-border shadow-none rounded-3xl bg-white dark:bg-slate-900 overflow-hidden border transition-colors">
           <CardHeader className="p-6 md:p-8">
             <div className="flex items-center justify-between mb-5">
                <div className="w-12 h-12 rounded-2xl bg-orange-50 dark:bg-orange-950/20 border border-orange-100 dark:border-orange-800 flex items-center justify-center">
@@ -150,7 +151,7 @@ export default function SpendingPage() {
           </CardContent>
         </Card>
 
-        <Card className="xl:col-span-8 border-slate-200 dark:border-slate-800 shadow-none rounded-3xl bg-white dark:bg-slate-900 overflow-hidden border transition-colors">
+        <Card className="xl:col-span-8 border-border shadow-none rounded-3xl bg-white dark:bg-slate-900 overflow-hidden border transition-colors">
           <CardHeader className="p-6 md:p-8 pb-4">
             <div className="flex items-center justify-between">
                <div className="flex items-center gap-5">
@@ -165,11 +166,11 @@ export default function SpendingPage() {
                
                <DropdownMenu>
                  <DropdownMenuTrigger asChild>
-                    <Button variant="outline" size="sm" className={cn("rounded-full border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 font-bold text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 shadow-sm", filterCategory !== "All" && "border-emerald-500 text-emerald-600")}>
+                    <Button variant="outline" size="sm" className={cn("rounded-full border-border bg-white dark:bg-slate-900 font-bold text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 shadow-sm", filterCategory !== "All" && "border-emerald-500 text-emerald-600")}>
                       <Filter className="mr-2 h-3.5 w-3.5" /> {filterCategory === "All" ? "Filter" : filterCategory}
                     </Button>
                  </DropdownMenuTrigger>
-                 <DropdownMenuContent className="rounded-2xl border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 w-48 p-2">
+                 <DropdownMenuContent className="rounded-2xl border-border bg-white dark:bg-slate-900 w-48 p-2">
                    <DropdownMenuLabel className="text-[10px] uppercase font-black tracking-widest text-slate-400 px-3 py-2">Select Category</DropdownMenuLabel>
                    <DropdownMenuSeparator />
                    {["All", "Income", "Needs", "Wants", "Savings", "Assets"].map((cat) => (
@@ -185,8 +186,8 @@ export default function SpendingPage() {
                </DropdownMenu>
             </div>
           </CardHeader>
-          <CardContent className="p-6 md:p-10 pt-4">
-             <div className="max-h-[500px] overflow-y-auto pr-6 emerald-scrollbar space-y-6">
+          <CardContent className="p-6 md:px-10 md:pt-2 md:pb-8">
+             <div className="max-h-[420px] overflow-y-auto pr-6 emerald-scrollbar space-y-4">
                 {filteredTransactions.length > 0 ? (
                   filteredTransactions.map((item, idx) => (
                     <div key={idx} className="flex items-center group cursor-pointer border-b border-slate-50 dark:border-slate-800 pb-4 last:border-0 last:pb-0">
@@ -220,23 +221,23 @@ function TransactionForm({ t }: { t: any }) {
     <div className="grid gap-5">
       <div className="grid gap-2">
         <Label htmlFor="desc" className="text-slate-700 dark:text-slate-300 font-bold ml-1">{t.form.desc}</Label>
-        <Input id="desc" placeholder={t.form.descPlaceholder} className="rounded-2xl border-slate-200 dark:border-slate-800 dark:bg-slate-900 focus-visible:ring-emerald-500 h-11" />
+        <Input id="desc" placeholder={t.form.descPlaceholder} className="rounded-2xl border-border dark:bg-slate-900 focus-visible:ring-emerald-500 h-11" />
       </div>
       <div className="grid grid-cols-2 gap-4">
         <div className="grid gap-2">
           <Label htmlFor="amount" className="text-slate-700 dark:text-slate-300 font-bold ml-1">{t.form.amount}</Label>
           <div className="relative">
             <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold text-sm">Rp</span>
-            <Input id="amount" placeholder="0" className="rounded-2xl border-slate-200 dark:border-slate-800 dark:bg-slate-900 focus-visible:ring-emerald-500 pl-11 h-11" />
+            <Input id="amount" placeholder="0" className="rounded-2xl border-border dark:bg-slate-900 focus-visible:ring-emerald-500 pl-11 h-11" />
           </div>
         </div>
         <div className="grid gap-2">
           <Label htmlFor="category" className="text-slate-700 dark:text-slate-300 font-bold ml-1">{t.form.category}</Label>
           <Select>
-            <SelectTrigger className="rounded-2xl border-slate-200 dark:border-slate-800 dark:bg-slate-900 focus:ring-emerald-500 h-11">
+            <SelectTrigger className="rounded-2xl border-border dark:bg-slate-900 focus:ring-emerald-500 h-11">
               <SelectValue placeholder="Category" />
             </SelectTrigger>
-            <SelectContent className="rounded-2xl border-slate-200 dark:border-slate-800 dark:bg-slate-900">
+            <SelectContent className="rounded-2xl border-border dark:bg-slate-900">
               <SelectItem value="food" className="cursor-pointer">Food & Drinks</SelectItem>
               <SelectItem value="transport" className="cursor-pointer">Transport</SelectItem>
               <SelectItem value="housing" className="cursor-pointer">Housing</SelectItem>
@@ -250,7 +251,7 @@ function TransactionForm({ t }: { t: any }) {
         <Label htmlFor="date" className="text-slate-700 dark:text-slate-300 font-bold ml-1">{t.form.date}</Label>
         <div className="relative">
           <CalendarIcon className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4" />
-          <Input id="date" type="date" className="rounded-2xl border-slate-200 dark:border-slate-800 dark:bg-slate-900 focus-visible:ring-emerald-500 pl-11 h-11" defaultValue={new Date().toISOString().split('T')[0]} />
+          <Input id="date" type="date" className="rounded-2xl border-border dark:bg-slate-900 focus-visible:ring-emerald-500 pl-11 h-11" defaultValue={new Date().toISOString().split('T')[0]} />
         </div>
       </div>
     </div>

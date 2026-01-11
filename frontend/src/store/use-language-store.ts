@@ -33,6 +33,10 @@ export const translations = {
       getStarted: "Mulai Sekarang",
       dashboard: "Dasbor",
     },
+    months: [
+      "Januari", "Februari", "Maret", "April", "Mei", "Juni",
+      "Juli", "Agustus", "September", "Oktober", "November", "Desember"
+    ],
     hero: {
       new: "Baru",
       ai: "Asisten AI Finansial Generasi Terbaru",
@@ -174,7 +178,67 @@ export const translations = {
           wants: "Kategori Keinginan",
           savings: "Kategori Tabungan",
           assets: "Aset Akun"
+        },
+      },
+      accountSettings: "Pengaturan Akun",
+      displaySettings: "Pengaturan Tampilan",
+      profile: {
+        title: "Detail <span class='text-gradient-money'>Profil</span>",
+        subtitle: "Kelola identitas dan preferensi akun Anda.",
+        personalInfo: "Informasi Pribadi",
+        fullName: "Nama Lengkap",
+        displayName: "Nama Tampilan",
+        email: "Alamat Email",
+        phoneNumber: "Nomor Telepon",
+        birthDate: "Tanggal Lahir",
+        gender: "Jenis Kelamin",
+        genderMale: "Laki-laki",
+        genderFemale: "Perempuan",
+        optional: "Opsional",
+        saveBtn: "Simpan Perubahan",
+        cancelBtn: "Batal",
+        dangerZone: "Zona Bahaya",
+        changeAvatar: "Ubah Avatar",
+        security: {
+          title: "Keamanan & <span class='text-gradient-money'>Kata Sandi</span>",
+          subtitle: "Kelola pengaturan keamanan akun Anda.",
+          currentPwd: "Kata Sandi Saat Ini",
+          newPwd: "Kata Sandi Baru",
+          confirmPwd: "Konfirmasi Kata Sandi",
+          updateBtn: "Perbarui Kata Sandi",
+          twoFactor: "Autentikasi Dua Faktor",
+          twoFactorDesc: "Tambahkan lapisan keamanan ekstra ke akun Anda.",
+          enableBtn: "Aktifkan 2FA"
+        },
+        notifications: {
+          title: "Preferensi <span class='text-gradient-money'>Notifikasi</span>",
+          subtitle: "Pilih bagaimana Anda ingin kami menghubungi Anda.",
+          email: "Notifikasi Email",
+          emailDesc: "Terima ringkasan mingguan dan peringatan keamanan.",
+          push: "Notifikasi Push",
+          pushDesc: "Pemberitahuan real-time tentang transaksi.",
+          marketing: "Email Pemasaran",
+          marketingDesc: "Terima tips, tawaran, dan promosi khusus."
+        },
+        display: {
+          title: "Tampilan & <span class='text-gradient-money'>Bahasa</span>",
+          subtitle: "Sesuaikan tampilan dan nuansa aplikasi.",
+          theme: "Tema Tampilan",
+          themeDesc: "Pilih antara mode terang atau gelap.",
+          language: "Bahasa Aplikasi",
+          languageDesc: "Pilih bahasa pilihan Anda.",
+          light: "Terang",
+          dark: "Gelap",
+          system: "Sistem"
         }
+      },
+      subscription: {
+        title: "Paket <span class='text-gradient-money'>Langganan</span>",
+        subtitle: "Pilih paket yang tepat untuk perjalanan finansial Anda.",
+        popular: "Populer",
+        getStarted: "Mulai Sekarang",
+        contactUs: "Hubungi Kami",
+        faq: "Pertanyaan Umum",
       }
     },
     partners: {
@@ -255,6 +319,10 @@ export const translations = {
       getStarted: "Get Started",
       dashboard: "Dashboard",
     },
+    months: [
+      "January", "February", "March", "April", "May", "June",
+      "July", "August", "September", "October", "November", "December"
+    ],
     hero: {
       new: "New",
       ai: "Next Gen Financial AI Assistant",
@@ -396,7 +464,67 @@ export const translations = {
           wants: "Wants Categories",
           savings: "Savings Categories",
           assets: "Account Assets"
+        },
+      },
+      accountSettings: "Account Settings",
+      displaySettings: "Display Settings",
+      profile: {
+        title: "Profile <span class='text-gradient-money'>Details</span>",
+        subtitle: "Manage your identity and account preferences.",
+        personalInfo: "Personal Information",
+        fullName: "Full Name",
+        displayName: "Display Name",
+        email: "Email Address",
+        phoneNumber: "Phone Number",
+        birthDate: "Date of Birth",
+        gender: "Gender",
+        genderMale: "Male",
+        genderFemale: "Female",
+        optional: "Optional",
+        saveBtn: "Save Changes",
+        cancelBtn: "Cancel",
+        dangerZone: "Danger Zone",
+        changeAvatar: "Change Avatar",
+        security: {
+          title: "Security & <span class='text-gradient-money'>Password</span>",
+          subtitle: "Manage your account security settings.",
+          currentPwd: "Current Password",
+          newPwd: "New Password",
+          confirmPwd: "Confirm Password",
+          updateBtn: "Update Password",
+          twoFactor: "Two-Factor Authentication",
+          twoFactorDesc: "Add an extra layer of security to your account.",
+          enableBtn: "Enable 2FA"
+        },
+        notifications: {
+          title: "Notification <span class='text-gradient-money'>Preferences</span>",
+          subtitle: "Choose how you want us to contact you.",
+          email: "Email Notifications",
+          emailDesc: "Receive weekly summaries and security alerts.",
+          push: "Push Notifications",
+          pushDesc: "Real-time updates about transactions.",
+          marketing: "Marketing Emails",
+          marketingDesc: "Receive tips, offers, and special promotions."
+        },
+        display: {
+          title: "Display & <span class='text-gradient-money'>Language</span>",
+          subtitle: "Customize the look and feel of the app.",
+          theme: "Appearance Theme",
+          themeDesc: "Choose between light or dark mode.",
+          language: "App Language",
+          languageDesc: "Select your preferred language.",
+          light: "Light",
+          dark: "Dark",
+          system: "System"
         }
+      },
+      subscription: {
+        title: "Subscription <span class='text-gradient-money'>Plan</span>",
+        subtitle: "Choose the plan that's right for your financial journey.",
+        popular: "Popular",
+        getStarted: "Get Started",
+        contactUs: "Contact Us",
+        faq: "Frequently Asked Questions",
       }
     },
     partners: {

@@ -35,22 +35,22 @@ export default function RegisterPage() {
 
   return (
     <div className="w-full">
-      <Card className="rounded-3xl bg-white border border-slate-200">
+      <Card className="rounded-3xl bg-white border border-border">
         <CardContent className="p-6 md:p-8">
           <form onSubmit={handleRegister} className="space-y-4">
             <div className="space-y-1.5">
               <Label htmlFor="fullname" className="font-bold text-sm text-slate-700 ml-1">Full Name</Label>
-              <Input id="fullname" placeholder="John Doe" required className="h-12 rounded-2xl border-slate-200 focus:ring-emerald-500 bg-slate-50/30 px-5 font-medium" />
+              <Input id="fullname" placeholder="John Doe" required className="h-12 rounded-2xl border-border focus:ring-emerald-500 bg-slate-50/30 px-5 font-medium" />
             </div>
             
             <div className="space-y-1.5">
               <Label htmlFor="email" className="font-bold text-sm text-slate-700 ml-1">Email</Label>
-              <Input id="email" type="email" placeholder="name@example.com" required className="h-12 rounded-2xl border-slate-200 focus:ring-emerald-500 bg-slate-50/30 px-5 font-medium" />
+              <Input id="email" type="email" placeholder="name@example.com" required className="h-12 rounded-2xl border-border focus:ring-emerald-500 bg-slate-50/30 px-5 font-medium" />
             </div>
             
             <div className="space-y-1.5">
               <Label htmlFor="password" title="password" className="font-bold text-sm text-slate-700 ml-1">Password</Label>
-              <Input id="password" type="password" placeholder="••••••••" required className="h-12 rounded-2xl border-slate-200 focus:ring-emerald-500 bg-slate-50/30 px-5 font-medium tracking-widest" />
+              <Input id="password" type="password" placeholder="••••••••" required className="h-12 rounded-2xl border-border focus:ring-emerald-500 bg-slate-50/30 px-5 font-medium tracking-widest" />
             </div>
 
             <Button type="submit" className="w-full h-12 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-lg transition-all active:scale-95 mt-2">
@@ -69,14 +69,14 @@ export default function RegisterPage() {
             <Button 
               variant="outline" 
               onClick={() => handleSocial("Google")}
-              className="rounded-2xl h-12 border-slate-200 hover:bg-slate-50 font-bold text-slate-700 px-6 transition-all"
+              className="rounded-2xl h-12 border-border hover:bg-slate-50 font-bold text-slate-700 px-6 transition-all"
             >
               <GoogleIcon /> Google
             </Button>
             <Button 
               variant="outline" 
               onClick={() => handleSocial("Facebook")}
-              className="rounded-2xl h-12 border-slate-200 hover:bg-slate-50 font-bold text-slate-700 px-6 transition-all"
+              className="rounded-2xl h-12 border-border hover:bg-slate-50 font-bold text-slate-700 px-6 transition-all"
             >
               <FacebookIcon /> Facebook
             </Button>

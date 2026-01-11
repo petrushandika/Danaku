@@ -20,6 +20,13 @@ import {
   Tooltip,
   Legend
 } from "recharts"
+import { 
+  Select, 
+  SelectContent, 
+  SelectItem, 
+  SelectTrigger, 
+  SelectValue 
+} from "@/components/ui/select"
 
 const barData = [
   { name: "Housing", budget: 3500000, actual: 3200000 },
@@ -75,9 +82,21 @@ export default function ReportPage() {
           <p className="text-slate-500 dark:text-slate-400 font-medium mt-2">{t.desc}</p>
         </div>
         <div className="flex flex-col sm:flex-row gap-3">
-          <Button variant="outline" className="w-full sm:w-auto rounded-full px-6 border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 font-bold hover:bg-slate-50 dark:hover:bg-slate-800 shadow-sm cursor-pointer">
-            <Calendar className="mr-2 h-4 w-4 text-slate-400" /> {t.thisMonth}
-          </Button>
+          <Select defaultValue={new Date().getMonth().toString()}>
+            <SelectTrigger className="w-full sm:w-32 rounded-full px-4 border-border bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 font-bold hover:bg-slate-50 dark:hover:bg-slate-800 shadow-sm transition-all h-10">
+              <div className="flex items-center text-xs">
+                <Calendar className="mr-2 h-3.5 w-3.5 text-slate-400" />
+                <SelectValue placeholder={t.thisMonth} />
+              </div>
+            </SelectTrigger>
+            <SelectContent className="rounded-2xl border-border bg-white dark:bg-slate-900 max-h-64 overflow-y-auto no-scrollbar min-w-(--radix-select-trigger-width)">
+              {translations[language].months.map((month, index) => (
+                <SelectItem key={index} value={index.toString()} className="cursor-pointer font-bold rounded-xl m-1 text-xs">
+                  {month}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
           <Button 
             onClick={handleDownload}
             className="w-full sm:w-auto rounded-full px-6 bg-linear-to-r from-emerald-600 to-emerald-700 text-white font-bold shadow-sm transition-all active:scale-95 cursor-pointer border-none"
@@ -88,9 +107,9 @@ export default function ReportPage() {
       </div>
 
       <div className="grid gap-8 lg:grid-cols-2">
-        <Card className="border-slate-200 dark:border-slate-800 shadow-none rounded-3xl bg-white dark:bg-slate-900 overflow-hidden border group transition-all hover:border-slate-300 dark:hover:border-slate-700">
-          <CardHeader className="p-6 md:p-10">
-            <div className="flex items-center gap-5 mb-5">
+        <Card className="border-border shadow-none rounded-3xl bg-white dark:bg-slate-900 overflow-hidden border group transition-all hover:border-slate-400 dark:hover:border-slate-600">
+          <CardHeader className="p-6 md:px-10 md:pt-8 md:pb-4">
+            <div className="flex items-center gap-5 mb-2">
               <div className="w-14 h-14 rounded-2xl bg-violet-50 dark:bg-violet-950/20 border border-violet-100 dark:border-violet-800 flex items-center justify-center transition-transform group-hover:scale-105">
                 <FileText className="w-7 h-7 text-violet-600 dark:text-violet-400" />
               </div>
@@ -100,7 +119,7 @@ export default function ReportPage() {
               </div>
             </div>
           </CardHeader>
-          <CardContent className="p-6 md:p-10 pt-0">
+          <CardContent className="p-6 md:px-10 md:pb-8 pt-0">
              <div className="h-[300px] w-full bg-slate-50/50 dark:bg-slate-950/20 rounded-3xl p-4 border border-slate-100 dark:border-slate-800">
                <ResponsiveContainer width="100%" height="100%">
                  <BarChart data={barData} margin={{ top: 10, right: 10, left: 10, bottom: 0 }}>
@@ -118,9 +137,9 @@ export default function ReportPage() {
           </CardContent>
         </Card>
 
-        <Card className="border-slate-200 dark:border-slate-800 shadow-none rounded-3xl bg-white dark:bg-slate-900 overflow-hidden border group transition-all hover:border-slate-300 dark:hover:border-slate-700">
-          <CardHeader className="p-6 md:p-10">
-            <div className="flex items-center gap-5 mb-5">
+        <Card className="border-border shadow-none rounded-3xl bg-white dark:bg-slate-900 overflow-hidden border group transition-all hover:border-slate-400 dark:hover:border-slate-600">
+          <CardHeader className="p-6 md:px-10 md:pt-8 md:pb-4">
+            <div className="flex items-center gap-5 mb-2">
               <div className="w-14 h-14 rounded-2xl bg-rose-50 dark:bg-rose-950/20 border border-rose-100 dark:border-rose-800 flex items-center justify-center transition-transform group-hover:scale-105">
                 <FileText className="w-7 h-7 text-rose-600 dark:text-rose-400" />
               </div>
@@ -130,7 +149,7 @@ export default function ReportPage() {
               </div>
             </div>
           </CardHeader>
-          <CardContent className="p-6 md:p-10 pt-0">
+          <CardContent className="p-6 md:px-10 md:pb-8 pt-0">
              <div className="h-[300px] w-full bg-slate-50/50 dark:bg-slate-950/20 rounded-3xl p-4 border border-slate-100 dark:border-slate-800">
                <ResponsiveContainer width="100%" height="100%">
                  <PieChart>

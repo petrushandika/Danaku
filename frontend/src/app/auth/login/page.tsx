@@ -35,7 +35,7 @@ export default function LoginPage() {
 
   return (
     <div className="w-full">
-      <Card className="rounded-3xl bg-white border border-slate-200">
+      <Card className="rounded-3xl bg-white border border-border">
         <CardContent className="p-6 md:p-8">
           <form onSubmit={handleLogin} className="space-y-4">
             <div className="space-y-1.5">
@@ -45,7 +45,7 @@ export default function LoginPage() {
                 type="email" 
                 placeholder="name@example.com" 
                 required 
-                className="h-12 rounded-2xl border-slate-200 focus:ring-emerald-500 bg-slate-50/30 px-5 font-medium" 
+                className="h-12 rounded-2xl border-border focus:ring-emerald-500 bg-slate-50/30 px-5 font-medium" 
               />
             </div>
             
@@ -59,7 +59,7 @@ export default function LoginPage() {
                 type="password" 
                 placeholder="••••••••" 
                 required 
-                className="h-12 rounded-2xl border-slate-200 focus:ring-emerald-500 bg-slate-50/30 px-5 font-medium tracking-widest" 
+                className="h-12 rounded-2xl border-border focus:ring-emerald-500 bg-slate-50/30 px-5 font-medium tracking-widest" 
               />
             </div>
 
@@ -79,14 +79,14 @@ export default function LoginPage() {
             <Button 
               variant="outline" 
               onClick={() => handleSocial("Google")}
-              className="rounded-2xl h-12 border-slate-200 hover:bg-slate-50 font-bold text-slate-700 px-6 transition-all"
+              className="rounded-2xl h-12 border-border hover:bg-slate-50 font-bold text-slate-700 px-6 transition-all"
             >
               <GoogleIcon /> Google
             </Button>
             <Button 
               variant="outline" 
               onClick={() => handleSocial("Facebook")}
-              className="rounded-2xl h-12 border-slate-200 hover:bg-slate-50 font-bold text-slate-700 px-6 transition-all"
+              className="rounded-2xl h-12 border-border hover:bg-slate-50 font-bold text-slate-700 px-6 transition-all"
             >
               <FacebookIcon /> Facebook
             </Button>
