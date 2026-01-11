@@ -22,7 +22,7 @@ import {
   DropdownMenuSeparator, 
   DropdownMenuTrigger 
 } from "@/components/ui/dropdown-menu"
-import { LogOut, User, Settings, CreditCard } from "lucide-react"
+import { LogOut, User, Settings, CreditCard, X } from "lucide-react"
 import { toast } from "sonner"
 import { BrandGate } from "@/components/brand-gate"
 import { ThemeToggle } from "@/components/theme-toggle"
@@ -156,15 +156,16 @@ export default function DashboardLayout({
                            <span className="absolute top-2 right-2 w-2 h-2 bg-rose-500 rounded-full border-2 border-white dark:border-slate-900" />
                         </Button>
                      </SheetTrigger>
-                     <SheetContent side="bottom" className="rounded-t-[2rem] border-t border-border p-0 bg-white dark:bg-slate-900 h-[85vh]">
+                     <SheetContent side="bottom" className="rounded-t-[2rem] border-t border-border p-0 bg-white dark:bg-slate-900 h-[85vh] [&>button]:hidden">
                         <div className="p-6 border-b border-border flex items-center justify-between sticky top-0 bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl z-10 rounded-t-[2rem]">
                            <div>
                               <h2 className="text-xl font-black text-slate-900 dark:text-white">Notifications</h2>
                               <p className="text-sm text-slate-500 font-medium">You have 2 unread messages</p>
                            </div>
-                           <div className="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
-                              <Bell className="w-5 h-5 text-slate-600 dark:text-slate-400" />
-                           </div>
+                           <SheetClose className="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center transition-colors hover:bg-slate-200 dark:hover:bg-slate-700 focus:outline-none">
+                              <X className="w-5 h-5 text-slate-600 dark:text-slate-400" />
+                              <span className="sr-only">Close</span>
+                           </SheetClose>
                         </div>
                         <div className="overflow-y-auto h-full pb-20 p-4 space-y-2">
                            {[

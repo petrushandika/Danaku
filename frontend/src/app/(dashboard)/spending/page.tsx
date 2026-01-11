@@ -13,14 +13,7 @@ import {
   SelectTrigger, 
   SelectValue 
 } from "@/components/ui/select"
-import { 
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-  DropdownMenuSeparator,
-  DropdownMenuLabel,
-} from "@/components/ui/dropdown-menu"
+
 import { toast } from "sonner"
 import { useLanguageStore, translations } from "@/store/use-language-store"
 import { useSearchStore } from "@/store/use-search-store"
@@ -153,7 +146,7 @@ export default function SpendingPage() {
 
         <Card className="xl:col-span-8 border-border shadow-none rounded-3xl bg-white dark:bg-slate-900 overflow-hidden border transition-colors">
           <CardHeader className="p-6 md:p-8 pb-4">
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                <div className="flex items-center gap-5">
                   <div className="w-12 h-12 rounded-2xl bg-violet-50 dark:bg-violet-950/20 border border-violet-100 dark:border-violet-800 flex items-center justify-center shrink-0">
                      <History className="w-6 h-6 text-violet-600 dark:text-violet-400" />
@@ -164,30 +157,27 @@ export default function SpendingPage() {
                   </div>
                </div>
                
-               <DropdownMenu>
-                 <DropdownMenuTrigger asChild>
-                    <Button variant="outline" size="sm" className={cn("rounded-full border-border bg-white dark:bg-slate-900 font-bold text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 shadow-sm", filterCategory !== "All" && "border-emerald-500 text-emerald-600")}>
-                      <Filter className="mr-2 h-3.5 w-3.5" /> {filterCategory === "All" ? "Filter" : filterCategory}
-                    </Button>
-                 </DropdownMenuTrigger>
-                 <DropdownMenuContent className="rounded-2xl border-border bg-white dark:bg-slate-900 w-48 p-2">
-                   <DropdownMenuLabel className="text-[10px] uppercase font-black tracking-widest text-slate-400 px-3 py-2">Select Category</DropdownMenuLabel>
-                   <DropdownMenuSeparator />
-                   {["All", "Income", "Needs", "Wants", "Savings", "Assets"].map((cat) => (
-                     <DropdownMenuItem 
-                       key={cat} 
-                       onClick={() => setFilterCategory(cat)}
-                       className={cn("rounded-xl font-bold text-sm px-3 py-2.5 cursor-pointer transition-colors", filterCategory === cat ? "bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600" : "text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800")}
-                     >
-                       {cat}
-                     </DropdownMenuItem>
-                   ))}
-                 </DropdownMenuContent>
-               </DropdownMenu>
+                <Select value={filterCategory} onValueChange={setFilterCategory}>
+                  <SelectTrigger className="w-auto min-w-[140px] rounded-full px-4 border-border bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 font-bold hover:bg-slate-50 dark:hover:bg-slate-800 shadow-sm transition-all h-10">
+                    <div className="flex items-center text-xs">
+                       <Filter className="mr-2 h-3.5 w-3.5 text-slate-400" />
+                       <SelectValue placeholder="Filter">
+                          {filterCategory === "All" ? "Select Category" : filterCategory}
+                       </SelectValue>
+                    </div>
+                  </SelectTrigger>
+                  <SelectContent className="rounded-2xl border-border bg-white dark:bg-slate-900 max-h-64 overflow-y-auto no-scrollbar min-w-(--radix-select-trigger-width)" align="end">
+                    {["All", "Income", "Needs", "Wants", "Savings", "Assets"].map((cat) => (
+                      <SelectItem key={cat} value={cat} className="cursor-pointer font-bold rounded-xl m-1 text-xs text-slate-600 dark:text-slate-400 focus:bg-emerald-50 dark:focus:bg-emerald-900/20 focus:text-emerald-600">
+                        {cat}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
             </div>
           </CardHeader>
           <CardContent className="p-6 md:px-10 md:pt-2 md:pb-8">
-             <div className="max-h-[420px] overflow-y-auto pr-6 emerald-scrollbar space-y-4">
+             <div className="max-h-[420px] overflow-y-auto pr-2 no-scrollbar space-y-4">
                 {filteredTransactions.length > 0 ? (
                   filteredTransactions.map((item, idx) => (
                     <div key={idx} className="flex items-center group cursor-pointer border-b border-slate-50 dark:border-slate-800 pb-4 last:border-0 last:pb-0">
@@ -250,8 +240,13 @@ function TransactionForm({ t }: { t: any }) {
       <div className="grid gap-2">
         <Label htmlFor="date" className="text-slate-700 dark:text-slate-300 font-bold ml-1">{t.form.date}</Label>
         <div className="relative">
-          <CalendarIcon className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4" />
-          <Input id="date" type="date" className="rounded-2xl border-border dark:bg-slate-900 focus-visible:ring-emerald-500 pl-11 h-11" defaultValue={new Date().toISOString().split('T')[0]} />
+          <CalendarIcon className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4 pointer-events-none" />
+          <Input 
+            id="date" 
+            type="date" 
+            className="rounded-2xl border-border dark:bg-slate-900 focus-visible:ring-emerald-500 pl-11 h-11 [&::-webkit-calendar-picker-indicator]:opacity-0 [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:w-full [&::-webkit-calendar-picker-indicator]:h-full [&::-webkit-calendar-picker-indicator]:cursor-pointer" 
+            defaultValue={new Date().toISOString().split('T')[0]} 
+          />
         </div>
       </div>
     </div>

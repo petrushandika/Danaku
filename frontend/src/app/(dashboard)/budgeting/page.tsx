@@ -181,7 +181,7 @@ export default function BudgetingPage() {
                           </span>
                        </div>
                     </div>
-                    <div className="h-1.5 md:h-2.5 w-full bg-slate-100 dark:bg-slate-800/50 rounded-full overflow-hidden p-0.5 border border-border transition-colors">
+                    <div className="h-2.5 w-full bg-slate-100 dark:bg-slate-800/50 rounded-full overflow-hidden p-0.5 border border-border transition-colors">
                       <div 
                         className={cn("h-full rounded-full transition-all duration-1000", item.color)} 
                         style={{ width: `${item.percent}%` }} 
