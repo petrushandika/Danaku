@@ -1,4 +1,4 @@
-import { Controller, Post, Body, HttpCode, HttpStatus } from '@nestjs/common';
+import { Controller, Post, Body, HttpCode, HttpStatus, Get, UseGuards, Req, Res, UnauthorizedException } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register.dto';
@@ -8,22 +8,40 @@ import { ResetPasswordDto } from './dto/reset-password.dto';
 import { VerifyEmailDto } from './dto/verify-email.dto';
 import { ResendVerificationDto } from './dto/resend-verification.dto';
 import { Public } from '@/common/decorators/public.decorator';
+import { GoogleAuthGuard } from '@/common/guards/google-auth.guard';
+import { FacebookAuthGuard } from '@/common/guards/facebook-auth.guard';
 
 @ApiTags('auth')
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
+  private setCookies(res: any, accessToken: string, refreshToken: string) {
+    res.cookie('access_token', accessToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+      maxAge: 15 * 60 * 1000, // 15 minutes
+    });
+    res.cookie('refresh_token', refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+    });
+  }
+
   @Public()
   @Post('register')
   @ApiOperation({ summary: 'Register new user' })
   @ApiResponse({ status: 201, description: 'User registered successfully' })
   @ApiResponse({ status: 400, description: 'Bad request' })
-  async register(@Body() registerDto: RegisterDto) {
+  async register(@Body() registerDto: RegisterDto, @Res({ passthrough: true }) res) {
     const result = await this.authService.register(registerDto);
+    this.setCookies(res, result.accessToken, result.refreshToken);
     return {
       success: true,
-      data: result,
+      data: result.user,
       message: 'User registered successfully',
     };
   }
@@ -34,11 +52,12 @@ export class AuthController {
   @ApiOperation({ summary: 'Login user' })
   @ApiResponse({ status: 200, description: 'Login successful' })
   @ApiResponse({ status: 401, description: 'Invalid credentials' })
-  async login(@Body() loginDto: LoginDto) {
+  async login(@Body() loginDto: LoginDto, @Res({ passthrough: true }) res) {
     const result = await this.authService.login(loginDto);
+    this.setCookies(res, result.accessToken, result.refreshToken);
     return {
       success: true,
-      data: result,
+      data: result.user,
       message: 'Login successful',
     };
   }
@@ -94,6 +113,86 @@ export class AuthController {
     return {
       success: true,
       message: result.message,
+    };
+  }
+
+  @Public()
+  @Get('google')
+  @UseGuards(GoogleAuthGuard)
+  @ApiOperation({ summary: 'Login with Google' })
+  async googleLogin() {
+    // Initiates the Google OAuth2 flow
+  }
+
+  @Public()
+  @Get('google/callback')
+  @UseGuards(GoogleAuthGuard)
+  @ApiOperation({ summary: 'Google login callback' })
+  async googleLoginCallback(@Req() req, @Res() res) {
+    const result = await this.authService.validateSocialUser(req.user);
+    this.setCookies(res, result.accessToken, result.refreshToken);
+    res.redirect(`${process.env.FRONTEND_URL}/auth/callback`);
+  }
+
+  @Public()
+  @Get('facebook')
+  @UseGuards(FacebookAuthGuard)
+  @ApiOperation({ summary: 'Login with Facebook' })
+  async facebookLogin() {
+    // Initiates the Facebook OAuth2 flow
+  }
+
+  @Public()
+  @Get('facebook/callback')
+  @UseGuards(FacebookAuthGuard)
+  @ApiOperation({ summary: 'Facebook login callback' })
+  async facebookLoginCallback(@Req() req, @Res() res) {
+    const result = await this.authService.validateSocialUser(req.user);
+    this.setCookies(res, result.accessToken, result.refreshToken);
+    res.redirect(`${process.env.FRONTEND_URL}/auth/callback`);
+  }
+
+  @Post('logout')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Logout user' })
+  async logout(@Req() req, @Res({ passthrough: true }) res) {
+    const userId = req.user?.id;
+    if (userId) {
+        await this.authService.logout(userId);
+    }
+    
+    res.clearCookie('access_token');
+    res.clearCookie('refresh_token');
+    
+    return {
+        success: true,
+        message: 'Logged out successfully',
+    };
+  }
+
+  @Public()
+  @Post('refresh')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Refresh access token' })
+  async refresh(@Req() req, @Res({ passthrough: true }) res) {
+    const refreshToken = req.cookies['refresh_token'];
+    
+    if (!refreshToken) throw new UnauthorizedException('Refresh token not found');
+
+    // Basic decoding to get payload (simulating Strategy extraction)
+    // NOTE: In production, use a proper Guard + Strategy
+    const base64Url = refreshToken.split('.')[1];
+    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    const payload = JSON.parse(Buffer.from(base64, 'base64').toString());
+
+    if (!payload.sub) throw new UnauthorizedException('Invalid token');
+
+    const tokens = await this.authService.refreshTokens(payload.sub, refreshToken);
+    this.setCookies(res, tokens.accessToken, tokens.refreshToken);
+    
+    return {
+        success: true,
+        message: 'Tokens refreshed successfully',
     };
   }
 }

@@ -17,14 +17,28 @@ model User {
     resetPasswordExpires DateTime?
     avatarUrl            String?
     plan                 String    @default("FREE")
+    phoneNumber          String?
+    birthDate            DateTime?
+    gender               String?
+    googleId             String?
+    facebookId           String?
+    hashedRefreshToken   String?
     createdAt            DateTime  @default(now())
     updatedAt            DateTime  @updatedAt
 
-    setupConfig  SetupConfig?
-    budgets      Budget[]
-    spending     Spending[]
-    assets       Asset[]
-    userSettings UserSettings?
+    setupConfig   SetupConfig?
+    budgets       Budget[]
+    spending      Spending[]
+    assets        Asset[]
+    userSettings  UserSettings?
+    subscriptions Subscription[]
+    payments      Payment[]
+    notifications Notification[]
+    chatSessions  ChatSession[]
+
+    // Relations
+    familyMembers    FamilyMember[]
+    userAchievements UserAchievement[]
 
     @@map("users")
 }
@@ -120,13 +134,226 @@ model UserSettings {
     user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
     assetsTarget Decimal @default(0) @db.Decimal(15, 2)
+    currency     String  @default("IDR")
+    language     String  @default("en")
+    theme        String  @default("light")
 
-    currency String @default("IDR")
+    // Notification Preferences
+    emailNotif       Boolean @default(true)
+    pushNotif        Boolean @default(true)
+    marketingNotif   Boolean @default(false)
+    twoFactorEnabled Boolean @default(false)
 
-    preferences Json @default("{}")
+    preferences Json @default("{}") // Keeping for future flexibility
 
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 
     @@map("user_settings")
+}
+
+// Family Management
+model Family {
+    id        String   @id @default(uuid())
+    name      String
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    members FamilyMember[]
+
+    @@map("families")
+}
+
+enum FamilyRole {
+    HEAD
+    SPOUSE
+    CHILD
+    PARENT
+    MEMBER
+}
+
+model FamilyMember {
+    id           String     @id @default(uuid())
+    familyId     String
+    userId       String?
+    name         String
+    role         FamilyRole @default(MEMBER)
+    relation     String?
+    monthlyLimit Decimal    @default(0) @db.Decimal(15, 2)
+    isAccepted   Boolean    @default(false)
+    email        String?
+
+    family Family @relation(fields: [familyId], references: [id], onDelete: Cascade)
+    user   User?  @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@map("family_members")
+}
+
+// Achievements System
+model Achievement {
+    id          String   @id @default(uuid())
+    title       String
+    description String
+    icon        String
+    points      Int      @default(0)
+    xp          Int      @default(0)
+    category    String?
+    createdAt   DateTime @default(now())
+    updatedAt   DateTime @updatedAt
+
+    userAchievements UserAchievement[]
+
+    @@map("achievements")
+}
+
+model UserAchievement {
+    id            String   @id @default(uuid())
+    userId        String
+    achievementId String
+    unlockedAt    DateTime @default(now())
+
+    user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+    achievement Achievement @relation(fields: [achievementId], references: [id], onDelete: Cascade)
+
+    @@unique([userId, achievementId])
+    @@map("user_achievements")
+}
+
+enum SubscriptionPlan {
+    FREE
+    BASIC
+    FAMILY
+}
+
+enum SubscriptionStatus {
+    ACTIVE
+    CANCELLED
+    EXPIRED
+    PENDING
+}
+
+model Subscription {
+    id     String @id @default(uuid())
+    userId String
+    user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    plan             SubscriptionPlan
+    status           SubscriptionStatus @default(PENDING)
+    startDate        DateTime
+    endDate          DateTime
+    autoRenew        Boolean            @default(true)
+    cancelledAt      DateTime?
+    cancellationNote String?
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@index([userId, status])
+    @@map("subscriptions")
+}
+
+enum PaymentStatus {
+    PENDING
+    SUCCESS
+    FAILED
+    EXPIRED
+    CANCELLED
+}
+
+enum PaymentMethod {
+    MIDTRANS
+    MANUAL
+}
+
+model Payment {
+    id     String @id @default(uuid())
+    userId String
+    user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    orderId       String        @unique
+    amount        Decimal       @db.Decimal(15, 2)
+    status        PaymentStatus @default(PENDING)
+    paymentMethod PaymentMethod
+    midtransToken String?
+    midtransUrl   String?
+    paidAt        DateTime?
+    expiredAt     DateTime?
+    metadata      Json          @default("{}")
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@index([userId, status])
+    @@index([orderId])
+    @@map("payments")
+}
+
+enum NotificationType {
+    INFO
+    SUCCESS
+    WARNING
+    ERROR
+    PAYMENT
+    SYSTEM
+}
+
+model Notification {
+    id     String @id @default(uuid())
+    userId String
+    user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    type     NotificationType
+    title    String
+    message  String
+    isRead   Boolean          @default(false)
+    readAt   DateTime?
+    link     String?
+    metadata Json             @default("{}")
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@index([userId, isRead])
+    @@index([userId, createdAt])
+    @@map("notifications")
+}
+
+model ChatSession {
+    id     String @id @default(uuid())
+    userId String
+    user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    title    String?
+    isActive Boolean       @default(true)
+    messages ChatMessage[]
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@index([userId, isActive])
+    @@map("chat_sessions")
+}
+
+enum ChatRole {
+    USER
+    ASSISTANT
+    SYSTEM
+}
+
+model ChatMessage {
+    id        String      @id @default(uuid())
+    sessionId String
+    session   ChatSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+    role     ChatRole
+    content  String   @db.Text
+    metadata Json     @default("{}")
+
+    createdAt DateTime @default(now())
+
+    @@index([sessionId, createdAt])
+    @@map("chat_messages")
 }

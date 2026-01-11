@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body { font-family: 'Helvetica', sans-serif; background-color: #f8fafc; margin: 0; padding: 0; }
+        .container { max-width: 600px; margin: 40px auto; background: #ffffff; padding: 40px; border-radius: 16px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
+        .header { text-align: center; margin-bottom: 30px; }
+        .logo { font-size: 24px; font-weight: bold; color: #059669; text-decoration: none; }
+        .content { color: #334155; line-height: 1.6; font-size: 16px; }
+        .button { display: inline-block; background-color: #059669; color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; font-weight: bold; margin-top: 20px; transition: background-color 0.3s; }
+        .button:hover { background-color: #047857; }
+        .footer { margin-top: 30px; text-align: center; font-size: 12px; color: #94a3b8; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <a href="{{frontendUrl}}" class="logo">Home Sweet Loan</a>
+        </div>
+        <div class="content">
+            <h2>Welcome, {{name}}! 🏠</h2>
+            <p>We are thrilled to have you join our community. Home Sweet Loan is designed to help you master your finances, manage your family's budget, and unlock your financial potential through fun achievements.</p>
+            <p>Here's what you can do right now:</p>
+            <ul>
+                <li>Set up your monthly budget</li>
+                <li>Add your family members</li>
+                <li>Track your spending and assets</li>
+            </ul>
+            <div style="text-align: center;">
+                <a href="{{url}}" class="button">Go to Dashboard</a>
+            </div>
+        </div>
+        <div class="footer">
+            <p>&copy; 2026 Home Sweet Loan. All rights reserved.</p>
+        </div>
+    </div>
+</body>
+</html>

@@ -19,7 +19,7 @@ export class UsersController {
   }
 
   @Put('profile')
-  async updateProfile(@CurrentUser() user: any, @Body() data: { name?: string }) {
+  async updateProfile(@CurrentUser() user: any, @Body() data: { name?: string; avatarUrl?: string; phoneNumber?: string; birthDate?: string | Date; gender?: string }) {
     const profile = await this.usersService.updateProfile(user.id, data);
     return {
       success: true,

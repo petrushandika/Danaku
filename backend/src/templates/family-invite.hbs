@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body { font-family: 'Helvetica', sans-serif; background-color: #f8fafc; margin: 0; padding: 0; }
+        .container { max-width: 600px; margin: 40px auto; background: #ffffff; padding: 40px; border-radius: 16px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
+        .header { text-align: center; margin-bottom: 30px; }
+        .logo { font-size: 24px; font-weight: bold; color: #059669; text-decoration: none; }
+        .content { color: #334155; line-height: 1.6; font-size: 16px; }
+        .button { display: inline-block; background-color: #059669; color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; font-weight: bold; margin-top: 20px; transition: background-color 0.3s; }
+        .button:hover { background-color: #047857; }
+        .footer { margin-top: 30px; text-align: center; font-size: 12px; color: #94a3b8; }
+        .invite-box { background-color: #f0fdf4; border: 1px solid #bbf7d0; padding: 20px; border-radius: 12px; text-align: center; margin: 20px 0; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <a href="{{frontendUrl}}" class="logo">Home Sweet Loan</a>
+        </div>
+        <div class="content">
+            <h2>You're Invited! 👨‍👩‍👧‍👦</h2>
+            <p>Hello,</p>
+            <p><strong>{{inviterName}}</strong> has invited you to join their family group on Home Sweet Loan as a <strong>{{role}}</strong>.</p>
+            <div class="invite-box">
+                <p style="margin: 0; font-weight: bold; color: #065f46;">"Join my family group to manage our shared finances together!"</p>
+            </div>
+            <p>Click the button below to accept the invitation and set up your account.</p>
+            <div style="text-align: center;">
+                <a href="{{url}}" class="button">Accept Invitation</a>
+            </div>
+            <p style="margin-top: 20px; font-size: 14px; color: #64748b;">If you don't recognize this invitation, you can safely ignore this email.</p>
+        </div>
+        <div class="footer">
+            <p>&copy; 2026 Home Sweet Loan. All rights reserved.</p>
+        </div>
+    </div>
+</body>
+</html>

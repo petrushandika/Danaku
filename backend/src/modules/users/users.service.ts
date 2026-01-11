@@ -21,7 +21,7 @@ export class UsersService {
     });
   }
 
-  async updateProfile(userId: string, data: { name?: string; avatarUrl?: string }) {
+  async updateProfile(userId: string, data: { name?: string; avatarUrl?: string; phoneNumber?: string; birthDate?: string | Date; gender?: string }) {
     return this.prisma.user.update({
       where: { id: userId },
       data,
@@ -32,6 +32,9 @@ export class UsersService {
         isVerified: true,
         avatarUrl: true,
         plan: true,
+        phoneNumber: true,
+        birthDate: true,
+        gender: true,
         createdAt: true,
         updatedAt: true,
       },
