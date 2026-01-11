@@ -4,6 +4,7 @@ import { CurrentUser } from '@/common/decorators/current-user.decorator';
 import { ApiTags, ApiBearerAuth, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { CreateAssetDto } from './dto/create-asset.dto';
 import { UpdateAssetDto } from './dto/update-asset.dto';
+import { ResponseMessage } from '@/common/decorators/response-message.decorator';
 
 @ApiTags('assets')
 @ApiBearerAuth()
@@ -11,57 +12,39 @@ import { UpdateAssetDto } from './dto/update-asset.dto';
 export class AssetsController {
   constructor(private readonly assetsService: AssetsService) {}
 
-  @Get()
-  @ApiOperation({ summary: 'Get all assets' })
+  @ResponseMessage('Assets retrieved successfully')
   async findAll(@CurrentUser() user: any) {
-    const result = await this.assetsService.findAll(user.id);
-    return {
-      success: true,
-      data: result,
-    };
+    return this.assetsService.findAll(user.id);
   }
 
   @Post()
   @ApiOperation({ summary: 'Create a new asset' })
   @ApiResponse({ status: 201, description: 'Asset created successfully' })
+  @ResponseMessage('Asset created successfully')
   async create(@CurrentUser() user: any, @Body() data: CreateAssetDto) {
-    const asset = await this.assetsService.create(user.id, data);
-    return {
-      success: true,
-      data: asset,
-      message: 'Asset created successfully',
-    };
+    return this.assetsService.create(user.id, data);
   }
 
   @Put('target')
   @ApiOperation({ summary: 'Update assets target' })
+  @ResponseMessage('Target updated successfully')
   async updateTarget(@CurrentUser() user: any, @Body() data: { target: number }) {
-    const settings = await this.assetsService.updateTarget(user.id, data.target);
-    return {
-      success: true,
-      data: settings,
-      message: 'Target updated successfully',
-    };
+    return this.assetsService.updateTarget(user.id, data.target);
   }
 
   @Put(':id')
   @ApiOperation({ summary: 'Update an asset' })
   @ApiResponse({ status: 200, description: 'Asset updated successfully' })
+  @ResponseMessage('Asset updated successfully')
   async update(@CurrentUser() user: any, @Param('id') id: string, @Body() data: UpdateAssetDto) {
-    const asset = await this.assetsService.update(id, user.id, data);
-    return {
-      success: true,
-      data: asset,
-      message: 'Asset updated successfully',
-    };
+    return this.assetsService.update(id, user.id, data);
   }
 
   @Delete(':id')
+  @ApiOperation({ summary: 'Delete an asset' })
+  @ResponseMessage('Asset deleted successfully')
   async remove(@CurrentUser() user: any, @Param('id') id: string) {
     await this.assetsService.remove(id, user.id);
-    return {
-      success: true,
-      message: 'Asset deleted successfully',
-    };
+    return null;
   }
 }

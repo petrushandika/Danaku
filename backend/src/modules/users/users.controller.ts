@@ -5,6 +5,7 @@ import { CurrentUser } from '@/common/decorators/current-user.decorator';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { UpdateProfileDto } from './dto/update-profile.dto';
 import { UpdateSettingsDto } from './dto/update-settings.dto';
+import { ResponseMessage } from '@/common/decorators/response-message.decorator';
 
 @ApiTags('users')
 @ApiBearerAuth()
@@ -27,6 +28,7 @@ export class UsersController {
       },
     },
   })
+  @ResponseMessage('Avatar uploaded successfully')
   async uploadAvatar(
     @CurrentUser() user: any,
     @UploadedFile(
@@ -39,54 +41,35 @@ export class UsersController {
     )
     file: Express.Multer.File,
   ) {
-    const result = await this.usersService.updateAvatar(user.id, file);
-    return {
-      success: true,
-      data: result,
-      message: 'Avatar uploaded successfully',
-    };
+    return this.usersService.updateAvatar(user.id, file);
   }
 
   @Get('profile')
+  @ResponseMessage('Profile retrieved successfully')
   async getProfile(@CurrentUser() user: any) {
-    const profile = await this.usersService.getProfile(user.id);
-    return {
-      success: true,
-      data: profile,
-    };
+    return this.usersService.getProfile(user.id);
   }
 
   @Put('profile')
   @ApiOperation({ summary: 'Update current user profile' })
   @ApiResponse({ status: 200, description: 'Profile updated successfully' })
+  @ResponseMessage('Profile updated successfully')
   async updateProfile(@CurrentUser() user: any, @Body() data: UpdateProfileDto) {
-    const profile = await this.usersService.updateProfile(user.id, data);
-    return {
-      success: true,
-      data: profile,
-      message: 'Profile updated successfully',
-    };
+    return this.usersService.updateProfile(user.id, data);
   }
 
   @Get('settings')
   @ApiOperation({ summary: 'Get current user settings' })
+  @ResponseMessage('Settings retrieved successfully')
   async getSettings(@CurrentUser() user: any) {
-    const settings = await this.usersService.getSettings(user.id);
-    return {
-      success: true,
-      data: settings,
-    };
+    return this.usersService.getSettings(user.id);
   }
 
   @Put('settings')
   @ApiOperation({ summary: 'Update current user settings' })
   @ApiResponse({ status: 200, description: 'Settings updated successfully' })
+  @ResponseMessage('Settings updated successfully')
   async updateSettings(@CurrentUser() user: any, @Body() data: UpdateSettingsDto) {
-    const settings = await this.usersService.updateSettings(user.id, data);
-    return {
-      success: true,
-      data: settings,
-      message: 'Settings updated successfully',
-    };
+    return this.usersService.updateSettings(user.id, data);
   }
 }
