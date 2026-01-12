@@ -16,10 +16,19 @@ export default function VerifyEmailPage() {
   >("idle");
   const [errorMessage, setErrorMessage] = useState("");
   const [isResending, setIsResending] = useState(false);
+  const [countdown, setCountdown] = useState(0);
 
   const router = useRouter();
   const searchParams = useSearchParams();
   const token = searchParams.get("token");
+
+  // Countdown timer effect
+  useEffect(() => {
+    if (countdown > 0) {
+      const timer = setTimeout(() => setCountdown(countdown - 1), 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [countdown]);
 
   useEffect(() => {
     if (token) {
@@ -76,6 +85,7 @@ export default function VerifyEmailPage() {
         toast.error("Email not found", {
           description: "Please register again or enter your email.",
         });
+        setIsResending(false);
         return;
       }
 
@@ -83,14 +93,25 @@ export default function VerifyEmailPage() {
         email,
       });
 
+      // Start 30 second countdown
+      setCountdown(30);
+
       toast.success("Verification Sent", {
         description: "A new verification link has been sent to your email.",
       });
     } catch (error: any) {
+      const message =
+        error.response?.data?.message || "Could not resend verification email.";
+
+      // Check if error message contains wait time
+      const waitMatch = message.match(/(\d+) seconds/);
+      if (waitMatch) {
+        const waitSeconds = parseInt(waitMatch[1]);
+        setCountdown(waitSeconds);
+      }
+
       toast.error("Failed to resend", {
-        description:
-          error.response?.data?.message ||
-          "Could not resend verification email.",
+        description: message,
       });
     } finally {
       setIsResending(false);
@@ -163,10 +184,14 @@ export default function VerifyEmailPage() {
               <div className="space-y-3 w-full mt-6">
                 <Button
                   onClick={handleResend}
-                  disabled={isResending}
-                  className="w-full h-12 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-lg transition-all active:scale-95"
+                  disabled={isResending || countdown > 0}
+                  className="w-full h-12 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-lg transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  {isResending ? "Resending..." : "Resend Verification Link"}
+                  {isResending
+                    ? "Resending..."
+                    : countdown > 0
+                    ? `Wait ${countdown}s`
+                    : "Resend Verification Link"}
                 </Button>
 
                 <Link href="/auth/login" className="block">
@@ -204,10 +229,14 @@ export default function VerifyEmailPage() {
           <div className="space-y-3">
             <Button
               onClick={handleResend}
-              disabled={isResending}
-              className="w-full h-12 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-lg transition-all active:scale-95"
+              disabled={isResending || countdown > 0}
+              className="w-full h-12 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-lg transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {isResending ? "Resending..." : "Resend Link"}
+              {isResending
+                ? "Resending..."
+                : countdown > 0
+                ? `Wait ${countdown}s`
+                : "Resend Link"}
             </Button>
 
             <Button

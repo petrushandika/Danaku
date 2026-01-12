@@ -339,11 +339,28 @@ export class AuthService {
       return { message: 'Email is already verified' };
     }
 
+    // Check if user has sent verification email in the last 30 seconds
+    if (user.lastVerificationEmailSent) {
+      const now = new Date();
+      const lastSent = new Date(user.lastVerificationEmailSent);
+      const diffInSeconds = (now.getTime() - lastSent.getTime()) / 1000;
+
+      if (diffInSeconds < 30) {
+        const remainingSeconds = Math.ceil(30 - diffInSeconds);
+        throw new BadRequestException(
+          `Please wait ${remainingSeconds} seconds before requesting another verification email.`,
+        );
+      }
+    }
+
     const verificationToken = crypto.randomBytes(32).toString('hex');
 
     await this.prisma.user.update({
       where: { id: user.id },
-      data: { verificationToken },
+      data: {
+        verificationToken,
+        lastVerificationEmailSent: new Date(),
+      },
     });
 
     const verificationUrl = `${this.configService.get('FRONTEND_URL')}/auth/verify-email?token=${verificationToken}`;
