@@ -93,13 +93,13 @@ export default function RegisterPage() {
 
   return (
     <div className="w-full">
-      <Card className="rounded-3xl bg-white border border-border">
+      <Card className="rounded-3xl bg-card border border-border">
         <CardContent className="p-6 md:p-8">
           <form onSubmit={handleRegister} className="space-y-4">
             <div className="space-y-1.5">
               <Label
                 htmlFor="fullname"
-                className="font-bold text-sm text-slate-700 ml-1"
+                className="font-bold text-sm text-foreground ml-1"
               >
                 Full Name
               </Label>
@@ -111,14 +111,14 @@ export default function RegisterPage() {
                 onChange={(e) =>
                   setFormData({ ...formData, name: e.target.value })
                 }
-                className="h-12 rounded-2xl border-border focus:ring-emerald-500 bg-slate-50/30 px-5 font-medium"
+                className="h-12 rounded-2xl border-border focus:ring-primary bg-muted/30 px-5 font-medium"
               />
             </div>
 
             <div className="space-y-1.5">
               <Label
                 htmlFor="email"
-                className="font-bold text-sm text-slate-700 ml-1"
+                className="font-bold text-sm text-foreground ml-1"
               >
                 Email
               </Label>
@@ -131,7 +131,7 @@ export default function RegisterPage() {
                 onChange={(e) =>
                   setFormData({ ...formData, email: e.target.value })
                 }
-                className="h-12 rounded-2xl border-border focus:ring-emerald-500 bg-slate-50/30 px-5 font-medium"
+                className="h-12 rounded-2xl border-border focus:ring-primary bg-muted/30 px-5 font-medium"
               />
             </div>
 
@@ -139,7 +139,7 @@ export default function RegisterPage() {
               <Label
                 htmlFor="password"
                 title="password"
-                className="font-bold text-sm text-slate-700 ml-1"
+                className="font-bold text-sm text-foreground ml-1"
               >
                 Password
               </Label>
@@ -152,14 +152,14 @@ export default function RegisterPage() {
                 onChange={(e) =>
                   setFormData({ ...formData, password: e.target.value })
                 }
-                className="h-12 rounded-2xl border-border focus:ring-emerald-500 bg-slate-50/30 px-5 font-medium tracking-widest"
+                className="h-12 rounded-2xl border-border focus:ring-primary bg-muted/30 px-5 font-medium tracking-widest"
               />
             </div>
 
             <Button
               type="submit"
               disabled={loading}
-              className="w-full h-12 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-lg transition-all active:scale-95 mt-2 border-none"
+              className="w-full h-12 rounded-2xl bg-primary hover:bg-primary/90 text-primary-foreground font-black text-lg transition-all active:scale-95 mt-2 border-none"
             >
               {loading ? (
                 <Loader2 className="w-6 h-6 animate-spin" />
@@ -171,10 +171,10 @@ export default function RegisterPage() {
 
           <div className="relative my-6">
             <div className="absolute inset-0 flex items-center">
-              <span className="w-full border-t border-slate-100" />
+              <span className="w-full border-t border-border" />
             </div>
             <div className="relative flex justify-center text-xs font-bold uppercase tracking-wider">
-              <span className="bg-white px-4 text-slate-400">
+              <span className="bg-card px-4 text-muted-foreground">
                 Or Register with
               </span>
             </div>
@@ -184,25 +184,25 @@ export default function RegisterPage() {
             <Button
               variant="outline"
               onClick={() => handleSocial("Google")}
-              className="rounded-2xl h-12 border-border hover:bg-slate-50 font-bold text-slate-700 px-6 transition-all"
+              className="rounded-2xl h-12 border-border hover:bg-accent font-bold text-foreground px-6 transition-all"
             >
               <GoogleIcon /> Google
             </Button>
             <Button
               variant="outline"
               onClick={() => handleSocial("Facebook")}
-              className="rounded-2xl h-12 border-border hover:bg-slate-50 font-bold text-slate-700 px-6 transition-all"
+              className="rounded-2xl h-12 border-border hover:bg-accent font-bold text-foreground px-6 transition-all"
             >
               <FacebookIcon /> Facebook
             </Button>
           </div>
 
-          <div className="mt-6 text-center pt-4 border-t border-slate-50">
-            <p className="text-sm font-medium text-slate-500">
+          <div className="mt-6 text-center pt-4 border-t border-border">
+            <p className="text-sm font-medium text-muted-foreground">
               Already have an account?{" "}
               <Link
                 href="/auth/login"
-                className="text-emerald-600 font-bold hover:underline underline-offset-4"
+                className="text-primary font-bold hover:underline underline-offset-4"
               >
                 Login
               </Link>

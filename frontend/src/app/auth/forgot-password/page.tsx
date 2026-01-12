@@ -38,13 +38,13 @@ export default function ForgotPasswordPage() {
 
   return (
     <div className="w-full">
-      <Card className="rounded-3xl bg-white border border-slate-200">
+      <Card className="rounded-3xl bg-card border border-border">
         <CardContent className="p-6 md:p-8">
           <form onSubmit={handleReset} className="space-y-4">
             <div className="space-y-1.5">
               <Label
                 htmlFor="email"
-                className="font-bold text-sm text-slate-700 ml-1"
+                className="font-bold text-sm text-foreground ml-1"
               >
                 Email
               </Label>
@@ -53,14 +53,14 @@ export default function ForgotPasswordPage() {
                 type="email"
                 placeholder="name@example.com"
                 required
-                className="h-12 rounded-2xl border-slate-200 focus:ring-emerald-500 bg-slate-50/30 px-5 font-medium"
+                className="h-12 rounded-2xl border-border focus:ring-primary bg-muted/30 px-5 font-medium"
               />
             </div>
 
             <Button
               type="submit"
               disabled={loading}
-              className="w-full h-12 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-lg transition-all active:scale-95"
+              className="w-full h-12 rounded-2xl bg-primary hover:bg-primary/90 text-primary-foreground font-black text-lg transition-all active:scale-95"
             >
               {loading ? (
                 <>
@@ -74,7 +74,7 @@ export default function ForgotPasswordPage() {
 
           <Link
             href="/auth/login"
-            className="mt-6 flex items-center justify-center lg:justify-start gap-3 text-sm font-bold text-slate-400 hover:text-emerald-600 transition-all pt-6 border-t border-slate-50"
+            className="mt-6 flex items-center justify-center lg:justify-start gap-3 text-sm font-bold text-muted-foreground hover:text-primary transition-all pt-6 border-t border-border"
           >
             <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />{" "}
             Back to Login
