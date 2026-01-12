@@ -58,77 +58,147 @@ export default function DashboardLayout({
   const [notifDragging, setNotifDragging] = useState(false);
   const [userMenuDragging, setUserMenuDragging] = useState(false);
 
+  // Reset transform when sheets open
+  useEffect(() => {
+    if (notifOpen && notifRef.current) {
+      notifRef.current.style.transform = "translateY(0)";
+    }
+  }, [notifOpen]);
+
+  useEffect(() => {
+    if (userMenuOpen && userMenuRef.current) {
+      userMenuRef.current.style.transform = "translateY(0)";
+    }
+  }, [userMenuOpen]);
+
   // Drag handlers for notification sheet
-  const handleNotifDrag = useCallback((e: React.TouchEvent) => {
-    const startY = e.touches[0].clientY;
-    let currentY = startY;
-    setNotifDragging(true);
+  const handleNotifDrag = useCallback(
+    (e: React.TouchEvent | React.MouseEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
 
-    const handleMove = (moveE: TouchEvent) => {
-      currentY = moveE.touches[0].clientY;
-      const deltaY = currentY - startY;
-      if (deltaY > 0 && notifRef.current) {
-        notifRef.current.style.transform = `translateY(${deltaY}px)`;
-        notifRef.current.style.transition = "none";
-      }
-    };
+      const startY = "touches" in e ? e.touches[0].clientY : e.clientY;
+      const startTime = Date.now();
+      let currentY = startY;
+      setNotifDragging(true);
 
-    const handleEnd = () => {
-      const deltaY = currentY - startY;
-      if (deltaY > 150) {
-        if (notifRef.current) {
-          notifRef.current.style.transition = "transform 0.3s ease-out";
-          notifRef.current.style.transform = "translateY(100%)";
+      const handleMove = (moveE: TouchEvent | MouseEvent) => {
+        currentY =
+          "touches" in moveE ? moveE.touches[0].clientY : moveE.clientY;
+        const deltaY = currentY - startY;
+        if (deltaY > 0 && notifRef.current) {
+          notifRef.current.style.transform = `translateY(${deltaY}px)`;
+          notifRef.current.style.transition = "none";
         }
-        setTimeout(() => setNotifOpen(false), 300);
-      } else if (notifRef.current) {
-        notifRef.current.style.transition = "transform 0.3s ease-out";
-        notifRef.current.style.transform = "translateY(0)";
-      }
-      setNotifDragging(false);
-      document.removeEventListener("touchmove", handleMove);
-      document.removeEventListener("touchend", handleEnd);
-    };
+      };
 
-    document.addEventListener("touchmove", handleMove, { passive: true });
-    document.addEventListener("touchend", handleEnd);
-  }, []);
+      const handleEnd = () => {
+        const deltaY = currentY - startY;
+        const deltaTime = Date.now() - startTime;
+        const velocity = deltaY / deltaTime;
+
+        const shouldClose = deltaY > 80 || velocity > 0.3;
+
+        if (shouldClose) {
+          if (notifRef.current) {
+            notifRef.current.style.transition = "transform 0.2s ease-out";
+            notifRef.current.style.transform = "translateY(100%)";
+          }
+          setTimeout(() => {
+            setNotifOpen(false);
+            if (notifRef.current) {
+              notifRef.current.style.transform = "translateY(0)";
+            }
+          }, 200);
+        } else {
+          if (notifRef.current) {
+            notifRef.current.style.transition =
+              "transform 0.3s cubic-bezier(0.32, 0.72, 0, 1)";
+            notifRef.current.style.transform = "translateY(0)";
+          }
+        }
+
+        setNotifDragging(false);
+        document.removeEventListener("touchmove", handleMove as EventListener);
+        document.removeEventListener("touchend", handleEnd);
+        document.removeEventListener("mousemove", handleMove as EventListener);
+        document.removeEventListener("mouseup", handleEnd);
+      };
+
+      document.addEventListener("touchmove", handleMove as EventListener, {
+        passive: false,
+      });
+      document.addEventListener("touchend", handleEnd);
+      document.addEventListener("mousemove", handleMove as EventListener);
+      document.addEventListener("mouseup", handleEnd);
+    },
+    []
+  );
 
   // Drag handlers for user menu sheet
-  const handleUserMenuDrag = useCallback((e: React.TouchEvent) => {
-    const startY = e.touches[0].clientY;
-    let currentY = startY;
-    setUserMenuDragging(true);
+  const handleUserMenuDrag = useCallback(
+    (e: React.TouchEvent | React.MouseEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
 
-    const handleMove = (moveE: TouchEvent) => {
-      currentY = moveE.touches[0].clientY;
-      const deltaY = currentY - startY;
-      if (deltaY > 0 && userMenuRef.current) {
-        userMenuRef.current.style.transform = `translateY(${deltaY}px)`;
-        userMenuRef.current.style.transition = "none";
-      }
-    };
+      const startY = "touches" in e ? e.touches[0].clientY : e.clientY;
+      const startTime = Date.now();
+      let currentY = startY;
+      setUserMenuDragging(true);
 
-    const handleEnd = () => {
-      const deltaY = currentY - startY;
-      if (deltaY > 150) {
-        if (userMenuRef.current) {
-          userMenuRef.current.style.transition = "transform 0.3s ease-out";
-          userMenuRef.current.style.transform = "translateY(100%)";
+      const handleMove = (moveE: TouchEvent | MouseEvent) => {
+        currentY =
+          "touches" in moveE ? moveE.touches[0].clientY : moveE.clientY;
+        const deltaY = currentY - startY;
+        if (deltaY > 0 && userMenuRef.current) {
+          userMenuRef.current.style.transform = `translateY(${deltaY}px)`;
+          userMenuRef.current.style.transition = "none";
         }
-        setTimeout(() => setUserMenuOpen(false), 300);
-      } else if (userMenuRef.current) {
-        userMenuRef.current.style.transition = "transform 0.3s ease-out";
-        userMenuRef.current.style.transform = "translateY(0)";
-      }
-      setUserMenuDragging(false);
-      document.removeEventListener("touchmove", handleMove);
-      document.removeEventListener("touchend", handleEnd);
-    };
+      };
 
-    document.addEventListener("touchmove", handleMove, { passive: true });
-    document.addEventListener("touchend", handleEnd);
-  }, []);
+      const handleEnd = () => {
+        const deltaY = currentY - startY;
+        const deltaTime = Date.now() - startTime;
+        const velocity = deltaY / deltaTime;
+
+        const shouldClose = deltaY > 80 || velocity > 0.3;
+
+        if (shouldClose) {
+          if (userMenuRef.current) {
+            userMenuRef.current.style.transition = "transform 0.2s ease-out";
+            userMenuRef.current.style.transform = "translateY(100%)";
+          }
+          setTimeout(() => {
+            setUserMenuOpen(false);
+            if (userMenuRef.current) {
+              userMenuRef.current.style.transform = "translateY(0)";
+            }
+          }, 200);
+        } else {
+          if (userMenuRef.current) {
+            userMenuRef.current.style.transition =
+              "transform 0.3s cubic-bezier(0.32, 0.72, 0, 1)";
+            userMenuRef.current.style.transform = "translateY(0)";
+          }
+        }
+
+        setUserMenuDragging(false);
+        document.removeEventListener("touchmove", handleMove as EventListener);
+        document.removeEventListener("touchend", handleEnd);
+        document.removeEventListener("mousemove", handleMove as EventListener);
+        document.removeEventListener("mouseup", handleEnd);
+      };
+
+      document.addEventListener("touchmove", handleMove as EventListener, {
+        passive: false,
+      });
+      document.addEventListener("touchend", handleEnd);
+      document.addEventListener("mousemove", handleMove as EventListener);
+      document.addEventListener("mouseup", handleEnd);
+    },
+    []
+  );
+
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -325,30 +395,33 @@ export default function DashboardLayout({
                     <SheetContent
                       ref={notifRef}
                       side="bottom"
-                      className="rounded-t-[2rem] border-t border-border p-0 bg-white dark:bg-slate-900 h-[85vh] [&>button]:hidden"
+                      className="rounded-t-[2rem] border-t border-border p-0 bg-white dark:bg-slate-900 max-h-[85vh] flex flex-col [&>button]:hidden"
                     >
-                      <div
-                        className={cn(
-                          "bottom-sheet-handle mt-3",
-                          notifDragging && "bg-slate-400 dark:bg-slate-600"
-                        )}
-                        onTouchStart={handleNotifDrag}
-                      />
-                      <div className="p-6 border-b border-border flex items-center justify-between sticky top-0 bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl z-10 rounded-t-[2rem]">
-                        <div>
-                          <h2 className="text-xl font-black text-slate-900 dark:text-white">
-                            {tn.title}
-                          </h2>
-                          <p className="text-sm text-slate-500 font-medium">
-                            {tn.youHave} 2 {tn.unreadMessages}
-                          </p>
+                      <div className="shrink-0">
+                        <div
+                          className={cn(
+                            "bottom-sheet-handle mt-3 cursor-grab active:cursor-grabbing",
+                            notifDragging && "bg-slate-400 dark:bg-slate-600"
+                          )}
+                          onTouchStart={handleNotifDrag}
+                          onMouseDown={handleNotifDrag}
+                        />
+                        <div className="p-6 border-b border-border flex items-center justify-between bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl">
+                          <div>
+                            <h2 className="text-xl font-black text-slate-900 dark:text-white">
+                              {tn.title}
+                            </h2>
+                            <p className="text-sm text-slate-500 font-medium">
+                              {tn.youHave} 2 {tn.unreadMessages}
+                            </p>
+                          </div>
+                          <SheetClose className="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center transition-colors hover:bg-slate-200 dark:hover:bg-slate-700 focus:outline-none">
+                            <X className="w-5 h-5 text-slate-600 dark:text-slate-400" />
+                            <span className="sr-only">Close</span>
+                          </SheetClose>
                         </div>
-                        <SheetClose className="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center transition-colors hover:bg-slate-200 dark:hover:bg-slate-700 focus:outline-none">
-                          <X className="w-5 h-5 text-slate-600 dark:text-slate-400" />
-                          <span className="sr-only">Close</span>
-                        </SheetClose>
                       </div>
-                      <div className="overflow-y-auto h-full pb-20 p-4 space-y-2">
+                      <div className="flex-1 overflow-y-auto p-4 space-y-2">
                         {[
                           {
                             id: 1,
@@ -404,14 +477,14 @@ export default function DashboardLayout({
                             </div>
                           </div>
                         ))}
-                        <div className="pt-4 text-center">
-                          <Button
-                            variant="outline"
-                            className="rounded-full w-full font-bold border-border"
-                          >
-                            {tn.markAllRead}
-                          </Button>
-                        </div>
+                      </div>
+                      <div className="shrink-0 p-4 border-t border-border bg-white dark:bg-slate-900">
+                        <Button
+                          variant="outline"
+                          className="rounded-full w-full font-bold border-border"
+                        >
+                          {tn.markAllRead}
+                        </Button>
                       </div>
                     </SheetContent>
                   </Sheet>
@@ -505,90 +578,95 @@ export default function DashboardLayout({
                     <SheetContent
                       ref={userMenuRef}
                       side="bottom"
-                      className="rounded-t-[2rem] border-t border-border p-6 bg-slate-50/95 dark:bg-slate-900/95 backdrop-blur-xl"
+                      className="rounded-t-[2rem] border-t border-border p-0 bg-slate-50/95 dark:bg-slate-900/95 backdrop-blur-xl max-h-[75vh] flex flex-col [&>button]:hidden"
                     >
-                      <div
-                        className={cn(
-                          "bottom-sheet-handle -mt-3 mb-6",
-                          userMenuDragging && "bg-slate-400 dark:bg-slate-600"
-                        )}
-                        onTouchStart={handleUserMenuDrag}
-                      />
-                      <div className="flex flex-col gap-6">
-                        <div className="flex items-center gap-4 bg-white dark:bg-slate-800 p-4 rounded-3xl shadow-sm border border-border">
-                          <div className="w-16 h-16 rounded-2xl border-2 border-emerald-100 dark:border-emerald-800 p-0.5 overflow-hidden bg-white dark:bg-slate-900">
-                            <img
-                              src={
-                                user?.avatarUrl ||
-                                "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=200&h=200&q=80"
-                              }
-                              alt="Profile"
-                              className="w-full h-full rounded-xl object-cover"
-                            />
+                      <div className="shrink-0 pt-3">
+                        <div
+                          className={cn(
+                            "bottom-sheet-handle cursor-grab active:cursor-grabbing",
+                            userMenuDragging && "bg-slate-400 dark:bg-slate-600"
+                          )}
+                          onTouchStart={handleUserMenuDrag}
+                          onMouseDown={handleUserMenuDrag}
+                        />
+                      </div>
+                      <div className="flex-1 overflow-y-auto px-6 pb-6">
+                        <div className="flex flex-col gap-6">
+                          <div className="flex items-center gap-4 bg-white dark:bg-slate-800 p-4 rounded-3xl shadow-sm border border-border">
+                            <div className="w-16 h-16 rounded-2xl border-2 border-emerald-100 dark:border-emerald-800 p-0.5 overflow-hidden bg-white dark:bg-slate-900">
+                              <img
+                                src={
+                                  user?.avatarUrl ||
+                                  "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=200&h=200&q=80"
+                                }
+                                alt="Profile"
+                                className="w-full h-full rounded-xl object-cover"
+                              />
+                            </div>
+                            <div className="flex flex-col">
+                              <span className="text-lg font-black text-slate-900 dark:text-white uppercase tracking-tight">
+                                {user?.name || "User HSL"}
+                              </span>
+                              <span className="text-xs font-bold text-emerald-600 dark:text-emerald-500 bg-emerald-50 dark:bg-emerald-500/10 px-2 py-0.5 rounded-lg leading-tight w-fit mt-1">
+                                PREMIUM PLAN
+                              </span>
+                            </div>
                           </div>
-                          <div className="flex flex-col">
-                            <span className="text-lg font-black text-slate-900 dark:text-white uppercase tracking-tight">
-                              {user?.name || "User HSL"}
-                            </span>
-                            <span className="text-xs font-bold text-emerald-600 dark:text-emerald-500 bg-emerald-50 dark:bg-emerald-500/10 px-2 py-0.5 rounded-lg leading-tight w-fit mt-1">
-                              PREMIUM PLAN
-                            </span>
-                          </div>
-                        </div>
 
-                        <div className="grid grid-cols-2 gap-3">
-                          <SheetClose asChild>
-                            <Link
-                              href="/profile"
-                              className="flex flex-col items-center justify-center gap-2 p-4 bg-white dark:bg-slate-800 rounded-2xl border border-border active:scale-95 transition-all hover:border-emerald-500/50 hover:shadow-sm"
-                            >
-                              <div className="w-10 h-10 rounded-full bg-emerald-50 dark:bg-slate-700 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
-                                <User className="w-5 h-5" />
-                              </div>
-                              <span className="font-bold text-xs text-slate-700 dark:text-site-200">
-                                {t.profile.personalInfo}
-                              </span>
-                            </Link>
-                          </SheetClose>
-                          <SheetClose asChild>
-                            <Link
-                              href="/subscription"
-                              className="flex flex-col items-center justify-center gap-2 p-4 bg-white dark:bg-slate-800 rounded-2xl border border-border active:scale-95 transition-all hover:border-emerald-500/50 hover:shadow-sm"
-                            >
-                              <div className="w-10 h-10 rounded-full bg-purple-50 dark:bg-slate-700 text-purple-600 dark:text-purple-400 flex items-center justify-center">
-                                <CreditCard className="w-5 h-5" />
-                              </div>
-                              <span className="font-bold text-xs text-slate-700 dark:text-site-200">
-                                Subscription
-                              </span>
-                            </Link>
-                          </SheetClose>
-                          <SheetClose asChild>
-                            <Link
-                              href="/profile"
-                              className="flex flex-col items-center justify-center gap-2 p-4 bg-white dark:bg-slate-800 rounded-2xl border border-border active:scale-95 transition-all hover:border-emerald-500/50 hover:shadow-sm"
-                            >
-                              <div className="w-10 h-10 rounded-full bg-blue-50 dark:bg-slate-700 text-blue-600 dark:text-blue-400 flex items-center justify-center">
-                                <Settings className="w-5 h-5" />
-                              </div>
-                              <span className="font-bold text-xs text-slate-700 dark:text-site-200">
-                                {t.displaySettings}
-                              </span>
-                            </Link>
-                          </SheetClose>
-                          <SheetClose asChild>
-                            <button
-                              onClick={handleLogout}
-                              className="flex flex-col items-center justify-center gap-2 p-4 bg-rose-50 dark:bg-rose-950/20 rounded-2xl border border-rose-100 dark:border-rose-900 active:scale-95 transition-all hover:border-rose-300"
-                            >
-                              <div className="w-10 h-10 rounded-full bg-rose-100 dark:bg-rose-900/40 text-rose-600 flex items-center justify-center">
-                                <LogOut className="w-5 h-5" />
-                              </div>
-                              <span className="font-black text-xs text-rose-600">
-                                Sign Out
-                              </span>
-                            </button>
-                          </SheetClose>
+                          <div className="grid grid-cols-2 gap-3">
+                            <SheetClose asChild>
+                              <Link
+                                href="/profile"
+                                className="flex flex-col items-center justify-center gap-2 p-4 bg-white dark:bg-slate-800 rounded-2xl border border-border active:scale-95 transition-all hover:border-emerald-500/50 hover:shadow-sm"
+                              >
+                                <div className="w-10 h-10 rounded-full bg-emerald-50 dark:bg-slate-700 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
+                                  <User className="w-5 h-5" />
+                                </div>
+                                <span className="font-bold text-xs text-slate-700 dark:text-slate-200">
+                                  {t.profile.personalInfo}
+                                </span>
+                              </Link>
+                            </SheetClose>
+                            <SheetClose asChild>
+                              <Link
+                                href="/subscription"
+                                className="flex flex-col items-center justify-center gap-2 p-4 bg-white dark:bg-slate-800 rounded-2xl border border-border active:scale-95 transition-all hover:border-emerald-500/50 hover:shadow-sm"
+                              >
+                                <div className="w-10 h-10 rounded-full bg-purple-50 dark:bg-slate-700 text-purple-600 dark:text-purple-400 flex items-center justify-center">
+                                  <CreditCard className="w-5 h-5" />
+                                </div>
+                                <span className="font-bold text-xs text-slate-700 dark:text-slate-200">
+                                  Subscription
+                                </span>
+                              </Link>
+                            </SheetClose>
+                            <SheetClose asChild>
+                              <Link
+                                href="/profile"
+                                className="flex flex-col items-center justify-center gap-2 p-4 bg-white dark:bg-slate-800 rounded-2xl border border-border active:scale-95 transition-all hover:border-emerald-500/50 hover:shadow-sm"
+                              >
+                                <div className="w-10 h-10 rounded-full bg-blue-50 dark:bg-slate-700 text-blue-600 dark:text-blue-400 flex items-center justify-center">
+                                  <Settings className="w-5 h-5" />
+                                </div>
+                                <span className="font-bold text-xs text-slate-700 dark:text-slate-200">
+                                  {t.displaySettings}
+                                </span>
+                              </Link>
+                            </SheetClose>
+                            <SheetClose asChild>
+                              <button
+                                onClick={handleLogout}
+                                className="flex flex-col items-center justify-center gap-2 p-4 bg-rose-50 dark:bg-rose-950/20 rounded-2xl border border-rose-100 dark:border-rose-900 active:scale-95 transition-all hover:border-rose-300"
+                              >
+                                <div className="w-10 h-10 rounded-full bg-rose-100 dark:bg-rose-900/40 text-rose-600 flex items-center justify-center">
+                                  <LogOut className="w-5 h-5" />
+                                </div>
+                                <span className="font-black text-xs text-rose-600">
+                                  Sign Out
+                                </span>
+                              </button>
+                            </SheetClose>
+                          </div>
                         </div>
                       </div>
                     </SheetContent>
