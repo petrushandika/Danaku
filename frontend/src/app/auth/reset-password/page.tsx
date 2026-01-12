@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { PasswordInput } from "@/components/ui/password-input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
 import { toast } from "sonner";
@@ -64,12 +64,11 @@ export default function ResetPasswordPage() {
               >
                 New Password
               </Label>
-              <Input
+              <PasswordInput
                 id="pass"
-                type="password"
                 placeholder="••••••••"
                 required
-                className="h-12 rounded-2xl border-border focus:ring-primary bg-muted/30 px-6 font-medium tracking-widest shadow-sm"
+                className="tracking-widest shadow-sm"
               />
             </div>
             <div className="space-y-1.5">
@@ -79,12 +78,11 @@ export default function ResetPasswordPage() {
               >
                 Confirm Password
               </Label>
-              <Input
+              <PasswordInput
                 id="confirm"
-                type="password"
                 placeholder="••••••••"
                 required
-                className="h-12 rounded-2xl border-border focus:ring-primary bg-muted/30 px-6 font-medium tracking-widest shadow-sm"
+                className="tracking-widest shadow-sm"
               />
             </div>
 
