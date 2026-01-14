@@ -10,6 +10,7 @@ import {
   PieChart,
   Coins,
   Briefcase,
+  X,
 } from "lucide-react";
 import { ResponsiveModal } from "@/components/responsive-modal";
 import { Input } from "@/components/ui/input";
@@ -25,10 +26,69 @@ import { toast } from "sonner";
 import { useLanguageStore, translations } from "@/store/use-language-store";
 import { useEffect, useState } from "react";
 
+type CategoryItems = {
+  [key: string]: string[];
+};
+
 export default function SetupPage() {
   const { language } = useLanguageStore();
   const t = translations[language].dashboard.setup;
   const [mounted, setMounted] = useState(false);
+
+  // State for managing items in each category
+  const [categoryItems, setCategoryItems] = useState<CategoryItems>({
+    "Account Summary": ["BCA", "Gopay", "Permata", "Dana"],
+    "Income Sources": ["Monthly Salary", "Bonus"],
+    Needs: [
+      "Home Rent",
+      "Course",
+      "Utilities",
+      "Transportation",
+      "Food",
+      "Health",
+      "Insurance",
+      "Phone Bill",
+    ],
+    Wants: [
+      "Shopping",
+      "Entertainment",
+      "Dining Out",
+      "Hobbies",
+      "Vacation",
+      "Gadgets",
+      "Streaming",
+      "Coffee",
+      "Books",
+      "Gym",
+      "Beauty",
+      "Gaming",
+    ],
+    Savings: [
+      "General Savings",
+      "Emergency Funds",
+      "Investment",
+      "Retirement",
+      "Education",
+    ],
+    Assets: [
+      "General Savings",
+      "Bibit",
+      "BPJS",
+      "Stocks",
+      "Property",
+      "Vehicle",
+    ],
+  });
+
+  // State for showing add item input
+  const [showAddInput, setShowAddInput] = useState<{ [key: string]: boolean }>(
+    {}
+  );
+
+  // State for new item input value
+  const [newItemValue, setNewItemValue] = useState<{ [key: string]: string }>(
+    {}
+  );
 
   useEffect(() => {
     setMounted(true);
@@ -41,10 +101,59 @@ export default function SetupPage() {
     });
   };
 
-  const handleRemove = (name: string) => {
-    toast.error("Category Removed", {
-      description: `${name} has been deleted from your settings.`,
+  const handleRemove = (categoryTitle: string, itemName: string) => {
+    setCategoryItems((prev) => ({
+      ...prev,
+      [categoryTitle]: prev[categoryTitle].filter((item) => item !== itemName),
+    }));
+
+    toast.error("Item Removed", {
+      description: `${itemName} has been deleted from ${categoryTitle}.`,
     });
+  };
+
+  const handleAddItem = (categoryTitle: string) => {
+    const newItem = newItemValue[categoryTitle]?.trim();
+
+    if (!newItem) {
+      toast.error("Invalid Input", {
+        description: "Please enter a valid item name.",
+      });
+      return;
+    }
+
+    // Check for duplicates
+    if (categoryItems[categoryTitle]?.includes(newItem)) {
+      toast.error("Duplicate Item", {
+        description: `${newItem} already exists in ${categoryTitle}.`,
+      });
+      return;
+    }
+
+    setCategoryItems((prev) => ({
+      ...prev,
+      [categoryTitle]: [...(prev[categoryTitle] || []), newItem],
+    }));
+
+    // Reset input and hide
+    setNewItemValue((prev) => ({ ...prev, [categoryTitle]: "" }));
+    setShowAddInput((prev) => ({ ...prev, [categoryTitle]: false }));
+
+    toast.success("Item Added", {
+      description: `${newItem} has been added to ${categoryTitle}.`,
+    });
+  };
+
+  const toggleAddInput = (categoryTitle: string) => {
+    setShowAddInput((prev) => ({
+      ...prev,
+      [categoryTitle]: !prev[categoryTitle],
+    }));
+
+    // Reset input value when closing
+    if (showAddInput[categoryTitle]) {
+      setNewItemValue((prev) => ({ ...prev, [categoryTitle]: "" }));
+    }
   };
 
   if (!mounted) return null;
@@ -56,7 +165,6 @@ export default function SetupPage() {
       color: "text-blue-500",
       bg: "bg-blue-50 dark:bg-blue-950/20",
       borderColor: "hover:border-blue-200 dark:hover:border-blue-800",
-      count: 4,
     },
     {
       title: t.items.income,
@@ -64,7 +172,6 @@ export default function SetupPage() {
       color: "text-emerald-500",
       bg: "bg-emerald-50 dark:bg-emerald-950/20",
       borderColor: "hover:border-emerald-200 dark:hover:border-emerald-800",
-      count: 2,
     },
     {
       title: t.items.needs,
@@ -72,7 +179,6 @@ export default function SetupPage() {
       color: "text-orange-500",
       bg: "bg-orange-50 dark:bg-orange-950/20",
       borderColor: "hover:border-orange-200 dark:hover:border-orange-800",
-      count: 8,
     },
     {
       title: t.items.wants,
@@ -80,7 +186,6 @@ export default function SetupPage() {
       color: "text-violet-500",
       bg: "bg-violet-50 dark:bg-violet-950/20",
       borderColor: "hover:border-violet-200 dark:hover:border-violet-800",
-      count: 12,
     },
     {
       title: t.items.savings,
@@ -88,7 +193,6 @@ export default function SetupPage() {
       color: "text-pink-500",
       bg: "bg-pink-50 dark:bg-pink-950/20",
       borderColor: "hover:border-pink-200 dark:hover:border-pink-800",
-      count: 5,
     },
     {
       title: t.items.assets,
@@ -96,7 +200,6 @@ export default function SetupPage() {
       color: "text-sky-500",
       bg: "bg-sky-50 dark:bg-sky-950/20",
       borderColor: "hover:border-sky-200 dark:hover:border-sky-800",
-      count: 6,
     },
   ];
 
@@ -178,81 +281,140 @@ export default function SetupPage() {
       </div>
 
       <div className="grid gap-6 grid-cols-1 md:grid-cols-2 xl:grid-cols-3">
-        {setupItems.map((item) => (
-          <ResponsiveModal
-            key={item.title}
-            title={`${item.title} Settings`}
-            description={`Manage your ${item.title.toLowerCase()} list and configurations.`}
-            trigger={
-              <Card
-                className={`border-border shadow-none rounded-3xl bg-white dark:bg-slate-900 overflow-hidden group transition-all cursor-pointer border hover:shadow-md ${item.borderColor}`}
-              >
-                <CardHeader className="p-6 md:p-8">
-                  <div className="flex items-center gap-5">
-                    <div
-                      className={`w-14 h-14 rounded-2xl ${item.bg} flex items-center justify-center transition-all border border-transparent group-hover:border-slate-100 dark:group-hover:border-slate-700 group-hover:scale-105 shadow-xs`}
-                    >
-                      <item.icon className={`w-7 h-7 ${item.color}`} />
+        {setupItems.map((item) => {
+          const itemList = categoryItems[item.title] || [];
+
+          return (
+            <ResponsiveModal
+              key={item.title}
+              title={`${item.title} Settings`}
+              description={`Manage your ${item.title.toLowerCase()} list and configurations.`}
+              trigger={
+                <Card
+                  className={`border-border shadow-none rounded-3xl bg-white dark:bg-slate-900 overflow-hidden group transition-all cursor-pointer border hover:shadow-md ${item.borderColor}`}
+                >
+                  <CardHeader className="p-6 md:p-8">
+                    <div className="flex items-center gap-5">
+                      <div
+                        className={`w-14 h-14 rounded-2xl ${item.bg} flex items-center justify-center transition-all border border-transparent group-hover:border-slate-100 dark:group-hover:border-slate-700 group-hover:scale-105 shadow-xs`}
+                      >
+                        <item.icon className={`w-7 h-7 ${item.color}`} />
+                      </div>
+                      <div>
+                        <CardTitle className="text-xl font-bold text-slate-800 dark:text-white uppercase tracking-tight">
+                          {item.title}
+                        </CardTitle>
+                        <p className="text-[10px] text-slate-400 dark:text-slate-500 font-bold uppercase tracking-widest mt-1.5">
+                          {t.module}
+                        </p>
+                      </div>
                     </div>
-                    <div>
-                      <CardTitle className="text-xl font-bold text-slate-800 dark:text-white uppercase tracking-tight">
-                        {item.title}
-                      </CardTitle>
-                      <p className="text-[10px] text-slate-400 dark:text-slate-500 font-bold uppercase tracking-widest mt-1.5">
-                        {t.module}
+                  </CardHeader>
+                  <CardContent className="p-6 md:p-8 pt-0">
+                    <div className="p-6 md:p-10 flex flex-col items-center justify-center border-2 border-dashed border-slate-100 dark:border-slate-800 rounded-3xl text-sm text-slate-400 dark:text-slate-500 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 font-medium italic bg-slate-50/50 dark:bg-slate-950/20 group-hover:bg-white dark:group-hover:bg-slate-800 transition-all">
+                      <span className="text-2xl font-black mb-1">
+                        {itemList.length}
+                      </span>
+                      <span className="text-[10px] uppercase font-bold tracking-widest opacity-60">
+                        Active Items
+                      </span>
+                    </div>
+                  </CardContent>
+                </Card>
+              }
+            >
+              <div className="flex flex-col h-full">
+                <div className="flex-1 space-y-3 max-h-[300px] md:max-h-[400px] overflow-y-auto emerald-scrollbar pr-2">
+                  {itemList.length === 0 ? (
+                    <div className="flex flex-col items-center justify-center p-8 text-center">
+                      <p className="text-slate-400 dark:text-slate-500 text-sm font-medium">
+                        No items yet. Add your first item below!
                       </p>
                     </div>
-                  </div>
-                </CardHeader>
-                <CardContent className="p-6 md:p-8 pt-0">
-                  <div className="p-6 md:p-10 flex flex-col items-center justify-center border-2 border-dashed border-slate-100 dark:border-slate-800 rounded-3xl text-sm text-slate-400 dark:text-slate-500 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 font-medium italic bg-slate-50/50 dark:bg-slate-950/20 group-hover:bg-white dark:group-hover:bg-slate-800 transition-all">
-                    <span className="text-2xl font-black mb-1">
-                      {item.count}
-                    </span>
-                    <span className="text-[10px] uppercase font-bold tracking-widest opacity-60">
-                      Active Items
-                    </span>
-                  </div>
-                </CardContent>
-              </Card>
-            }
-          >
-            <div className="flex flex-col h-full">
-              <div className="flex-1 space-y-3 max-h-[200px] overflow-y-auto emerald-scrollbar pr-2">
-                {Array.from({ length: item.count }, (_, i) => i + 1).map(
-                  (i) => (
-                    <div
-                      key={i}
-                      className="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800"
-                    >
-                      <span className="font-bold text-slate-700 dark:text-slate-300">
-                        Sample {item.title} Item {i}
-                      </span>
+                  ) : (
+                    itemList.map((itemName, index) => (
+                      <div
+                        key={index}
+                        className="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800 hover:border-slate-200 dark:hover:border-slate-700 transition-all group"
+                      >
+                        <span className="font-bold text-slate-700 dark:text-slate-300 flex-1">
+                          {itemName}
+                        </span>
+                        <Button
+                          onClick={() => handleRemove(item.title, itemName)}
+                          variant="ghost"
+                          size="sm"
+                          className="text-rose-500 font-bold hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/30 rounded-xl cursor-pointer opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity"
+                        >
+                          <X className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    ))
+                  )}
+                </div>
+
+                <div className="shrink-0 pt-4 space-y-3">
+                  {showAddInput[item.title] && (
+                    <div className="p-4 bg-emerald-50 dark:bg-emerald-950/20 rounded-2xl border-2 border-emerald-200 dark:border-emerald-800 space-y-4 animate-smooth-in">
+                      <Label
+                        htmlFor={`new-item-${item.title}`}
+                        className="text-slate-700 dark:text-slate-300 font-bold text-sm block mb-2"
+                      >
+                        New Item Name
+                      </Label>
+                      <div className="flex gap-2">
+                        <Input
+                          id={`new-item-${item.title}`}
+                          placeholder={`Enter ${item.title.toLowerCase()} name...`}
+                          value={newItemValue[item.title] || ""}
+                          onChange={(e) =>
+                            setNewItemValue((prev) => ({
+                              ...prev,
+                              [item.title]: e.target.value,
+                            }))
+                          }
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter") {
+                              handleAddItem(item.title);
+                            }
+                          }}
+                          className="flex-1 rounded-xl border-emerald-200 dark:border-emerald-800 dark:bg-slate-900 focus-visible:ring-emerald-500 h-11"
+                          autoFocus
+                        />
+                        <Button
+                          onClick={() => handleAddItem(item.title)}
+                          className="rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold h-11 px-4 cursor-pointer transition-all active:scale-95 border-none"
+                        >
+                          Add
+                        </Button>
+                      </div>
                       <Button
-                        onClick={() => handleRemove(`Sample Item ${i}`)}
+                        onClick={() => toggleAddInput(item.title)}
                         variant="ghost"
                         size="sm"
-                        className="text-rose-500 font-bold hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/30 rounded-xl cursor-pointer"
+                        className="w-full text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 font-medium rounded-xl"
                       >
-                        Remove
+                        Cancel
                       </Button>
                     </div>
-                  )
-                )}
-              </div>
-              <div className="shrink-0 pt-4">
-                <div className="p-6 flex flex-col items-center justify-center border-2 border-dashed border-slate-100 dark:border-slate-800 rounded-3xl text-slate-400 bg-slate-50/50 dark:bg-slate-950/20">
-                  <Button
-                    variant="outline"
-                    className="rounded-xl border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 font-bold h-11 px-6 hover:bg-white dark:hover:bg-slate-800"
-                  >
-                    <Plus className="w-4 h-4 mr-2" /> Add custom item
-                  </Button>
+                  )}
+
+                  {!showAddInput[item.title] && (
+                    <div className="p-6 flex flex-col items-center justify-center border-2 border-dashed border-slate-100 dark:border-slate-800 rounded-3xl text-slate-400 bg-slate-50/50 dark:bg-slate-950/20 hover:border-emerald-200 dark:hover:border-emerald-800 hover:bg-emerald-50/50 dark:hover:bg-emerald-950/10 transition-all">
+                      <Button
+                        onClick={() => toggleAddInput(item.title)}
+                        variant="outline"
+                        className="rounded-xl border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 font-bold h-11 px-6 hover:bg-white dark:hover:bg-slate-800 hover:text-emerald-600 dark:hover:text-emerald-400 hover:border-emerald-200 dark:hover:border-emerald-700 transition-all"
+                      >
+                        <Plus className="w-4 h-4 mr-2" /> Add custom item
+                      </Button>
+                    </div>
+                  )}
                 </div>
               </div>
-            </div>
-          </ResponsiveModal>
-        ))}
+            </ResponsiveModal>
+          );
+        })}
       </div>
     </div>
   );
