@@ -1,24 +1,25 @@
-import { create } from "zustand"
-import { persist } from "zustand/middleware"
-import api from "@/lib/api"
+import { create } from "zustand";
+import { persist } from "zustand/middleware";
+import api from "@/lib/api";
 
 interface User {
-  id: string
-  email: string
-  name: string
-  avatarUrl?: string
-  role: string
+  id: string;
+  email: string;
+  name: string;
+  avatarUrl?: string;
+  role: string;
+  plan?: string;
 }
 
 interface AuthState {
-  user: User | null
-  isAuthenticated: boolean
-  isLoading: boolean
-  setUser: (user: User | null) => void
-  setIsAuthenticated: (status: boolean) => void
-  setIsLoading: (status: boolean) => void
-  logout: () => void
-  checkSession: () => Promise<void>
+  user: User | null;
+  isAuthenticated: boolean;
+  isLoading: boolean;
+  setUser: (user: User | null) => void;
+  setIsAuthenticated: (status: boolean) => void;
+  setIsLoading: (status: boolean) => void;
+  logout: () => void;
+  checkSession: () => Promise<void>;
 }
 
 export const useAuthStore = create<AuthState>()(
@@ -33,14 +34,14 @@ export const useAuthStore = create<AuthState>()(
       logout: () => set({ user: null, isAuthenticated: false }),
       checkSession: async () => {
         try {
-          const response = await api.get("/users/profile")
+          const response = await api.get("/users/profile");
           if (response.data.success) {
-            set({ user: response.data.data, isAuthenticated: true })
+            set({ user: response.data.data, isAuthenticated: true });
           } else {
-            set({ user: null, isAuthenticated: false })
+            set({ user: null, isAuthenticated: false });
           }
         } catch (error) {
-          set({ user: null, isAuthenticated: false })
+          set({ user: null, isAuthenticated: false });
         }
       },
     }),
@@ -48,4 +49,4 @@ export const useAuthStore = create<AuthState>()(
       name: "auth-storage",
     }
   )
-)
+);

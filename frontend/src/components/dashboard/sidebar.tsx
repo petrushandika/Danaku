@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { useLanguageStore, translations } from "@/store/use-language-store";
+import { useAuthStore } from "@/store/use-auth-store";
 import {
   LayoutDashboard,
   Settings,
@@ -16,6 +17,9 @@ import {
   PanelLeftOpen,
   X,
 } from "lucide-react";
+import { useEffect, useState } from "react";
+import { getBudget } from "@/lib/api/budgets";
+import { getSpending } from "@/lib/api/spending";
 
 export function Sidebar({
   className,
@@ -32,8 +36,63 @@ export function Sidebar({
 }) {
   const pathname = usePathname();
   const { language } = useLanguageStore();
+  const { user } = useAuthStore();
+  const [budgetStats, setBudgetStats] = useState({ percent: 0, loading: true });
 
   const t = translations[language].dashboard;
+
+  useEffect(() => {
+    const fetchBudgetStats = async () => {
+      try {
+        const now = new Date();
+        const yearMonth = `${now.getFullYear()}-${String(
+          now.getMonth() + 1
+        ).padStart(2, "0")}`;
+
+        const startDate = `${yearMonth}-01`;
+        const endDate = `${yearMonth}-31`;
+
+        const [budget, spendingData] = await Promise.all([
+          getBudget(yearMonth).catch(() => null), // If no budget, null
+          getSpending({
+            startDate,
+            endDate,
+            limit: 2000,
+            excludeIncome: true,
+          }).catch(() => ({ spending: [] })),
+        ]);
+
+        let totalIncome = 0;
+        if (budget && budget.income) {
+          totalIncome = Object.values(budget.income).reduce(
+            (a: number, b: number) => a + b,
+            0
+          );
+        }
+
+        const totalSpent = spendingData.spending.reduce(
+          (sum: number, tx: any) => sum + Math.abs(tx.amount),
+          0
+        );
+
+        let percent = 0;
+        if (totalIncome > 0) {
+          percent = Math.round((totalSpent / totalIncome) * 100);
+        } else if (totalSpent > 0) {
+          percent = 100; // Spent something with no budget
+        }
+
+        setBudgetStats({ percent, loading: false });
+      } catch (error) {
+        console.error("Failed to fetch sidebar stats", error);
+        setBudgetStats({ percent: 0, loading: false });
+      }
+    };
+
+    if (user) {
+      fetchBudgetStats();
+    }
+  }, [user]);
 
   const items = [
     {
@@ -213,7 +272,10 @@ export function Sidebar({
                 )}
               >
                 <img
-                  src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=100&h=100&q=80"
+                  src={
+                    user?.avatarUrl ||
+                    "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=100&h=100&q=80"
+                  }
                   alt="Profile"
                   className="w-full h-full rounded-full object-cover group-hover/profile:scale-110 transition-transform duration-700"
                 />
@@ -227,10 +289,10 @@ export function Sidebar({
                 )}
               >
                 <span className="text-sm font-bold text-slate-800 dark:text-white transition-colors duration-300 truncate">
-                  User
+                  {user?.name || "User"}
                 </span>
                 <span className="text-[10px] uppercase tracking-wider text-slate-500 dark:text-slate-400 font-bold transition-colors duration-300 truncate">
-                  PRO PLAN
+                  {user?.plan || "FREE PLAN"}
                 </span>
               </div>
             </div>
@@ -242,10 +304,17 @@ export function Sidebar({
               )}
             >
               <div className="h-1.5 w-full bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden transition-colors duration-300">
-                <div className="h-full bg-emerald-600 w-2/3 transition-all duration-1000" />
+                <div
+                  className={cn(
+                    "h-full transition-all duration-1000",
+                    budgetStats.percent > 100 ? "bg-rose-500" : "bg-emerald-600"
+                  )}
+                  style={{ width: `${Math.min(budgetStats.percent, 100)}%` }}
+                />
               </div>
               <p className="text-[10px] mt-1 text-slate-500 dark:text-slate-400 font-medium tracking-wide transition-colors duration-300 whitespace-nowrap">
-                Budget: 66%
+                {language === "id" ? "Terpakai" : "Used"}: {budgetStats.percent}
+                %
               </p>
             </div>
           </Link>

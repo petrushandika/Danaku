@@ -20,6 +20,7 @@ import {
   ArrowRight,
   CalendarIcon,
   Loader2,
+  Info,
 } from "lucide-react";
 import {
   Bar,
@@ -45,6 +46,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import Link from "next/link";
 import { toast } from "sonner";
 import { useLanguageStore, translations } from "@/store/use-language-store";
@@ -89,6 +98,7 @@ export default function DashboardPage() {
     spendingTrend: "+0%",
     savingsTrend: "+0%",
     netWorthTrend: "+0%",
+    incomeBreakdown: [] as { label: string; amount: number }[],
   });
   const [chartData, setChartData] = useState<any[]>([]);
   const [recentActivity, setRecentActivity] = useState<any[]>([]);
@@ -228,6 +238,13 @@ export default function DashboardPage() {
               100
             ).toFixed(0)}%`;
 
+      // Build Income Breakdown
+      const incomeMap = currentMonthBudget?.income || {};
+      const breakdown = (setup?.incomeSources || []).map((source) => ({
+        label: source,
+        amount: incomeMap[source] || 0,
+      }));
+
       setSummaryStats({
         income: Number(budgetedIncome), // User requested Projected Income to be shown
         spending: actualSpending, // Keep Spending as Actual
@@ -237,6 +254,7 @@ export default function DashboardPage() {
         spendingTrend: "+0%",
         savingsTrend: "+0%",
         netWorthTrend: "+0%",
+        incomeBreakdown: breakdown,
       });
 
       // 3. Process Activity
@@ -463,6 +481,7 @@ export default function DashboardPage() {
           textColor="text-emerald-600"
           iconBg="bg-emerald-100 dark:bg-emerald-900/30"
           isLoading={isLoading}
+          breakdown={summaryStats.incomeBreakdown}
         />
         <StatsCard
           title={t.spending}
@@ -693,6 +712,7 @@ function StatsCard({
   iconBg,
   subtitle,
   isLoading,
+  breakdown,
 }: any) {
   return (
     <Card
@@ -717,15 +737,49 @@ function StatsCard({
           >
             <Icon className={cn("w-5.5 h-5.5", textColor)} />
           </div>
-          {/* Trend Badge - Optional for MVP as real trend needs more data */}
-          {/* <div className={cn(
-            "text-[10px] sm:text-[11px] font-bold px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full border shadow-xs transition-transform group-hover:scale-105",
-            positive 
-              ? "bg-emerald-50 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-400 border-emerald-100 dark:border-emerald-800" 
-              : "bg-rose-50 dark:bg-rose-950/30 text-rose-700 dark:text-rose-400 border-rose-100 dark:border-rose-800"
-          )}>
-            {trend}
-          </div> */}
+
+          {/* Income Breakdown Info Button */}
+          {breakdown && breakdown.length > 0 && (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-8 w-8 rounded-full text-slate-400 hover:text-emerald-600 hover:bg-white/50 dark:hover:bg-slate-800/50 transition-colors"
+                >
+                  <Info className="w-4 h-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-64 rounded-2xl p-2">
+                <DropdownMenuLabel className="text-xs font-bold text-slate-500 uppercase tracking-wider px-2 py-1.5">
+                  Income Sources
+                </DropdownMenuLabel>
+                <DropdownMenuSeparator className="-mx-1 my-1" />
+                <div className="max-h-[200px] overflow-y-auto emerald-scrollbar">
+                  {breakdown.map((item: any, idx: number) => (
+                    <DropdownMenuItem
+                      key={idx}
+                      className="flex justify-between items-center py-2.5 px-2 rounded-xl cursor-pointer focus:bg-slate-50 dark:focus:bg-slate-800"
+                    >
+                      <span className="text-sm font-medium text-slate-700 dark:text-slate-300">
+                        {item.label}
+                      </span>
+                      <span className="text-sm font-bold text-emerald-600 tabular-nums">
+                        {new Intl.NumberFormat("id-ID", {
+                          style: "currency",
+                          currency: "IDR",
+                          maximumFractionDigits: 0,
+                        }).format(item.amount)}
+                      </span>
+                    </DropdownMenuItem>
+                  ))}
+                </div>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )}
+
+          {/* Trend Badge - Optional (Hidden if Breakdown exists or just default hidden as before) */}
+          {/* {!breakdown && <div className={cn(...) }>{trend}</div>} */}
         </div>
         <CardTitle className="text-[10px] sm:text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">
           {title}

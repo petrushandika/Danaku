@@ -15,9 +15,37 @@ export class BudgetsService {
       where.yearMonth = yearMonth;
     }
 
-    return this.prisma.budget.findMany({
+    const budgets = await this.prisma.budget.findMany({
       where,
       orderBy: { yearMonth: 'desc' },
+    });
+
+    return budgets.map((budget) => {
+      const income = (budget.income || {}) as Record<string, number>;
+      const savingsAllocation = (budget.savingsAllocation || {}) as Record<string, number>;
+      const expenses = (budget.expenses || {}) as Record<string, number>;
+
+      const totalIncome = Object.values(income).reduce((sum, val) => sum + Number(val), 0);
+      const totalSavings = Object.values(savingsAllocation).reduce(
+        (sum, val) => sum + Number(val),
+        0,
+      );
+      const totalExpenses = Object.values(expenses).reduce((sum, val) => sum + Number(val), 0);
+
+      const allocatedPercentage =
+        totalIncome > 0 ? ((totalSavings + totalExpenses) / totalIncome) * 100 : 0;
+      const nonAllocated = totalIncome - totalSavings - totalExpenses;
+
+      return {
+        ...budget,
+        summary: {
+          totalIncome,
+          totalSavings,
+          totalExpenses,
+          allocatedPercentage: Math.round(allocatedPercentage * 100) / 100,
+          nonAllocated,
+        },
+      };
     });
   }
 
@@ -40,10 +68,14 @@ export class BudgetsService {
     const expenses = budget.expenses as Record<string, number>;
 
     const totalIncome = Object.values(income).reduce((sum, val) => sum + Number(val), 0);
-    const totalSavings = Object.values(savingsAllocation).reduce((sum, val) => sum + Number(val), 0);
+    const totalSavings = Object.values(savingsAllocation).reduce(
+      (sum, val) => sum + Number(val),
+      0,
+    );
     const totalExpenses = Object.values(expenses).reduce((sum, val) => sum + Number(val), 0);
 
-    const allocatedPercentage = totalIncome > 0 ? ((totalSavings + totalExpenses) / totalIncome) * 100 : 0;
+    const allocatedPercentage =
+      totalIncome > 0 ? ((totalSavings + totalExpenses) / totalIncome) * 100 : 0;
     const nonAllocated = totalIncome - totalSavings - totalExpenses;
 
     return {

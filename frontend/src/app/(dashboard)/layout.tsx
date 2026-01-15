@@ -500,7 +500,7 @@ export default function DashboardLayout({
                             {user?.name || "User HSL"}
                           </span>
                           <span className="text-[9px] font-bold text-emerald-600 dark:text-emerald-500 bg-emerald-50 dark:bg-emerald-500/10 px-1.5 rounded-md leading-tight">
-                            PREMIUM
+                            {user?.plan || "FREE"}
                           </span>
                         </div>
                         <div className="w-9 h-9 rounded-xl border border-emerald-100 dark:border-emerald-800 p-0.5 overflow-hidden bg-white dark:bg-slate-900 group-hover:scale-105 transition-transform duration-300">
@@ -608,7 +608,7 @@ export default function DashboardLayout({
                                 {user?.name || "User HSL"}
                               </span>
                               <span className="text-xs font-bold text-emerald-600 dark:text-emerald-500 bg-emerald-50 dark:bg-emerald-500/10 px-2 py-0.5 rounded-lg leading-tight w-fit mt-1">
-                                PREMIUM PLAN
+                                {user?.plan || "FREE"} PLAN
                               </span>
                             </div>
                           </div>
