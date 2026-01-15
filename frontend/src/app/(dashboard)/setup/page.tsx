@@ -24,7 +24,15 @@ import {
 } from "@/components/ui/select";
 import { toast } from "sonner";
 import { useLanguageStore, translations } from "@/store/use-language-store";
+import {
+  addItem,
+  deleteItem,
+  getSetup,
+  SetupConfig,
+  CATEGORY_DISPLAY_MAP,
+} from "@/lib/api/setup";
 import { useEffect, useState } from "react";
+import { Loader2 } from "lucide-react";
 
 type CategoryItems = {
   [key: string]: string[];
@@ -34,50 +42,16 @@ export default function SetupPage() {
   const { language } = useLanguageStore();
   const t = translations[language].dashboard.setup;
   const [mounted, setMounted] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   // State for managing items in each category
   const [categoryItems, setCategoryItems] = useState<CategoryItems>({
-    "Account Summary": ["BCA", "Gopay", "Permata", "Dana"],
-    "Income Sources": ["Monthly Salary", "Bonus"],
-    Needs: [
-      "Home Rent",
-      "Course",
-      "Utilities",
-      "Transportation",
-      "Food",
-      "Health",
-      "Insurance",
-      "Phone Bill",
-    ],
-    Wants: [
-      "Shopping",
-      "Entertainment",
-      "Dining Out",
-      "Hobbies",
-      "Vacation",
-      "Gadgets",
-      "Streaming",
-      "Coffee",
-      "Books",
-      "Gym",
-      "Beauty",
-      "Gaming",
-    ],
-    Savings: [
-      "General Savings",
-      "Emergency Funds",
-      "Investment",
-      "Retirement",
-      "Education",
-    ],
-    Assets: [
-      "General Savings",
-      "Bibit",
-      "BPJS",
-      "Stocks",
-      "Property",
-      "Vehicle",
-    ],
+    accountSummary: [],
+    incomeSources: [],
+    needs: [],
+    wants: [],
+    savings: [],
+    accountAssets: [],
   });
 
   // State for showing add item input
@@ -92,7 +66,32 @@ export default function SetupPage() {
 
   useEffect(() => {
     setMounted(true);
+    fetchSetup();
   }, []);
+
+  const fetchSetup = async () => {
+    try {
+      setIsLoading(true);
+      const data = await getSetup();
+
+      const mappedItems: CategoryItems = {
+        accountSummary: data.accountSummary,
+        incomeSources: data.incomeSources,
+        needs: data.needs,
+        wants: data.wants,
+        savings: data.savings,
+        accountAssets: data.accountAssets,
+      };
+
+      setCategoryItems(mappedItems);
+    } catch (error: any) {
+      toast.error("Failed to fetch setup", {
+        description: error.message,
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const handleSaveCategory = () => {
     toast.success("Category Saved", {
@@ -101,18 +100,28 @@ export default function SetupPage() {
     });
   };
 
-  const handleRemove = (categoryTitle: string, itemName: string) => {
-    setCategoryItems((prev) => ({
-      ...prev,
-      [categoryTitle]: prev[categoryTitle].filter((item) => item !== itemName),
-    }));
+  const handleRemove = async (categoryTitle: string, itemName: string) => {
+    try {
+      await deleteItem(categoryTitle, itemName);
 
-    toast.error("Item Removed", {
-      description: `${itemName} has been deleted from ${categoryTitle}.`,
-    });
+      setCategoryItems((prev) => ({
+        ...prev,
+        [categoryTitle]: prev[categoryTitle].filter(
+          (item) => item !== itemName
+        ),
+      }));
+
+      toast.success("Item Removed", {
+        description: `${itemName} has been deleted from ${categoryTitle}.`,
+      });
+    } catch (error: any) {
+      toast.error("Failed to remove item", {
+        description: error.message,
+      });
+    }
   };
 
-  const handleAddItem = (categoryTitle: string) => {
+  const handleAddItem = async (categoryTitle: string) => {
     const newItem = newItemValue[categoryTitle]?.trim();
 
     if (!newItem) {
@@ -122,26 +131,26 @@ export default function SetupPage() {
       return;
     }
 
-    // Check for duplicates
-    if (categoryItems[categoryTitle]?.includes(newItem)) {
-      toast.error("Duplicate Item", {
-        description: `${newItem} already exists in ${categoryTitle}.`,
+    try {
+      await addItem(categoryTitle, newItem);
+
+      setCategoryItems((prev) => ({
+        ...prev,
+        [categoryTitle]: [...(prev[categoryTitle] || []), newItem],
+      }));
+
+      // Reset input and hide
+      setNewItemValue((prev) => ({ ...prev, [categoryTitle]: "" }));
+      setShowAddInput((prev) => ({ ...prev, [categoryTitle]: false }));
+
+      toast.success("Item Added", {
+        description: `${newItem} has been added to ${categoryTitle}.`,
       });
-      return;
+    } catch (error: any) {
+      toast.error("Failed to add item", {
+        description: error.message,
+      });
     }
-
-    setCategoryItems((prev) => ({
-      ...prev,
-      [categoryTitle]: [...(prev[categoryTitle] || []), newItem],
-    }));
-
-    // Reset input and hide
-    setNewItemValue((prev) => ({ ...prev, [categoryTitle]: "" }));
-    setShowAddInput((prev) => ({ ...prev, [categoryTitle]: false }));
-
-    toast.success("Item Added", {
-      description: `${newItem} has been added to ${categoryTitle}.`,
-    });
   };
 
   const toggleAddInput = (categoryTitle: string) => {
@@ -160,6 +169,7 @@ export default function SetupPage() {
 
   const setupItems = [
     {
+      id: "accountSummary",
       title: t.items.account,
       icon: CreditCard,
       color: "text-blue-500",
@@ -167,6 +177,7 @@ export default function SetupPage() {
       borderColor: "hover:border-blue-200 dark:hover:border-blue-800",
     },
     {
+      id: "incomeSources",
       title: t.items.income,
       icon: Coins,
       color: "text-emerald-500",
@@ -174,6 +185,7 @@ export default function SetupPage() {
       borderColor: "hover:border-emerald-200 dark:hover:border-emerald-800",
     },
     {
+      id: "needs",
       title: t.items.needs,
       icon: ShieldCheck,
       color: "text-orange-500",
@@ -181,6 +193,7 @@ export default function SetupPage() {
       borderColor: "hover:border-orange-200 dark:hover:border-orange-800",
     },
     {
+      id: "wants",
       title: t.items.wants,
       icon: PieChart,
       color: "text-violet-500",
@@ -188,6 +201,7 @@ export default function SetupPage() {
       borderColor: "hover:border-violet-200 dark:hover:border-violet-800",
     },
     {
+      id: "savings",
       title: t.items.savings,
       icon: Settings2,
       color: "text-pink-500",
@@ -195,6 +209,7 @@ export default function SetupPage() {
       borderColor: "hover:border-pink-200 dark:hover:border-pink-800",
     },
     {
+      id: "accountAssets",
       title: t.items.assets,
       icon: Briefcase,
       color: "text-sky-500",
@@ -281,140 +296,147 @@ export default function SetupPage() {
       </div>
 
       <div className="grid gap-6 grid-cols-1 md:grid-cols-2 xl:grid-cols-3">
-        {setupItems.map((item) => {
-          const itemList = categoryItems[item.title] || [];
+        {isLoading ? (
+          <div className="col-span-full flex flex-col items-center justify-center py-20 text-slate-400">
+            <Loader2 className="w-10 h-10 animate-spin mb-4 text-emerald-500" />
+            <p className="font-medium">Loading your setup...</p>
+          </div>
+        ) : (
+          setupItems.map((item) => {
+            const itemList = categoryItems[item.id] || [];
 
-          return (
-            <ResponsiveModal
-              key={item.title}
-              title={`${item.title} Settings`}
-              description={`Manage your ${item.title.toLowerCase()} list and configurations.`}
-              trigger={
-                <Card
-                  className={`border-border shadow-none rounded-3xl bg-white dark:bg-slate-900 overflow-hidden group transition-all cursor-pointer border hover:shadow-md ${item.borderColor}`}
-                >
-                  <CardHeader className="p-6 md:p-8">
-                    <div className="flex items-center gap-5">
-                      <div
-                        className={`w-14 h-14 rounded-2xl ${item.bg} flex items-center justify-center transition-all border border-transparent group-hover:border-slate-100 dark:group-hover:border-slate-700 group-hover:scale-105 shadow-xs`}
-                      >
-                        <item.icon className={`w-7 h-7 ${item.color}`} />
+            return (
+              <ResponsiveModal
+                key={item.id}
+                title={`${item.title} Settings`}
+                description={`Manage your ${item.title.toLowerCase()} list and configurations.`}
+                trigger={
+                  <Card
+                    className={`border-border shadow-none rounded-3xl bg-white dark:bg-slate-900 overflow-hidden group transition-all cursor-pointer border hover:shadow-md ${item.borderColor}`}
+                  >
+                    <CardHeader className="p-6 md:p-8">
+                      <div className="flex items-center gap-5">
+                        <div
+                          className={`w-14 h-14 rounded-2xl ${item.bg} flex items-center justify-center transition-all border border-transparent group-hover:border-slate-100 dark:group-hover:border-slate-700 group-hover:scale-105 shadow-xs`}
+                        >
+                          <item.icon className={`w-7 h-7 ${item.color}`} />
+                        </div>
+                        <div>
+                          <CardTitle className="text-xl font-bold text-slate-800 dark:text-white uppercase tracking-tight">
+                            {item.title}
+                          </CardTitle>
+                          <p className="text-[10px] text-slate-400 dark:text-slate-500 font-bold uppercase tracking-widest mt-1.5">
+                            {t.module}
+                          </p>
+                        </div>
                       </div>
-                      <div>
-                        <CardTitle className="text-xl font-bold text-slate-800 dark:text-white uppercase tracking-tight">
-                          {item.title}
-                        </CardTitle>
-                        <p className="text-[10px] text-slate-400 dark:text-slate-500 font-bold uppercase tracking-widest mt-1.5">
-                          {t.module}
+                    </CardHeader>
+                    <CardContent className="p-6 md:p-8 pt-0">
+                      <div className="p-6 md:p-10 flex flex-col items-center justify-center border-2 border-dashed border-slate-100 dark:border-slate-800 rounded-3xl text-sm text-slate-400 dark:text-slate-500 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 font-medium italic bg-slate-50/50 dark:bg-slate-950/20 group-hover:bg-white dark:group-hover:bg-slate-800 transition-all">
+                        <span className="text-2xl font-black mb-1">
+                          {itemList.length}
+                        </span>
+                        <span className="text-[10px] uppercase font-bold tracking-widest opacity-60">
+                          Active Items
+                        </span>
+                      </div>
+                    </CardContent>
+                  </Card>
+                }
+              >
+                <div className="flex flex-col h-full">
+                  <div className="flex-1 space-y-3 max-h-[300px] md:max-h-[400px] overflow-y-auto emerald-scrollbar pr-2">
+                    {itemList.length === 0 ? (
+                      <div className="flex flex-col items-center justify-center p-8 text-center">
+                        <p className="text-slate-400 dark:text-slate-500 text-sm font-medium">
+                          No items yet. Add your first item below!
                         </p>
                       </div>
-                    </div>
-                  </CardHeader>
-                  <CardContent className="p-6 md:p-8 pt-0">
-                    <div className="p-6 md:p-10 flex flex-col items-center justify-center border-2 border-dashed border-slate-100 dark:border-slate-800 rounded-3xl text-sm text-slate-400 dark:text-slate-500 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 font-medium italic bg-slate-50/50 dark:bg-slate-950/20 group-hover:bg-white dark:group-hover:bg-slate-800 transition-all">
-                      <span className="text-2xl font-black mb-1">
-                        {itemList.length}
-                      </span>
-                      <span className="text-[10px] uppercase font-bold tracking-widest opacity-60">
-                        Active Items
-                      </span>
-                    </div>
-                  </CardContent>
-                </Card>
-              }
-            >
-              <div className="flex flex-col h-full">
-                <div className="flex-1 space-y-3 max-h-[300px] md:max-h-[400px] overflow-y-auto emerald-scrollbar pr-2">
-                  {itemList.length === 0 ? (
-                    <div className="flex flex-col items-center justify-center p-8 text-center">
-                      <p className="text-slate-400 dark:text-slate-500 text-sm font-medium">
-                        No items yet. Add your first item below!
-                      </p>
-                    </div>
-                  ) : (
-                    itemList.map((itemName, index) => (
-                      <div
-                        key={index}
-                        className="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800 hover:border-slate-200 dark:hover:border-slate-700 transition-all group"
-                      >
-                        <span className="font-bold text-slate-700 dark:text-slate-300 flex-1">
-                          {itemName}
-                        </span>
+                    ) : (
+                      itemList.map((itemName, index) => (
+                        <div
+                          key={index}
+                          className="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800 hover:border-slate-200 dark:hover:border-slate-700 transition-all group"
+                        >
+                          <span className="font-bold text-slate-700 dark:text-slate-300 flex-1">
+                            {itemName}
+                          </span>
+                          <Button
+                            onClick={() => handleRemove(item.id, itemName)}
+                            variant="ghost"
+                            size="sm"
+                            className="text-rose-500 font-bold hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/30 rounded-xl cursor-pointer opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity"
+                          >
+                            <X className="w-4 h-4" />
+                          </Button>
+                        </div>
+                      ))
+                    )}
+                  </div>
+
+                  <div className="shrink-0 pt-4 space-y-3">
+                    {showAddInput[item.id] && (
+                      <div className="p-4 bg-emerald-50 dark:bg-emerald-950/20 rounded-2xl border-2 border-emerald-200 dark:border-emerald-800 space-y-4 animate-smooth-in">
+                        <Label
+                          htmlFor={`new-item-${item.id}`}
+                          className="text-slate-700 dark:text-slate-300 font-bold text-sm block mb-2"
+                        >
+                          New Item Name
+                        </Label>
+                        <div className="flex gap-2">
+                          <Input
+                            id={`new-item-${item.id}`}
+                            placeholder={`Enter ${item.title.toLowerCase()} name...`}
+                            value={newItemValue[item.id] || ""}
+                            onChange={(e) =>
+                              setNewItemValue((prev) => ({
+                                ...prev,
+                                [item.id]: e.target.value,
+                              }))
+                            }
+                            onKeyDown={(e) => {
+                              if (e.key === "Enter") {
+                                handleAddItem(item.id);
+                              }
+                            }}
+                            className="flex-1 rounded-xl border-emerald-200 dark:border-emerald-800 dark:bg-slate-900 focus-visible:ring-emerald-500 h-11"
+                            autoFocus
+                          />
+                          <Button
+                            onClick={() => handleAddItem(item.id)}
+                            className="rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold h-11 px-4 cursor-pointer transition-all active:scale-95 border-none"
+                          >
+                            Add
+                          </Button>
+                        </div>
                         <Button
-                          onClick={() => handleRemove(item.title, itemName)}
+                          onClick={() => toggleAddInput(item.id)}
                           variant="ghost"
                           size="sm"
-                          className="text-rose-500 font-bold hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/30 rounded-xl cursor-pointer opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity"
+                          className="w-full text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 font-medium rounded-xl"
                         >
-                          <X className="w-4 h-4" />
+                          Cancel
                         </Button>
                       </div>
-                    ))
-                  )}
-                </div>
+                    )}
 
-                <div className="shrink-0 pt-4 space-y-3">
-                  {showAddInput[item.title] && (
-                    <div className="p-4 bg-emerald-50 dark:bg-emerald-950/20 rounded-2xl border-2 border-emerald-200 dark:border-emerald-800 space-y-4 animate-smooth-in">
-                      <Label
-                        htmlFor={`new-item-${item.title}`}
-                        className="text-slate-700 dark:text-slate-300 font-bold text-sm block mb-2"
-                      >
-                        New Item Name
-                      </Label>
-                      <div className="flex gap-2">
-                        <Input
-                          id={`new-item-${item.title}`}
-                          placeholder={`Enter ${item.title.toLowerCase()} name...`}
-                          value={newItemValue[item.title] || ""}
-                          onChange={(e) =>
-                            setNewItemValue((prev) => ({
-                              ...prev,
-                              [item.title]: e.target.value,
-                            }))
-                          }
-                          onKeyDown={(e) => {
-                            if (e.key === "Enter") {
-                              handleAddItem(item.title);
-                            }
-                          }}
-                          className="flex-1 rounded-xl border-emerald-200 dark:border-emerald-800 dark:bg-slate-900 focus-visible:ring-emerald-500 h-11"
-                          autoFocus
-                        />
+                    {!showAddInput[item.id] && (
+                      <div className="p-6 flex flex-col items-center justify-center border-2 border-dashed border-slate-100 dark:border-slate-800 rounded-3xl text-slate-400 bg-slate-50/50 dark:bg-slate-950/20 hover:border-emerald-200 dark:hover:border-emerald-800 hover:bg-emerald-50/50 dark:hover:bg-emerald-950/10 transition-all">
                         <Button
-                          onClick={() => handleAddItem(item.title)}
-                          className="rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold h-11 px-4 cursor-pointer transition-all active:scale-95 border-none"
+                          onClick={() => toggleAddInput(item.id)}
+                          variant="outline"
+                          className="rounded-xl border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 font-bold h-11 px-6 hover:bg-white dark:hover:bg-slate-800 hover:text-emerald-600 dark:hover:text-emerald-400 hover:border-emerald-200 dark:hover:border-emerald-700 transition-all"
                         >
-                          Add
+                          <Plus className="w-4 h-4 mr-2" /> Add custom item
                         </Button>
                       </div>
-                      <Button
-                        onClick={() => toggleAddInput(item.title)}
-                        variant="ghost"
-                        size="sm"
-                        className="w-full text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 font-medium rounded-xl"
-                      >
-                        Cancel
-                      </Button>
-                    </div>
-                  )}
-
-                  {!showAddInput[item.title] && (
-                    <div className="p-6 flex flex-col items-center justify-center border-2 border-dashed border-slate-100 dark:border-slate-800 rounded-3xl text-slate-400 bg-slate-50/50 dark:bg-slate-950/20 hover:border-emerald-200 dark:hover:border-emerald-800 hover:bg-emerald-50/50 dark:hover:bg-emerald-950/10 transition-all">
-                      <Button
-                        onClick={() => toggleAddInput(item.title)}
-                        variant="outline"
-                        className="rounded-xl border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 font-bold h-11 px-6 hover:bg-white dark:hover:bg-slate-800 hover:text-emerald-600 dark:hover:text-emerald-400 hover:border-emerald-200 dark:hover:border-emerald-700 transition-all"
-                      >
-                        <Plus className="w-4 h-4 mr-2" /> Add custom item
-                      </Button>
-                    </div>
-                  )}
+                    )}
+                  </div>
                 </div>
-              </div>
-            </ResponsiveModal>
-          );
-        })}
+              </ResponsiveModal>
+            );
+          })
+        )}
       </div>
     </div>
   );

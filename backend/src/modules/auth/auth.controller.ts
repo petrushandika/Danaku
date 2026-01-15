@@ -12,6 +12,7 @@ import { CurrentUser } from '@/common/decorators/current-user.decorator';
 import { Public } from '@/common/decorators/public.decorator';
 import { GoogleAuthGuard } from '@/common/guards/google-auth.guard';
 import { FacebookAuthGuard } from '@/common/guards/facebook-auth.guard';
+import { ResponseMessage } from '@/common/decorators/response-message.decorator';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -38,14 +39,10 @@ export class AuthController {
   @ApiOperation({ summary: 'Register new user' })
   @ApiResponse({ status: 201, description: 'User registered successfully' })
   @ApiResponse({ status: 400, description: 'Bad request' })
-  async register(@Body() registerDto: RegisterDto, @Res({ passthrough: true }) res) {
+  @ResponseMessage('Account created! Please check your email to verify your account.')
+  async register(@Body() registerDto: RegisterDto) {
     const result = await this.authService.register(registerDto);
-    this.setCookies(res, result.accessToken, result.refreshToken);
-    return {
-      success: true,
-      data: result.user,
-      message: 'User registered successfully',
-    };
+    return result.user;
   }
 
   @Public()
@@ -54,14 +51,11 @@ export class AuthController {
   @ApiOperation({ summary: 'Login user' })
   @ApiResponse({ status: 200, description: 'Login successful' })
   @ApiResponse({ status: 401, description: 'Invalid credentials' })
+  @ResponseMessage('Login successful')
   async login(@Body() loginDto: LoginDto, @Res({ passthrough: true }) res) {
     const result = await this.authService.login(loginDto);
     this.setCookies(res, result.accessToken, result.refreshToken);
-    return {
-      success: true,
-      data: result.user,
-      message: 'Login successful',
-    };
+    return result.user;
   }
 
   @Public()
@@ -71,10 +65,7 @@ export class AuthController {
   @ApiResponse({ status: 200, description: 'Reset link sent' })
   async forgotPassword(@Body() forgotPasswordDto: ForgotPasswordDto) {
     const result = await this.authService.forgotPassword(forgotPasswordDto);
-    return {
-      success: true,
-      message: result.message,
-    };
+    return result.message; // Just return message or null, interceptor wraps it
   }
 
   @Public()
@@ -87,7 +78,9 @@ export class AuthController {
     const result = await this.authService.resetPassword(resetPasswordDto);
     return {
       success: true,
+      statusCode: 200,
       message: result.message,
+      data: null,
     };
   }
 
@@ -99,10 +92,7 @@ export class AuthController {
   @ApiResponse({ status: 401, description: 'Invalid token' })
   async verifyEmail(@Body() verifyEmailDto: VerifyEmailDto) {
     const result = await this.authService.verifyEmail(verifyEmailDto);
-    return {
-      success: true,
-      message: result.message,
-    };
+    return result.message;
   }
 
   @Public()
@@ -114,7 +104,9 @@ export class AuthController {
     const result = await this.authService.resendVerification(resendVerificationDto.email);
     return {
       success: true,
+      statusCode: 200,
       message: result.message,
+      data: null,
     };
   }
 
@@ -157,6 +149,7 @@ export class AuthController {
   @Post('logout')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Logout user' })
+  @ResponseMessage('Logged out successfully')
   async logout(@Req() req, @Res({ passthrough: true }) res) {
     const userId = req.user?.id;
     if (userId) {
@@ -166,10 +159,7 @@ export class AuthController {
     res.clearCookie('access_token');
     res.clearCookie('refresh_token');
     
-    return {
-        success: true,
-        message: 'Logged out successfully',
-    };
+    return null;
   }
 
   @Public()
@@ -194,7 +184,9 @@ export class AuthController {
     
     return {
         success: true,
+        statusCode: 200,
         message: 'Tokens refreshed successfully',
+        data: null,
     };
   }
   @Post('change-password')
@@ -202,9 +194,6 @@ export class AuthController {
   @ApiResponse({ status: 200, description: 'Password changed successfully' })
   async changePassword(@CurrentUser() user: any, @Body() changePasswordDto: ChangePasswordDto) {
     const result = await this.authService.changePassword(user.id, changePasswordDto);
-    return {
-      success: true,
-      message: result.message,
-    };
+    return result.message;
   }
 }

@@ -3,16 +3,15 @@ import { PaymentsService } from './payments.service';
 import { JwtAuthGuard } from '@/common/guards/jwt-auth.guard';
 import { CurrentUser } from '@/common/decorators/current-user.decorator';
 import { User } from '@prisma/client';
-import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
+import { ApiTags, ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
+import { ResponseMessage } from '@/common/decorators/response-message.decorator';
 
 @ApiTags('payments')
 @Controller('payments')
 export class PaymentsController {
   constructor(private readonly paymentsService: PaymentsService) {}
 
-  @Post('initiate')
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
+  @ResponseMessage('Payment initiated successfully')
   async initiatePayment(
     @CurrentUser() user: User,
     @Body() body: { plan: string; amount: number }
@@ -21,8 +20,9 @@ export class PaymentsController {
   }
 
   @Post('notification')
+  @ApiOperation({ summary: 'Handle Midtrans payment notifications' })
+  @ResponseMessage('Notification processed successfully')
   async handleNotification(@Body() notificationData: any) {
-    // Handling Midtrans Webhook
     return this.paymentsService.handleNotification(notificationData);
   }
 }

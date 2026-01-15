@@ -1,10 +1,11 @@
-import { NestFactory } from '@nestjs/core';
+import { NestFactory, Reflector } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import { ConfigService } from '@nestjs/config';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 import { PrismaClientExceptionFilter } from './common/filters/prisma-client-exception.filter';
+import { ResponseInterceptor } from './common/interceptors/response.interceptor';
 import * as cookieParser from 'cookie-parser';
 
 async function bootstrap() {
@@ -22,6 +23,8 @@ async function bootstrap() {
   });
 
   app.useGlobalFilters(new HttpExceptionFilter(), new PrismaClientExceptionFilter());
+  
+  app.useGlobalInterceptors(new ResponseInterceptor(app.get(Reflector)));
 
   app.useGlobalPipes(
     new ValidationPipe({

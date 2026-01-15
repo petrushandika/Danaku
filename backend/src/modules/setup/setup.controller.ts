@@ -5,6 +5,7 @@ import { UpdateSetupDto } from './dto/update-setup.dto';
 import { AddItemDto } from './dto/add-item.dto';
 import { DeleteItemDto } from './dto/delete-item.dto';
 import { CurrentUser } from '@/common/decorators/current-user.decorator';
+import { ResponseMessage } from '@/common/decorators/response-message.decorator';
 
 @ApiTags('setup')
 @ApiBearerAuth()
@@ -14,12 +15,9 @@ export class SetupController {
 
   @Get()
   @ApiOperation({ summary: 'Get user setup configuration' })
+  @ResponseMessage('Setup configuration retrieved successfully')
   async getSetup(@CurrentUser() user: any) {
-    const setup = await this.setupService.getSetup(user.id);
-    return {
-      success: true,
-      data: setup,
-    };
+    return this.setupService.getSetup(user.id);
   }
 
   @Put()

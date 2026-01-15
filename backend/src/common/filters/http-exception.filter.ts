@@ -45,12 +45,12 @@ export class HttpExceptionFilter implements ExceptionFilter {
     response.status(status).json({
       success: false,
       statusCode: status,
-      message: Array.isArray(message) ? message[0] : message, // If validation error array, take first
+      message: Array.isArray(message) ? message[0] : message,
+      data: null,
       timestamp: new Date().toISOString(),
       path: request.url,
-      // Include original validation errors if available
-      ...(Array.isArray(message) && { errors: message }),
-      data: null,
+      // Include all errors if it's a validation error
+      errors: Array.isArray(message) ? message : undefined,
     });
   }
 }

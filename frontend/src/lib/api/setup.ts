@@ -126,15 +126,10 @@ export const updateSetup = async (
  * Add item to a category
  */
 export const addItem = async (
-  categoryDisplay: string,
+  category: string,
   itemName: string
 ): Promise<{ category: string; itemName: string; items: string[] }> => {
   const token = getAuthToken();
-  const category = CATEGORY_MAP[categoryDisplay];
-
-  if (!category) {
-    throw new Error(`Invalid category: ${categoryDisplay}`);
-  }
 
   const response = await fetch(`${API_BASE_URL}/setup/items`, {
     method: "POST",
@@ -150,7 +145,7 @@ export const addItem = async (
   if (!response.ok) {
     // Handle specific error cases
     if (response.status === 409) {
-      throw new Error(`"${itemName}" already exists in ${categoryDisplay}`);
+      throw new Error(`"${itemName}" already exists in this category`);
     }
     throw new Error(data.error?.message || "Failed to add item");
   }
@@ -162,15 +157,10 @@ export const addItem = async (
  * Delete item from a category
  */
 export const deleteItem = async (
-  categoryDisplay: string,
+  category: string,
   itemName: string
 ): Promise<{ category: string; itemName: string; items: string[] }> => {
   const token = getAuthToken();
-  const category = CATEGORY_MAP[categoryDisplay];
-
-  if (!category) {
-    throw new Error(`Invalid category: ${categoryDisplay}`);
-  }
 
   const response = await fetch(`${API_BASE_URL}/setup/items`, {
     method: "DELETE",
@@ -186,7 +176,7 @@ export const deleteItem = async (
   if (!response.ok) {
     // Handle specific error cases
     if (response.status === 404) {
-      throw new Error(`"${itemName}" not found in ${categoryDisplay}`);
+      throw new Error(`"${itemName}" not found in this category`);
     }
     throw new Error(data.error?.message || "Failed to delete item");
   }

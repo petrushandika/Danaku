@@ -2,6 +2,7 @@ import { Controller, Get, Query } from '@nestjs/common';
 import { ApiTags, ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
 import { ReportsService } from './reports.service';
 import { CurrentUser } from '@/common/decorators/current-user.decorator';
+import { ResponseMessage } from '@/common/decorators/response-message.decorator';
 
 @ApiTags('reports')
 @ApiBearerAuth()
@@ -10,25 +11,19 @@ export class ReportsController {
   constructor(private readonly reportsService: ReportsService) {}
 
   @Get('monthly')
+  @ResponseMessage('Monthly report retrieved successfully')
   async getMonthlyReport(
     @CurrentUser() user: any,
     @Query('year') year: number,
     @Query('month') month: number,
   ) {
-    const report = await this.reportsService.getMonthlyReport(user.id, year, month);
-    return {
-      success: true,
-      data: report,
-    };
+    return this.reportsService.getMonthlyReport(user.id, year, month);
   }
 
   @Get('summary')
   @ApiOperation({ summary: 'Get dashboard summary stats' })
+  @ResponseMessage('Dashboard summary retrieved successfully')
   async getSummary(@CurrentUser() user: any) {
-    const summary = await this.reportsService.getSummary(user.id);
-    return {
-      success: true,
-      data: summary,
-    };
+    return this.reportsService.getSummary(user.id);
   }
 }
