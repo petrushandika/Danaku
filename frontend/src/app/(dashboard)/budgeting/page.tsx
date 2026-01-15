@@ -32,64 +32,48 @@ import { toast } from "sonner";
 import { useLanguageStore, translations } from "@/store/use-language-store";
 import { cn } from "@/lib/utils";
 import { useEffect, useState } from "react";
-import { getSetup, SetupConfig } from "@/lib/api/setup";
-import {
-  getBudget,
-  createBudget,
-  updateBudget,
-  Budget,
-} from "@/lib/api/budgets";
 import { Loader2 } from "lucide-react";
-
-interface BudgetItemDisplay {
-  name: string;
-  category: string;
-  allocated: number;
-  spent: number;
-  percent: number;
-  color: string;
-  icon: any;
-  bg: string;
-}
-
+import { useSetupStore } from "@/store/use-setup-store";
+import { useBudgetStore } from "@/store/use-budget-store";
 import { getSpending } from "@/lib/api/spending";
 
 export default function BudgetingPage() {
   const { language } = useLanguageStore();
   const t = translations[language].dashboard.budgeting;
   const [mounted, setMounted] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
-  const [setup, setSetup] = useState<SetupConfig | null>(null);
-  const [currentBudget, setCurrentBudget] = useState<Budget | null>(null);
   const [selectedMonth, setSelectedMonth] = useState<string>("current");
   const [spentByItem, setSpentByItem] = useState<Record<string, number>>({});
 
+  // Global Stores
+  const { setup, fetchSetup } = useSetupStore();
+  const {
+    budget: currentBudget,
+    isLoading,
+    fetchBudget,
+    createBudget,
+    updateBudgetIncome,
+    updateBudgetAllocation,
+  } = useBudgetStore();
+
   useEffect(() => {
     setMounted(true);
-    fetchData();
+    const now = new Date();
+    const yearMonth = `${now.getFullYear()}-${(now.getMonth() + 1)
+      .toString()
+      .padStart(2, "0")}`;
+
+    fetchSetup();
+    fetchBudget(yearMonth);
+    fetchSpendingData(yearMonth);
   }, []);
 
-  const fetchData = async () => {
+  const fetchSpendingData = async (yearMonth: string) => {
     try {
-      setIsLoading(true);
-      const setupData = await getSetup();
-      setSetup(setupData);
-
-      const now = new Date();
-      const yearMonth = `${now.getFullYear()}-${(now.getMonth() + 1)
-        .toString()
-        .padStart(2, "0")}`;
-
-      const [budgetData, spendingData] = await Promise.all([
-        getBudget(yearMonth),
-        getSpending({
-          startDate: `${yearMonth}-01`,
-          endDate: `${yearMonth}-31`, // Simplified end date
-          limit: 1000,
-        }),
-      ]);
-
-      setCurrentBudget(budgetData);
+      const spendingData = await getSpending({
+        startDate: `${yearMonth}-01`,
+        endDate: `${yearMonth}-31`, // Simplified end date
+        limit: 1000,
+      });
 
       // Aggregate spending by item name (category field in Spending)
       const aggregated: Record<string, number> = {};
@@ -97,12 +81,8 @@ export default function BudgetingPage() {
         aggregated[s.category] = (aggregated[s.category] || 0) + s.amount;
       });
       setSpentByItem(aggregated);
-    } catch (error: any) {
-      toast.error("Failed to fetch data", {
-        description: error.message,
-      });
-    } finally {
-      setIsLoading(false);
+    } catch (error) {
+      console.error("Failed to fetch spending data", error);
     }
   };
 
@@ -132,14 +112,8 @@ export default function BudgetingPage() {
         initialIncome["Primary Income"] = 0;
       }
 
-      const newBudget = await createBudget({
-        yearMonth,
-        income: initialIncome,
-        expenses: {},
-        savingsAllocation: {},
-      });
+      await createBudget(yearMonth, initialIncome);
 
-      setCurrentBudget(newBudget);
       toast.success(t.toastTitle, {
         description: t.toastDesc,
       });
@@ -154,15 +128,7 @@ export default function BudgetingPage() {
     if (!currentBudget || isNaN(Number(newValue))) return;
 
     try {
-      const updatedIncome = {
-        ...currentBudget.income,
-        [source]: Number(newValue),
-      };
-
-      const updated = await updateBudget(currentBudget.yearMonth, {
-        income: updatedIncome,
-      });
-      setCurrentBudget(updated);
+      await updateBudgetIncome(source, Number(newValue));
     } catch (error: any) {
       toast.error("Failed to update income", { description: error.message });
     }
@@ -176,24 +142,7 @@ export default function BudgetingPage() {
     if (!currentBudget || isNaN(Number(amount))) return;
 
     try {
-      const amountNum = Number(amount);
-      const isSaving = category === "Savings";
-
-      const updateData: any = {};
-      if (isSaving) {
-        updateData.savingsAllocation = {
-          ...currentBudget.savingsAllocation,
-          [itemName]: amountNum,
-        };
-      } else {
-        updateData.expenses = {
-          ...currentBudget.expenses,
-          [itemName]: amountNum,
-        };
-      }
-
-      const updated = await updateBudget(currentBudget.yearMonth, updateData);
-      setCurrentBudget(updated);
+      await updateBudgetAllocation(category, itemName, Number(amount));
     } catch (error: any) {
       toast.error("Failed to update allocation", {
         description: error.message,

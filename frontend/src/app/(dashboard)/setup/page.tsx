@@ -13,7 +13,6 @@ import {
   X,
   Edit2,
   Check,
-  Trash2,
 } from "lucide-react";
 import { ResponsiveModal } from "@/components/responsive-modal";
 import { Input } from "@/components/ui/input";
@@ -27,36 +26,18 @@ import {
 } from "@/components/ui/select";
 import { toast } from "sonner";
 import { useLanguageStore, translations } from "@/store/use-language-store";
-import {
-  addItem,
-  deleteItem,
-  updateItem,
-  getSetup,
-  SetupConfig,
-  CATEGORY_DISPLAY_MAP,
-} from "@/lib/api/setup";
+import { useSetupStore } from "@/store/use-setup-store";
 import { useEffect, useState } from "react";
 import { Loader2 } from "lucide-react";
-
-type CategoryItems = {
-  [key: string]: string[];
-};
 
 export default function SetupPage() {
   const { language } = useLanguageStore();
   const t = translations[language].dashboard.setup;
   const [mounted, setMounted] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
 
-  // State for managing items in each category
-  const [categoryItems, setCategoryItems] = useState<CategoryItems>({
-    accountSummary: [],
-    incomeSources: [],
-    needs: [],
-    wants: [],
-    savings: [],
-    accountAssets: [],
-  });
+  // Use global store
+  const { setup, isLoading, fetchSetup, addItem, removeItem, updateItem } =
+    useSetupStore();
 
   // State for showing add item input
   const [showAddInput, setShowAddInput] = useState<{ [key: string]: boolean }>(
@@ -77,32 +58,9 @@ export default function SetupPage() {
 
   useEffect(() => {
     setMounted(true);
+    // Only fetch if not already loaded or simple forced refresh
     fetchSetup();
   }, []);
-
-  const fetchSetup = async () => {
-    try {
-      setIsLoading(true);
-      const data = await getSetup();
-
-      const mappedItems: CategoryItems = {
-        accountSummary: data.accountSummary,
-        incomeSources: data.incomeSources,
-        needs: data.needs,
-        wants: data.wants,
-        savings: data.savings,
-        accountAssets: data.accountAssets,
-      };
-
-      setCategoryItems(mappedItems);
-    } catch (error: any) {
-      toast.error("Failed to fetch setup", {
-        description: error.message,
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
   const handleSaveCategory = () => {
     toast.success("Category Saved", {
@@ -113,13 +71,7 @@ export default function SetupPage() {
 
   const handleRemove = async (categoryId: string, itemName: string) => {
     try {
-      const result = await deleteItem(categoryId, itemName);
-
-      setCategoryItems((prev) => ({
-        ...prev,
-        [categoryId]: result.items,
-      }));
-
+      await removeItem(categoryId, itemName);
       toast.success("Item Removed", {
         description: `${itemName} has been deleted from this category.`,
       });
@@ -141,12 +93,8 @@ export default function SetupPage() {
     }
 
     try {
-      const result = await addItem(categoryId, newItem);
-
-      setCategoryItems((prev) => ({
-        ...prev,
-        [categoryId]: result.items,
-      }));
+      // Optimistic update handled in store
+      await addItem(categoryId, newItem);
 
       // Reset input and hide
       setNewItemValue((prev) => ({ ...prev, [categoryId]: "" }));
@@ -165,22 +113,16 @@ export default function SetupPage() {
   const handleEditItem = async (categoryId: string) => {
     if (!editingItem || !editingItem.newName.trim()) return;
 
-    try {
-      const result = await updateItem(
-        categoryId,
-        editingItem.oldName,
-        editingItem.newName.trim()
-      );
+    const { oldName, newName } = editingItem;
 
-      setCategoryItems((prev) => ({
-        ...prev,
-        [categoryId]: result.items,
-      }));
+    try {
+      // Optimistic update handled in store
+      await updateItem(categoryId, oldName, newName.trim());
 
       setEditingItem(null);
 
       toast.success("Item Updated", {
-        description: `${editingItem.oldName} has been renamed to ${editingItem.newName}.`,
+        description: `${oldName} has been renamed to ${newName}.`,
       });
     } catch (error: any) {
       toast.error("Failed to update item", {
@@ -332,14 +274,15 @@ export default function SetupPage() {
       </div>
 
       <div className="grid gap-6 grid-cols-1 md:grid-cols-2 xl:grid-cols-3">
-        {isLoading ? (
+        {isLoading || !setup ? (
           <div className="col-span-full flex flex-col items-center justify-center py-20 text-slate-400">
             <Loader2 className="w-10 h-10 animate-spin mb-4 text-emerald-500" />
             <p className="font-medium">Loading your setup...</p>
           </div>
         ) : (
           setupItems.map((item) => {
-            const itemList = categoryItems[item.id] || [];
+            const itemList =
+              (setup[item.id as keyof typeof setup] as string[]) || [];
 
             return (
               <ResponsiveModal

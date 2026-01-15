@@ -14,9 +14,6 @@ import {
   Landmark,
   Briefcase,
   TrendingUp,
-  Wallet,
-  Home,
-  Landmark as BankIcon,
   Trash2,
   Edit2,
 } from "lucide-react";
@@ -34,19 +31,11 @@ import {
 import { toast } from "sonner";
 import { useLanguageStore, translations } from "@/store/use-language-store";
 import { useEffect, useState } from "react";
-
 import { useSearchStore } from "@/store/use-search-store";
 import { useMemo } from "react";
-import { getSetup, SetupConfig } from "@/lib/api/setup";
-import {
-  getAssets,
-  createAsset,
-  updateAsset,
-  deleteAsset,
-  Asset,
-  AssetsSummary,
-  AssetType,
-} from "@/lib/api/assets";
+import { useSetupStore } from "@/store/use-setup-store";
+import { useAssetsStore } from "@/store/use-assets-store";
+import { Asset, AssetType } from "@/lib/api/assets";
 import { Loader2 } from "lucide-react";
 
 export default function AssetsPage() {
@@ -54,10 +43,18 @@ export default function AssetsPage() {
   const t = translations[language].dashboard.assets;
   const { query: searchQuery } = useSearchStore();
   const [mounted, setMounted] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
-  const [setup, setSetup] = useState<SetupConfig | null>(null);
-  const [assets, setAssets] = useState<Asset[]>([]);
-  const [summary, setSummary] = useState<AssetsSummary | null>(null);
+
+  // Global Stores
+  const { setup, fetchSetup } = useSetupStore();
+  const {
+    assets,
+    summary,
+    isLoading,
+    fetchAssets,
+    addAsset,
+    updateAsset,
+    deleteAsset,
+  } = useAssetsStore();
 
   // Registration Form State
   const [formData, setFormData] = useState({
@@ -73,27 +70,9 @@ export default function AssetsPage() {
 
   useEffect(() => {
     setMounted(true);
-    fetchData();
+    fetchSetup();
+    fetchAssets();
   }, []);
-
-  const fetchData = async () => {
-    try {
-      setIsLoading(true);
-      const [setupData, assetsData] = await Promise.all([
-        getSetup(),
-        getAssets(),
-      ]);
-      setSetup(setupData);
-      setAssets([...assetsData.liquidAssets, ...assetsData.nonLiquidAssets]);
-      setSummary(assetsData.summary);
-    } catch (error: any) {
-      toast.error("Failed to fetch data", {
-        description: error.message,
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
   const filteredAssets = useMemo(() => {
     return assets.filter(
@@ -112,21 +91,14 @@ export default function AssetsPage() {
     }
 
     try {
-      const newAsset = await createAsset({
+      await addAsset({
         type: formData.type,
         description: formData.name,
         value: Number(formData.value),
         account: formData.account,
       });
 
-      setAssets((prev) => [newAsset, ...prev]);
-
-      // Refresh summary
-      const assetsData = await getAssets();
-      setSummary(assetsData.summary);
-
       resetForm();
-
       toast.success("Asset Registered", {
         description: "Successfully added new item to your wealth portfolio.",
       });
@@ -141,12 +113,7 @@ export default function AssetsPage() {
     if (isNaN(Number(newValue))) return;
 
     try {
-      const updated = await updateAsset(id, { value: Number(newValue) });
-      setAssets((prev) => prev.map((a) => (a.id === id ? updated : a)));
-
-      const assetsData = await getAssets();
-      setSummary(assetsData.summary);
-
+      await updateAsset(id, { value: Number(newValue) });
       toast.success("Asset Updated", {
         description: "Refreshed your portfolio valuation.",
       });
@@ -171,20 +138,12 @@ export default function AssetsPage() {
       return;
 
     try {
-      const updated = await updateAsset(editingAsset.id, {
+      await updateAsset(editingAsset.id, {
         description: formData.name,
         type: formData.type,
         value: Number(formData.value),
         account: formData.account,
       });
-
-      setAssets((prev) =>
-        prev.map((a) => (a.id === editingAsset.id ? updated : a))
-      );
-
-      // Refresh summary
-      const assetsData = await getAssets();
-      setSummary(assetsData.summary);
 
       setIsEditModalOpen(false);
       setEditingAsset(null);
@@ -201,11 +160,6 @@ export default function AssetsPage() {
   const handleDelete = async (id: string) => {
     try {
       await deleteAsset(id);
-      setAssets((prev) => prev.filter((a) => a.id !== id));
-
-      const assetsData = await getAssets();
-      setSummary(assetsData.summary);
-
       toast.success("Asset Removed", {
         description: "Portfolio has been adjusted.",
       });
@@ -456,6 +410,7 @@ export default function AssetsPage() {
                           onBlur={(e) =>
                             handleUpdateValue(item.id, e.target.value)
                           }
+                          className="bg-transparent border-none outline-none w-24 text-right font-bold text-slate-700 dark:text-slate-300 text-sm"
                         />
                       </div>
                     </div>

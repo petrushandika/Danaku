@@ -38,35 +38,38 @@ import {
 import { toast } from "sonner";
 import { useLanguageStore, translations } from "@/store/use-language-store";
 import { useSearchStore } from "@/store/use-search-store";
+import { useSetupStore } from "@/store/use-setup-store";
+import { useSpendingStore } from "@/store/use-spending-store";
 import { cn } from "@/lib/utils";
 import { useEffect, useState, useMemo } from "react";
-import { getSetup, SetupConfig } from "@/lib/api/setup";
-import {
-  getSpending,
-  createSpending,
-  updateSpending,
-  deleteSpending,
-  Spending,
-  SpendingFilters,
-} from "@/lib/api/spending";
+import { SetupConfig } from "@/lib/api/setup";
+import { Spending } from "@/lib/api/spending";
 import { Loader2 } from "lucide-react";
 import { format } from "date-fns";
-
-// Mock constants removed and replaced with state
 
 export default function SpendingPage() {
   const { language } = useLanguageStore();
   const t = translations[language].dashboard.spending;
+
   const {
     query: searchQuery,
     setQuery: setSearchQuery,
     clearQuery,
   } = useSearchStore();
+
   const [mounted, setMounted] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
-  const [setup, setSetup] = useState<SetupConfig | null>(null);
-  const [spending, setSpending] = useState<Spending[]>([]);
   const [filterCategory, setFilterCategory] = useState("All");
+
+  // Global Stores
+  const { setup, fetchSetup } = useSetupStore();
+  const {
+    spending,
+    isLoading,
+    fetchSpending,
+    addSpending,
+    updateSpending,
+    deleteSpending,
+  } = useSpendingStore();
 
   // Transaction Form State
   const [formData, setFormData] = useState({
@@ -83,26 +86,9 @@ export default function SpendingPage() {
 
   useEffect(() => {
     setMounted(true);
-    fetchData();
+    fetchSetup();
+    fetchSpending();
   }, []);
-
-  const fetchData = async () => {
-    try {
-      setIsLoading(true);
-      const [setupData, spendingData] = await Promise.all([
-        getSetup(),
-        getSpending(),
-      ]);
-      setSetup(setupData);
-      setSpending(spendingData.spending);
-    } catch (error: any) {
-      toast.error("Failed to fetch data", {
-        description: error.message,
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
   const filteredTransactions = useMemo(() => {
     return spending.filter((item) => {
@@ -125,16 +111,14 @@ export default function SpendingPage() {
     }
 
     try {
-      const newRecord = await createSpending({
+      await addSpending({
         description: formData.description,
         amount: Number(formData.amount),
         category: formData.category,
         date: formData.date,
       });
 
-      setSpending((prev) => [newRecord, ...prev]);
       handleReset();
-
       toast.success("Transaction Logged", {
         description: "Successfully updated your monthly spending history.",
       });
@@ -157,7 +141,6 @@ export default function SpendingPage() {
   const handleDelete = async (id: string) => {
     try {
       await deleteSpending(id);
-      setSpending((prev) => prev.filter((s) => s.id !== id));
       toast.success("Transaction Deleted", {
         description: "The record has been permanently removed.",
       });
@@ -187,17 +170,13 @@ export default function SpendingPage() {
       return;
 
     try {
-      const amountNum = Number(formData.amount);
-      const updated = await updateSpending(editingTransaction.id, {
+      await updateSpending(editingTransaction.id, {
         description: formData.description,
-        amount: amountNum,
+        amount: Number(formData.amount),
         category: formData.category,
         date: formData.date,
       });
 
-      setSpending((prev) =>
-        prev.map((s) => (s.id === editingTransaction.id ? updated : s))
-      );
       setIsEditModalOpen(false);
       setEditingTransaction(null);
       handleReset();
@@ -358,7 +337,7 @@ export default function SpendingPage() {
           </CardHeader>
           <CardContent className="p-6 md:px-10 md:pt-2 md:pb-8">
             <div className="max-h-[420px] overflow-y-auto pr-2 emerald-scrollbar space-y-4">
-              {isLoading ? (
+              {isLoading || spending === undefined ? (
                 <div className="flex flex-col items-center justify-center py-20 text-slate-400">
                   <Loader2 className="w-10 h-10 animate-spin mb-4 text-emerald-500" />
                   <p className="font-medium">Loading history...</p>
