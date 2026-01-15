@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import {
   Spending,
+  SpendingFilters, // Import this
   getSpending,
   createSpending,
   updateSpending,
@@ -12,7 +13,7 @@ interface SpendingStore {
   isLoading: boolean;
   error: string | null;
 
-  fetchSpending: () => Promise<void>;
+  fetchSpending: (filters?: SpendingFilters) => Promise<void>;
   addSpending: (data: {
     description: string;
     amount: number;
@@ -36,14 +37,16 @@ export const useSpendingStore = create<SpendingStore>((set, get) => ({
   isLoading: false,
   error: null,
 
-  fetchSpending: async () => {
+  fetchSpending: async (filters) => {
     const { spending } = get();
     // Only show loading if we have no data
     if (spending.length === 0) {
       set({ isLoading: true, error: null });
     }
     try {
-      const data = await getSpending({ limit: 1000 });
+      // Merge defaults with passed filters
+      const query = { limit: 1000, ...filters };
+      const data = await getSpending(query);
       set({ spending: data.spending, isLoading: false });
     } catch (error: any) {
       set({ error: error.message, isLoading: false });

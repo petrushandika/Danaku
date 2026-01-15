@@ -88,8 +88,24 @@ export default function SpendingPage() {
   useEffect(() => {
     setMounted(true);
     fetchSetup();
-    fetchSpending();
+    fetchSpending({ excludeIncome: true });
   }, []);
+
+  const categoryOptions = useMemo(() => {
+    if (!setup) return ["All"];
+    // Collect all expense categories (excluding Income)
+    const categories = [
+      ...setup.needs,
+      ...setup.wants,
+      ...setup.savings,
+      ...setup.accountAssets,
+    ].sort();
+
+    // Remove duplicates
+    const unique = Array.from(new Set(categories));
+
+    return ["All", ...unique];
+  }, [setup]);
 
   const filteredTransactions = useMemo(() => {
     return spending.filter((item) => {
@@ -98,33 +114,12 @@ export default function SpendingPage() {
         .includes(searchQuery.toLowerCase());
 
       if (filterCategory === "All") return matchesSearch;
-      if (!setup) return matchesSearch;
 
-      let matchesCategory = false;
-
-      switch (filterCategory) {
-        case "Income":
-          matchesCategory = setup.incomeSources.includes(item.category);
-          break;
-        case "Needs":
-          matchesCategory = setup.needs.includes(item.category);
-          break;
-        case "Wants":
-          matchesCategory = setup.wants.includes(item.category);
-          break;
-        case "Savings":
-          matchesCategory = setup.savings.includes(item.category);
-          break;
-        case "Assets":
-          matchesCategory = setup.accountAssets.includes(item.category);
-          break;
-        default:
-          matchesCategory = item.category === filterCategory;
-      }
+      const matchesCategory = item.category === filterCategory;
 
       return matchesSearch && matchesCategory;
     });
-  }, [spending, searchQuery, filterCategory, setup]);
+  }, [spending, searchQuery, filterCategory]);
 
   const handleSave = async () => {
     if (!formData.description || !formData.amount || !formData.category) {
@@ -354,17 +349,15 @@ export default function SpendingPage() {
                   className="rounded-2xl border-border bg-white dark:bg-slate-900 max-h-64 overflow-y-auto no-scrollbar min-w-(--radix-select-trigger-width)"
                   align="end"
                 >
-                  {["All", "Income", "Needs", "Wants", "Savings", "Assets"].map(
-                    (cat) => (
-                      <SelectItem
-                        key={cat}
-                        value={cat}
-                        className="cursor-pointer font-bold rounded-xl m-1 text-xs text-slate-600 dark:text-slate-400 focus:bg-emerald-50 dark:focus:bg-emerald-900/20 focus:text-emerald-600"
-                      >
-                        {cat}
-                      </SelectItem>
-                    )
-                  )}
+                  {categoryOptions.map((cat) => (
+                    <SelectItem
+                      key={cat}
+                      value={cat}
+                      className="cursor-pointer font-bold rounded-xl m-1 text-xs text-slate-600 dark:text-slate-400 focus:bg-emerald-50 dark:focus:bg-emerald-900/20 focus:text-emerald-600"
+                    >
+                      {cat}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>
@@ -379,7 +372,14 @@ export default function SpendingPage() {
               ) : filteredTransactions.length > 0 ? (
                 filteredTransactions.map((item, idx) => {
                   // Logic to determine icon and color based on category/amount
-                  const isIncome = item.amount > 0;
+                  // If it's in incomeSources -> Income (+), otherwise Expense (-)
+                  const isIncome =
+                    setup?.incomeSources?.includes(item.category) ||
+                    (item.amount > 0 &&
+                      !setup?.needs?.includes(item.category) &&
+                      !setup?.wants?.includes(item.category) &&
+                      !setup?.savings?.includes(item.category));
+
                   const colorClass = isIncome
                     ? "text-emerald-600"
                     : "text-rose-600";
@@ -412,7 +412,7 @@ export default function SpendingPage() {
                           "font-black text-sm text-right flex items-center gap-4",
                           isIncome
                             ? "text-emerald-600"
-                            : "text-slate-700 dark:text-slate-300"
+                            : "text-rose-600 dark:text-rose-400"
                         )}
                       >
                         <div className="tabular-nums">

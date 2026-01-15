@@ -25,6 +25,7 @@ export interface SpendingFilters {
   checked?: boolean;
   page?: number;
   limit?: number;
+  excludeIncome?: boolean | string;
 }
 
 export interface SpendingResponse {

@@ -75,10 +75,13 @@ export default function BudgetingPage() {
         limit: 1000,
       });
 
-      // Aggregate spending by item name (category field in Spending)
+      // Aggregate spending by item name (category field in Spending) - Treating ALL amounts as usage (magnitude)
       const aggregated: Record<string, number> = {};
       spendingData.spending.forEach((s: any) => {
-        aggregated[s.category] = (aggregated[s.category] || 0) + s.amount;
+        // User request: "mau minus atau plus ... berarti pengeluaran"
+        // Treat both positive and negative amounts as expenditure magnitude
+        aggregated[s.category] =
+          (aggregated[s.category] || 0) + Math.abs(s.amount);
       });
       setSpentByItem(aggregated);
     } catch (error) {
@@ -354,6 +357,11 @@ export default function BudgetingPage() {
                                 onBlur={(e) =>
                                   handleUpdateIncome(source, e.target.value)
                                 }
+                                onKeyDown={(e) => {
+                                  if (e.key === "Enter") {
+                                    e.currentTarget.blur();
+                                  }
+                                }}
                                 className="bg-transparent border-none focus:ring-0 text-sm font-black text-slate-800 dark:text-white w-full tabular-nums outline-none p-0 h-full"
                               />
                             </div>
@@ -427,7 +435,7 @@ export default function BudgetingPage() {
                             (cat.title === "Savings"
                               ? currentBudget.savingsAllocation?.[itemName]
                               : currentBudget.expenses?.[itemName]) || 0;
-                          const spent = spentByItem[itemName] || 0;
+                          const spent = Math.abs(spentByItem[itemName] || 0);
                           const percent =
                             allocated > 0 ? (spent / allocated) * 100 : 0;
 
@@ -436,8 +444,8 @@ export default function BudgetingPage() {
                               key={itemName}
                               className="group py-3 px-5 rounded-3xl border border-border bg-white dark:bg-slate-900 hover:border-slate-200 dark:hover:border-slate-700 hover:shadow-sm transition-all"
                             >
-                              <div className="flex justify-between items-center mb-2">
-                                <div className="flex items-center gap-3">
+                              <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-3 sm:mb-2 gap-3 sm:gap-0">
+                                <div className="flex items-center gap-3 w-full sm:w-auto">
                                   <div
                                     className={cn(
                                       "w-8 h-8 rounded-lg flex items-center justify-center shrink-0",
@@ -451,15 +459,15 @@ export default function BudgetingPage() {
                                       )}
                                     />
                                   </div>
-                                  <span className="font-bold text-slate-700 dark:text-slate-200 text-sm whitespace-nowrap overflow-hidden text-ellipsis max-w-[150px]">
+                                  <span className="font-bold text-slate-700 dark:text-slate-200 text-sm whitespace-nowrap overflow-hidden text-ellipsis flex-1 sm:flex-none sm:max-w-[150px]">
                                     {itemName}
                                   </span>
                                 </div>
-                                <div className="flex items-center gap-2">
+                                <div className="flex items-center justify-between sm:justify-end gap-2 w-full sm:w-auto">
                                   <span className="text-[10px] font-black text-slate-400 tabular-nums">
                                     Rp {spent.toLocaleString()} /
                                   </span>
-                                  <div className="flex items-center bg-slate-50 dark:bg-slate-800 rounded-xl px-3 h-10 border border-slate-100 dark:border-slate-800 group-hover:border-slate-200 dark:group-hover:border-slate-700 transition-all w-32 sm:w-40">
+                                  <div className="flex items-center bg-slate-50 dark:bg-slate-800 rounded-xl px-3 h-10 border border-slate-100 dark:border-slate-800 group-hover:border-slate-200 dark:group-hover:border-slate-700 transition-all w-full sm:w-40 flex-1 sm:flex-none">
                                     <span className="text-xs font-black text-slate-500 mr-1">
                                       Rp
                                     </span>
@@ -473,6 +481,11 @@ export default function BudgetingPage() {
                                           e.target.value
                                         )
                                       }
+                                      onKeyDown={(e) => {
+                                        if (e.key === "Enter") {
+                                          e.currentTarget.blur();
+                                        }
+                                      }}
                                       className="bg-transparent border-none focus:ring-0 text-sm font-black text-slate-700 dark:text-slate-200 w-full tabular-nums text-right outline-none p-0 h-full"
                                     />
                                   </div>

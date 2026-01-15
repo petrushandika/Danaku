@@ -13,6 +13,7 @@ import {
   X,
   Edit2,
   Check,
+  Trash2,
 } from "lucide-react";
 import { ResponsiveModal } from "@/components/responsive-modal";
 import { Input } from "@/components/ui/input";
@@ -456,7 +457,7 @@ export default function SetupPage() {
                                   size="sm"
                                   className="h-8 w-8 text-rose-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/30 rounded-lg p-0"
                                 >
-                                  <X className="w-4 h-4" />
+                                  <Trash2 className="w-4 h-4" />
                                 </Button>
                               </div>
                             </>

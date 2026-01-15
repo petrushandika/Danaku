@@ -102,11 +102,18 @@ export default function DashboardPage() {
     date: format(new Date(), "yyyy-MM-dd"),
   });
 
+  const [rawBudgets, setRawBudgets] = useState<any[]>([]);
+
   useEffect(() => {
     setMounted(true);
     fetchSetup();
-    fetchDashboardData();
   }, []);
+
+  useEffect(() => {
+    if (setup) {
+      fetchDashboardData();
+    }
+  }, [setup]);
 
   const categoryOptions = useMemo(() => {
     if (!setup) return [];
@@ -127,6 +134,34 @@ export default function DashboardPage() {
     ];
   }, [setup]);
 
+  // ... (processChartHistory remains same, keeping it outside or here? It was defined before fetchDashboardData in last edit.
+  // Wait, I am replacing a block that includes fetchDashboardData. I need to be careful not to delete processChartHistory if I don't include it.
+  // In previous step (2112), processChartHistory is BEFORE fetchDashboardData.
+  // The block I am targeting starts at line 107 (useEffect).
+  // I will include processChartHistory in the replacement to be safe and ensure order.
+
+  const processChartHistory = (budgets: any[], range: string) => {
+    // Sort budgets by date
+    const sorted = [...budgets].sort((a, b) =>
+      a.yearMonth.localeCompare(b.yearMonth)
+    );
+
+    let filtered = sorted;
+    if (range === "1m") {
+      filtered = sorted.slice(-1);
+    } else if (range === "6m") {
+      filtered = sorted.slice(-6);
+    } else if (range === "12m") {
+      filtered = sorted.slice(-12);
+    }
+
+    return filtered.map((b) => ({
+      month: format(new Date(b.yearMonth + "-01"), "MMM yy"),
+      income: b.summary?.totalIncome || 0,
+      expenses: b.summary?.totalExpenses || 0,
+    }));
+  };
+
   const fetchDashboardData = async () => {
     try {
       setIsLoading(true);
@@ -134,56 +169,68 @@ export default function DashboardPage() {
       const currentMonthStr = format(now, "yyyy-MM");
 
       // Fetch concurrent data
-      const [allBudgets, assetsRes, spendingRes] = await Promise.all([
-        getBudgets(), // To build chart history
-        getAssets(),
-        getSpending({ limit: 10 }), // Get latest 10 transactions
-      ]);
+      // We fetch 'currentMonthTransactions' specifically for accurate summary stats
+      const [allBudgets, assetsRes, spendingRes, currentMonthTransactions] =
+        await Promise.all([
+          getBudgets(), // To build chart history
+          getAssets(),
+          getSpending({ limit: 10, excludeIncome: true }), // Get latest 10 transactions (expenses only)
+          getSpending({
+            startDate: `${currentMonthStr}-01`,
+            endDate: `${currentMonthStr}-31`,
+            limit: 2000,
+            excludeIncome: true, // Only fetch expenses for 'Actual Spending' calc
+          }),
+        ]);
 
-      // 1. Process Chart Data (Last 6 Months)
-      const processedChartData = processChartHistory(allBudgets);
+      setRawBudgets(allBudgets); // Store for filtering
+
+      // 1. Process Chart Data (Default 6 Months)
+      const processedChartData = processChartHistory(allBudgets, "6m");
       setChartData(processedChartData);
 
       // 2. Process Summary Stats
-      // Find current month budget for Income projection
-      const currentBudget = allBudgets.find(
+      const currentMonthBudget = allBudgets.find(
         (b: any) => b.yearMonth === currentMonthStr
       );
-      const totalIncome = currentBudget?.summary?.totalIncome || 0;
+      const budgetedIncome = currentMonthBudget?.summary?.totalIncome || 0;
 
-      // Calculate Income Trend (vs Previous Month Budget)
-      const prevMonth = new Date();
-      prevMonth.setMonth(prevMonth.getMonth() - 1);
-      const prevMonthStr = format(prevMonth, "yyyy-MM");
-      const prevBudget = allBudgets.find(
-        (b: any) => b.yearMonth === prevMonthStr
-      );
-      const prevIncome = prevBudget?.summary?.totalIncome || 0;
-      const incomeTrendVal =
-        prevIncome > 0 ? ((totalIncome - prevIncome) / prevIncome) * 100 : 0;
-      const incomeTrend = `${
-        incomeTrendVal > 0 ? "+" : ""
-      }${incomeTrendVal.toFixed(0)}%`;
+      // Calculate real income and spending from actual transactions
+      let actualIncome = 0;
+      let actualSpending = 0;
 
-      // Calculate real spending for this month
-      const currentMonthSpendingRes = await getSpending({
-        startDate: `${currentMonthStr}-01`,
-        endDate: `${currentMonthStr}-31`,
-        limit: 1000,
-      });
-      const totalSpendingReal = currentMonthSpendingRes.spending.reduce(
-        (acc: number, curr: any) => acc + Number(curr.amount),
-        0
-      );
+      // Logic: Income based on Setup Config
+      const incomeSources = setup?.incomeSources || [];
 
-      const totalSavings = assetsRes.liquidAssets.reduce(
-        (acc: number, curr: any) => acc + Number(curr.value),
-        0
+      if (currentMonthTransactions && currentMonthTransactions.spending) {
+        currentMonthTransactions.spending.forEach((s: any) => {
+          if (incomeSources.includes(s.category)) {
+            actualIncome += Math.abs(s.amount);
+          } else {
+            actualSpending += Math.abs(s.amount);
+          }
+        });
+      }
+
+      // Calculate trend
+      const previousMonthBudget = allBudgets.find(
+        (b: any) =>
+          b.yearMonth ===
+          format(new Date(now.setMonth(now.getMonth() - 1)), "yyyy-MM")
       );
+      const previousMonthIncome =
+        previousMonthBudget?.summary?.totalIncome || 0;
+      const incomeTrend =
+        previousMonthIncome === 0
+          ? "+0%"
+          : `${(
+              ((budgetedIncome - previousMonthIncome) / previousMonthIncome) *
+              100
+            ).toFixed(0)}%`;
 
       setSummaryStats({
-        income: Number(totalIncome),
-        spending: totalSpendingReal,
+        income: Number(budgetedIncome), // User requested Projected Income to be shown
+        spending: actualSpending, // Keep Spending as Actual
         savings: Number(assetsRes.summary.totalLiquidAssets),
         netWorth: Number(assetsRes.summary.totalAssets),
         incomeTrend: incomeTrend,
@@ -200,25 +247,6 @@ export default function DashboardPage() {
     } finally {
       setIsLoading(false);
     }
-  };
-
-  const processChartHistory = (budgets: any[]) => {
-    // Sort budgets by date
-    const sorted = [...budgets].sort((a, b) =>
-      a.yearMonth.localeCompare(b.yearMonth)
-    );
-    // Take last 6
-    const last6 = sorted.slice(-6);
-
-    // Map to chart format
-    // Logic: Income = budget.totalIncome, Expenses = budget.totalExpenses (projected) or needs update from real spending?
-    // Review: Dashboard usually shows Budget vs Actual or Income vs Expense history.
-    // Let's us Budgeted Income vs Budgeted Expense for simplicity if real spending history isn't easily aggregated without multiple API calls
-    return last6.map((b) => ({
-      month: format(new Date(b.yearMonth + "-01"), "MMM"),
-      income: b.summary?.totalIncome || 0,
-      expenses: b.summary?.totalExpenses || 0, // Budgeted expenses
-    }));
   };
 
   const handleQuickAdd = async () => {
@@ -487,13 +515,40 @@ export default function DashboardPage() {
                   {t.cashflowDesc}
                 </CardDescription>
               </div>
-              <Tabs defaultValue="6m" className="w-full sm:w-fit">
+              <Tabs
+                defaultValue="6m"
+                className="w-full sm:w-fit"
+                onValueChange={(val) => {
+                  setChartData(
+                    processChartHistory(
+                      // We need to fetch all budgets again or store them
+                      // Ideally we should have stored 'allBudgets' in state or calling logic
+                      // For now, let's trigger a refetch or pass data if we refactor.
+                      // BETTER: Store raw budget list in state.
+                      rawBudgets,
+                      val
+                    )
+                  );
+                }}
+              >
                 <TabsList className="w-full sm:w-fit rounded-full bg-slate-100 dark:bg-slate-800 p-1 border border-slate-200 dark:border-slate-700 transition-all duration-300">
+                  <TabsTrigger
+                    value="1m"
+                    className="flex-1 sm:flex-none rounded-full px-4 text-xs font-bold data-[state=active]:bg-white dark:data-[state=active]:bg-slate-900 data-[state=active]:shadow-sm transition-all duration-300"
+                  >
+                    1M
+                  </TabsTrigger>
                   <TabsTrigger
                     value="6m"
                     className="flex-1 sm:flex-none rounded-full px-4 text-xs font-bold data-[state=active]:bg-white dark:data-[state=active]:bg-slate-900 data-[state=active]:shadow-sm transition-all duration-300"
                   >
                     6M
+                  </TabsTrigger>
+                  <TabsTrigger
+                    value="12m"
+                    className="flex-1 sm:flex-none rounded-full px-4 text-xs font-bold data-[state=active]:bg-white dark:data-[state=active]:bg-slate-900 data-[state=active]:shadow-sm transition-all duration-300"
+                  >
+                    12M
                   </TabsTrigger>
                 </TabsList>
               </Tabs>
@@ -571,7 +626,14 @@ export default function DashboardPage() {
               </div>
             ) : filteredActivity.length > 0 ? (
               filteredActivity.map((item, idx) => {
-                const isIncome = item.amount > 0;
+                // Determine logic based on Setup configuration
+                // If it's in incomeSources -> Income (+), otherwise Expense (-)
+                const isIncome =
+                  setup?.incomeSources?.includes(item.category) ||
+                  (item.amount > 0 &&
+                    !setup?.needs?.includes(item.category) &&
+                    !setup?.wants?.includes(item.category) &&
+                    !setup?.savings?.includes(item.category));
 
                 return (
                   <div
@@ -598,10 +660,11 @@ export default function DashboardPage() {
                         "font-black text-sm text-right transition-colors duration-300",
                         isIncome
                           ? "text-emerald-600"
-                          : "text-slate-700 dark:text-slate-300"
+                          : "text-rose-600 dark:text-rose-400"
                       )}
                     >
-                      {isIncome ? "+" : "-"} {fmt(Math.abs(item.amount))}
+                      {isIncome ? "+" : "-"} Rp{" "}
+                      {Math.abs(item.amount).toLocaleString()}
                     </div>
                   </div>
                 );

@@ -27,6 +27,37 @@ export class SpendingService {
       where.checked = filters.checked === 'true';
     }
 
+    // New Logic: Exclude Income if requested
+    if (filters?.excludeIncome === 'true') {
+      const setup = await this.prisma.setupConfig.findUnique({
+        where: { userId },
+        select: { incomeSources: true },
+      });
+
+      if (setup && setup.incomeSources.length > 0) {
+        // If a specific category is requested, we strictly check overlap?
+        // Actually, simpler logic: Add 'notIn' condition.
+        // If 'where.category' is set (string), it overrides or conflicts?
+        // Prisma 'where' object structure:
+        // If where.category is scalar string, we can't add NOT IN easily without changing structure to AND.
+        // Let's check if 'category' filter is present.
+        if (where.category) {
+          // If the specifically requested category IS an income source, result should be empty.
+          if (setup.incomeSources.includes(where.category)) {
+            return {
+              spending: [],
+              pagination: { page, limit, total: 0, totalPages: 0 },
+            };
+          }
+        } else {
+          // General exclusion
+          where.category = {
+            notIn: setup.incomeSources,
+          };
+        }
+      }
+    }
+
     const spending = await this.prisma.spending.findMany({
       where,
       orderBy: { date: 'desc' },
