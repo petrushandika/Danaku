@@ -589,12 +589,7 @@ function TransactionForm({
                   value={opt.value}
                   className="cursor-pointer"
                 >
-                  <span className="flex items-center gap-2">
-                    <span className="text-[10px] uppercase font-black px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-500">
-                      {opt.type}
-                    </span>
-                    {opt.label}
-                  </span>
+                  <span className="flex items-center gap-2">{opt.label}</span>
                 </SelectItem>
               ))}
             </SelectContent>

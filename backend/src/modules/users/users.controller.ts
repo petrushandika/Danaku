@@ -1,5 +1,23 @@
-import { Controller, Get, Put, Post, Body, UseInterceptors, UploadedFile, ParseFilePipe, MaxFileSizeValidator, FileTypeValidator } from '@nestjs/common';
-import { ApiTags, ApiBearerAuth, ApiOperation, ApiConsumes, ApiBody, ApiResponse } from '@nestjs/swagger';
+import {
+  Controller,
+  Get,
+  Put,
+  Post,
+  Body,
+  UseInterceptors,
+  UploadedFile,
+  ParseFilePipe,
+  MaxFileSizeValidator,
+  FileTypeValidator,
+} from '@nestjs/common';
+import {
+  ApiTags,
+  ApiBearerAuth,
+  ApiOperation,
+  ApiConsumes,
+  ApiBody,
+  ApiResponse,
+} from '@nestjs/swagger';
 import { UsersService } from './users.service';
 import { CurrentUser } from '@/common/decorators/current-user.decorator';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -35,7 +53,7 @@ export class UsersController {
       new ParseFilePipe({
         validators: [
           new MaxFileSizeValidator({ maxSize: 5242880 }), // 5MB
-          new FileTypeValidator({ fileType: 'image/(jpeg|png|webp)' }),
+          new FileTypeValidator({ fileType: /image\/(jpeg|jpg|png|webp)/ }),
         ],
       }),
     )
