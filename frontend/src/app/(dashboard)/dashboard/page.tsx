@@ -151,17 +151,26 @@ export default function DashboardPage() {
   // I will include processChartHistory in the replacement to be safe and ensure order.
 
   const processChartHistory = (budgets: any[], range: string) => {
-    // Sort budgets by date
+    // Sort budgets by yearMonth ASC
     const sorted = [...budgets].sort((a, b) =>
       a.yearMonth.localeCompare(b.yearMonth)
     );
 
+    const now = new Date();
+    const currentMonthStr = format(now, "yyyy-MM");
+
+    // Ensure the current month is always included if missing from sorted list
+    // (Optional: depending on if backend returns partial months)
+
     let filtered = sorted;
     if (range === "1m") {
+      // Show only the latest available month
       filtered = sorted.slice(-1);
     } else if (range === "6m") {
+      // Last 6 months
       filtered = sorted.slice(-6);
     } else if (range === "12m") {
+      // Last 12 months
       filtered = sorted.slice(-12);
     }
 
@@ -169,6 +178,7 @@ export default function DashboardPage() {
       month: format(new Date(b.yearMonth + "-01"), "MMM yy"),
       income: b.summary?.totalIncome || 0,
       expenses: b.summary?.totalExpenses || 0,
+      raw: b.yearMonth,
     }));
   };
 
@@ -358,6 +368,14 @@ export default function DashboardPage() {
       toast.error("Export failed");
     }
   };
+
+  const [chartRange, setChartRange] = useState("6m");
+
+  useEffect(() => {
+    if (rawBudgets.length > 0) {
+      setChartData(processChartHistory(rawBudgets, chartRange));
+    }
+  }, [rawBudgets, chartRange]);
 
   if (!mounted) return null;
 
@@ -576,20 +594,9 @@ export default function DashboardPage() {
                 </CardDescription>
               </div>
               <Tabs
-                defaultValue="6m"
+                value={chartRange}
+                onValueChange={setChartRange}
                 className="w-full sm:w-fit"
-                onValueChange={(val) => {
-                  setChartData(
-                    processChartHistory(
-                      // We need to fetch all budgets again or store them
-                      // Ideally we should have stored 'allBudgets' in state or calling logic
-                      // For now, let's trigger a refetch or pass data if we refactor.
-                      // BETTER: Store raw budget list in state.
-                      rawBudgets,
-                      val
-                    )
-                  );
-                }}
               >
                 <TabsList className="w-full sm:w-fit rounded-full bg-slate-100 dark:bg-slate-800 p-1 border border-slate-200 dark:border-slate-700 transition-all duration-300">
                   <TabsTrigger
@@ -679,7 +686,7 @@ export default function DashboardPage() {
               </Link>
             </div>
           </CardHeader>
-          <CardContent className="p-6 md:px-10 md:pt-2 md:pb-8 space-y-4">
+          <CardContent className="p-6 md:px-10 md:pt-4 md:pb-8 space-y-4">
             {isLoading ? (
               <div className="h-40 flex items-center justify-center">
                 <Loader2 className="h-8 w-8 animate-spin text-slate-400" />

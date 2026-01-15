@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { PrismaService } from '@/config/prisma.service';
 import { ConfigService } from '@nestjs/config';
 import { User } from '@prisma/client';
+import { NotificationsService } from '../notifications/notifications.service';
 
 @Injectable()
 export class PaymentsService {
@@ -13,6 +14,7 @@ export class PaymentsService {
   constructor(
     private prisma: PrismaService,
     private configService: ConfigService,
+    private notificationsService: NotificationsService,
   ) {
     this.midtransServerKey = this.configService.get<string>('MIDTRANS_SERVER_KEY');
     this.midtransClientKey = this.configService.get<string>('MIDTRANS_CLIENT_KEY');
@@ -163,11 +165,30 @@ export class PaymentsService {
     if (newStatus === 'SUCCESS' && payment.status !== 'SUCCESS') {
       // Activate Subscription
       await this.activateSubscription(payment.userId, (payment.metadata as any).plan);
+
+      // Notify User via Socket
+      await this.notificationsService.create(
+        payment.userId,
+        'Payment Success!',
+        `Your payment for ${(payment.metadata as any).plan} has been confirmed. Enjoy your premium features!`,
+        'PAYMENT',
+      );
+    } else if (newStatus === 'FAILED' && payment.status === 'PENDING') {
+      // Notify User via Socket
+      await this.notificationsService.create(
+        payment.userId,
+        'Payment failed',
+        `Your payment transaction failed. Please try again or use another payment method.`,
+        'ERROR',
+      );
     }
 
     await this.prisma.payment.update({
       where: { id: payment.id },
-      data: { status: newStatus, paidAt: newStatus === 'SUCCESS' ? new Date() : null },
+      data: {
+        status: newStatus,
+        paidAt: newStatus === 'SUCCESS' ? new Date() : null,
+      },
     });
 
     return { status: 'ok' };

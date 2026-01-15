@@ -1,11 +1,17 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, forwardRef, Inject } from '@nestjs/common';
 import { PrismaService } from '@/config/prisma.service';
 import { CreateSpendingDto } from './dto/create-spending.dto';
 import { UpdateSpendingDto } from './dto/update-spending.dto';
+import { NotificationsService } from '../notifications/notifications.service';
+import { BudgetsService } from '../budgets/budgets.service';
 
 @Injectable()
 export class SpendingService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private notificationsService: NotificationsService,
+    private budgetsService: BudgetsService,
+  ) {}
 
   async findAll(userId: string, filters?: any) {
     const where: any = { userId };
@@ -35,14 +41,7 @@ export class SpendingService {
       });
 
       if (setup && setup.incomeSources.length > 0) {
-        // If a specific category is requested, we strictly check overlap?
-        // Actually, simpler logic: Add 'notIn' condition.
-        // If 'where.category' is set (string), it overrides or conflicts?
-        // Prisma 'where' object structure:
-        // If where.category is scalar string, we can't add NOT IN easily without changing structure to AND.
-        // Let's check if 'category' filter is present.
         if (where.category) {
-          // If the specifically requested category IS an income source, result should be empty.
           if (setup.incomeSources.includes(where.category)) {
             return {
               spending: [],
@@ -50,7 +49,6 @@ export class SpendingService {
             };
           }
         } else {
-          // General exclusion
           where.category = {
             notIn: setup.incomeSources,
           };
@@ -79,13 +77,18 @@ export class SpendingService {
   }
 
   async create(userId: string, data: CreateSpendingDto) {
-    return (this.prisma.spending as any).create({
+    const spending = await (this.prisma.spending as any).create({
       data: {
         userId,
         ...data,
         date: data.date ? new Date(data.date) : new Date(),
       },
     });
+
+    // Check budget alerts asynchronously
+    this.checkBudgetAlerts(userId, spending.category, spending.date);
+
+    return spending;
   }
 
   async update(id: string, userId: string, data: UpdateSpendingDto) {
@@ -94,15 +97,103 @@ export class SpendingService {
       updateData.date = new Date(data.date);
     }
 
-    return this.prisma.spending.update({
+    const spending = await this.prisma.spending.update({
       where: { id, userId },
       data: updateData,
     });
+
+    // Check budget alerts asynchronously
+    this.checkBudgetAlerts(userId, spending.category, spending.date);
+
+    return spending;
   }
 
   async remove(id: string, userId: string) {
     return this.prisma.spending.delete({
       where: { id, userId },
     });
+  }
+
+  private async checkBudgetAlerts(userId: string, category: string, date: Date) {
+    try {
+      const year = date.getFullYear();
+      const month = date.getMonth() + 1;
+      const yearMonth = `${year}-${month.toString().padStart(2, '0')}`;
+
+      // 1. Get Setup Config for Income Sources
+      const setup = await this.prisma.setupConfig.findUnique({
+        where: { userId },
+        select: { incomeSources: true },
+      });
+
+      const incomeSources = setup?.incomeSources || [];
+      const isIncome = incomeSources.includes(category);
+
+      // If it's income, we might want to check if it's a good news?
+      // But the user asked for Spending > Income alert.
+
+      // 2. Get the Budget for this month
+      const budget = await this.budgetsService.findOne(userId, yearMonth);
+      if (!budget) return;
+
+      const startDate = new Date(year, month - 1, 1);
+      const endDate = new Date(year, month, 0, 23, 59, 59);
+
+      // 3. Calculate Total Expenses for this month
+      const allSpending = await this.prisma.spending.findMany({
+        where: {
+          userId,
+          date: {
+            gte: startDate,
+            lte: endDate,
+          },
+          category: {
+            notIn: incomeSources,
+          },
+        },
+      });
+
+      const totalExpenses = allSpending.reduce((sum, s) => sum + Number(s.amount), 0);
+      const totalIncomeBudgeted = budget.summary.totalIncome;
+
+      // Alert 1: Expenses > Income
+      if (totalExpenses > totalIncomeBudgeted) {
+        await this.notificationsService.create(
+          userId,
+          'Overspent!',
+          `Your total expenses (Rp ${totalExpenses.toLocaleString()}) have exceeded your total income (Rp ${totalIncomeBudgeted.toLocaleString()}) this month.`,
+          'WARNING',
+        );
+      }
+
+      // Alert 2: Category Limit & Warning
+      if (!isIncome) {
+        const categorySpending = allSpending
+          .filter((s) => s.category === category)
+          .reduce((sum, s) => sum + Number(s.amount), 0);
+
+        const categoryBudget = (budget.expenses as any)[category] || 0;
+
+        if (categoryBudget > 0) {
+          if (categorySpending > categoryBudget) {
+            await this.notificationsService.create(
+              userId,
+              'Budget Limit Exceeded',
+              `You have spent Rp ${categorySpending.toLocaleString()} in ${category}, which exceeds your budget of Rp ${categoryBudget.toLocaleString()}.`,
+              'WARNING',
+            );
+          } else if (categorySpending >= categoryBudget * 0.9) {
+            await this.notificationsService.create(
+              userId,
+              'Budget Warning',
+              `You have reached ${Math.round((categorySpending / categoryBudget) * 100)}% of your budget for ${category}. Current spending: Rp ${categorySpending.toLocaleString()} / Rp ${categoryBudget.toLocaleString()}.`,
+              'WARNING',
+            );
+          }
+        }
+      }
+    } catch (error) {
+      console.error('Error checking budget alerts:', error);
+    }
   }
 }
