@@ -14,7 +14,7 @@ export class UsersService {
   async updateAvatar(userId: string, file: Express.Multer.File) {
     try {
       const result = await this.cloudinary.uploadFile(file);
-      
+
       if ('url' in result) {
         return this.prisma.user.update({
           where: { id: userId },
@@ -25,7 +25,7 @@ export class UsersService {
           },
         });
       }
-      
+
       throw new BadRequestException('Upload to Cloudinary failed');
     } catch (error) {
       throw new BadRequestException(error.message || 'Failed to upload profile picture');
@@ -47,6 +47,29 @@ export class UsersService {
         gender: true,
         createdAt: true,
         updatedAt: true,
+        userAchievements: {
+          include: {
+            achievement: true,
+          },
+        },
+        members: {
+          include: {
+            group: {
+              include: {
+                members: {
+                  include: {
+                    user: {
+                      select: {
+                        name: true,
+                        avatarUrl: true,
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
       },
     });
   }
@@ -56,7 +79,7 @@ export class UsersService {
     if (data.birthDate) {
       updateData.birthDate = new Date(data.birthDate);
     }
-    
+
     return this.prisma.user.update({
       where: { id: userId },
       data: updateData,
@@ -94,7 +117,7 @@ export class UsersService {
     return this.prisma.userSettings.upsert({
       where: { userId },
       update: data,
-      create: { userId, ...data as any },
+      create: { userId, ...(data as any) },
     });
   }
 }

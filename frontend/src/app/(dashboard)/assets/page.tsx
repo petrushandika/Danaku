@@ -297,9 +297,10 @@ export default function AssetsPage() {
                   id="asset-value"
                   placeholder="0"
                   value={formData.value}
-                  onChange={(e) =>
-                    setFormData({ ...formData, value: e.target.value })
-                  }
+                  onChange={(e) => {
+                    const value = e.target.value.replace(/[^0-9]/g, "");
+                    setFormData({ ...formData, value: value });
+                  }}
                   className="rounded-2xl border-border dark:bg-slate-900 focus-visible:ring-emerald-500 pl-11 h-11 transition-all duration-300"
                 />
               </div>
@@ -405,8 +406,12 @@ export default function AssetsPage() {
                           Rp
                         </span>
                         <input
-                          type="number"
+                          type="text"
                           defaultValue={item.value}
+                          onInput={(e) => {
+                            e.currentTarget.value =
+                              e.currentTarget.value.replace(/[^0-9]/g, "");
+                          }}
                           onBlur={(e) =>
                             handleUpdateValue(item.id, e.target.value)
                           }
@@ -547,9 +552,10 @@ export default function AssetsPage() {
                 id="edit-asset-value"
                 placeholder="0"
                 value={formData.value}
-                onChange={(e) =>
-                  setFormData({ ...formData, value: e.target.value })
-                }
+                onChange={(e) => {
+                  const value = e.target.value.replace(/[^0-9]/g, "");
+                  setFormData({ ...formData, value: value });
+                }}
                 className="rounded-2xl border-border dark:bg-slate-900 focus-visible:ring-emerald-500 pl-11 h-11 transition-all"
               />
             </div>

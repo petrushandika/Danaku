@@ -560,9 +560,10 @@ function TransactionForm({
               id="amount"
               placeholder="0"
               value={formData.amount}
-              onChange={(e) =>
-                setFormData({ ...formData, amount: e.target.value })
-              }
+              onChange={(e) => {
+                const value = e.target.value.replace(/[^0-9]/g, "");
+                setFormData({ ...formData, amount: value });
+              }}
               className="rounded-2xl border-border dark:bg-slate-900 focus-visible:ring-emerald-500 pl-11 h-11"
             />
           </div>
