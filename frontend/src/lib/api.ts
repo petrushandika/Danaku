@@ -16,7 +16,12 @@ api.interceptors.response.use(
     if (error.response?.status === 401) {
       if (typeof window !== "undefined") {
         localStorage.removeItem("token");
-        window.location.href = "/auth/login";
+
+        // Only redirect to login if NOT on a public page or auth page
+        const pathname = window.location.pathname;
+        if (pathname !== "/" && !pathname.startsWith("/auth/")) {
+          window.location.href = "/auth/login";
+        }
       }
     }
     return Promise.reject(error);

@@ -312,10 +312,51 @@ export default function DashboardPage() {
     );
   }, [searchQuery, recentActivity]);
 
-  const handleExport = () => {
-    toast.success(t.toastTitle, {
-      description: t.toastDesc,
-    });
+  const handleExport = async () => {
+    try {
+      const toastId = toast.loading("Exporting data...");
+
+      const { spending: allStats } = await getSpending({ limit: 1000 });
+
+      if (!allStats || allStats.length === 0) {
+        toast.dismiss(toastId);
+        toast.error("No data to export");
+        return;
+      }
+
+      // Compute CSV
+      const headers = ["Date", "Description", "Category", "Amount"];
+      const rows = allStats.map((s) => [
+        format(new Date(s.date), "yyyy-MM-dd"),
+        `"${s.description.replace(/"/g, '""')}"`,
+        s.category,
+        s.amount.toString(),
+      ]);
+
+      const csvContent = [
+        headers.join(","),
+        ...rows.map((r) => r.join(",")),
+      ].join("\n");
+
+      // Download
+      const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.setAttribute("href", url);
+      link.setAttribute(
+        "download",
+        `financial_export_${format(new Date(), "yyyyMMdd")}.csv`
+      );
+      link.style.visibility = "hidden";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      toast.dismiss(toastId);
+      toast.success("Download started");
+    } catch (e) {
+      toast.error("Export failed");
+    }
   };
 
   if (!mounted) return null;

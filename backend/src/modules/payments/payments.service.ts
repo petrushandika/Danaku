@@ -83,6 +83,8 @@ export class PaymentsService {
         token: data.token,
         redirect_url: data.redirect_url,
         orderId,
+        clientKey: this.midtransClientKey,
+        isProduction: this.configService.get<string>('MIDTRANS_IS_PRODUCTION') === 'true',
       };
     } catch (error) {
       this.logger.error(`Failed to create Midtrans transaction: ${error.message}`);
@@ -93,7 +95,10 @@ export class PaymentsService {
   async checkTransactionStatus(orderId: string) {
     try {
       const authString = Buffer.from(this.midtransServerKey + ':').toString('base64');
-      const baseUrl = this.midtransApiUrl.replace('/snap/v1/transactions', '/v2');
+      const isProduction = this.configService.get<string>('MIDTRANS_IS_PRODUCTION') === 'true';
+      const baseUrl = isProduction
+        ? 'https://api.midtrans.com/v2'
+        : 'https://api.sandbox.midtrans.com/v2';
       const url = `${baseUrl}/${orderId}/status`;
 
       const response = await fetch(url, {

@@ -47,6 +47,7 @@ import { Spending } from "@/lib/api/spending";
 import { Loader2 } from "lucide-react";
 import { format } from "date-fns";
 import { TransactionIcon } from "@/components/transaction-icon";
+import { transactionSchema } from "@/lib/schemas";
 
 export default function SpendingPage() {
   const { language } = useLanguageStore();
@@ -122,9 +123,10 @@ export default function SpendingPage() {
   }, [spending, searchQuery, filterCategory]);
 
   const handleSave = async () => {
-    if (!formData.description || !formData.amount || !formData.category) {
-      toast.error("Invalid Input", {
-        description: "Please fill in all required fields.",
+    const result = transactionSchema.safeParse(formData);
+    if (!result.success) {
+      toast.error("Validation Error", {
+        description: result.error.issues[0].message,
       });
       return;
     }
@@ -185,13 +187,15 @@ export default function SpendingPage() {
   };
 
   const handleUpdate = async () => {
-    if (
-      !editingTransaction ||
-      !formData.description ||
-      !formData.amount ||
-      !formData.category
-    )
+    if (!editingTransaction) return;
+
+    const result = transactionSchema.safeParse(formData);
+    if (!result.success) {
+      toast.error("Validation Error", {
+        description: result.error.issues[0].message,
+      });
       return;
+    }
 
     try {
       const isIncome = setup?.incomeSources.includes(formData.category);
@@ -310,7 +314,7 @@ export default function SpendingPage() {
             />
             <Button
               onClick={handleSave}
-              className="w-full mt-6 rounded-2xl bg-slate-900 dark:bg-white dark:text-slate-900 hover:bg-black dark:hover:bg-slate-100 text-white font-bold h-12 shadow-sm transition-all active:scale-95 cursor-pointer border-none"
+              className="w-full mt-6 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold h-12 shadow-md hover:shadow-lg shadow-emerald-100 dark:shadow-none transition-all active:scale-95 cursor-pointer border-none"
             >
               {t.form.proceed}
             </Button>
@@ -536,7 +540,7 @@ function TransactionForm({
           onChange={(e) =>
             setFormData({ ...formData, description: e.target.value })
           }
-          className="rounded-2xl border-border dark:bg-slate-900 focus-visible:ring-emerald-500 h-11"
+          className="rounded-2xl border-border dark:bg-slate-900 focus-visible:ring-emerald-500 h-12"
         />
       </div>
       <div className="grid grid-cols-2 gap-4">
@@ -559,7 +563,7 @@ function TransactionForm({
                 const value = e.target.value.replace(/[^0-9]/g, "");
                 setFormData({ ...formData, amount: value });
               }}
-              className="rounded-2xl border-border dark:bg-slate-900 focus-visible:ring-emerald-500 pl-11 h-11"
+              className="rounded-2xl border-border dark:bg-slate-900 focus-visible:ring-emerald-500 pl-11 h-12"
             />
           </div>
         </div>
@@ -574,7 +578,7 @@ function TransactionForm({
             value={formData.category}
             onValueChange={(val) => setFormData({ ...formData, category: val })}
           >
-            <SelectTrigger className="rounded-2xl border-border dark:bg-slate-900 focus:ring-emerald-500 h-11">
+            <SelectTrigger className="rounded-2xl border-border dark:bg-slate-900 focus:ring-emerald-500 h-12">
               <SelectValue placeholder="Category" />
             </SelectTrigger>
             <SelectContent className="rounded-2xl border-border dark:bg-slate-900 max-h-60">
@@ -605,7 +609,7 @@ function TransactionForm({
             type="date"
             value={formData.date}
             onChange={(e) => setFormData({ ...formData, date: e.target.value })}
-            className="rounded-2xl border-border dark:bg-slate-900 focus-visible:ring-emerald-500 pl-11 h-11 [&::-webkit-calendar-picker-indicator]:opacity-0 [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:w-full [&::-webkit-calendar-picker-indicator]:h-full [&::-webkit-calendar-picker-indicator]:cursor-pointer"
+            className="rounded-2xl border-border dark:bg-slate-900 focus-visible:ring-emerald-500 pl-11 h-12 [&::-webkit-calendar-picker-indicator]:opacity-0 [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:w-full [&::-webkit-calendar-picker-indicator]:h-full [&::-webkit-calendar-picker-indicator]:cursor-pointer"
           />
         </div>
       </div>

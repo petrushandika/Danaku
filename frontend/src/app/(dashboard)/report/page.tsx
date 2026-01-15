@@ -150,9 +150,12 @@ export default function ReportPage() {
   };
 
   const handleDownload = () => {
-    toast.success("Report generation started", {
-      description: "Your PDF report will be ready in a few seconds.",
+    toast.success("Preparing Report", {
+      description: "Opening print dialog...",
     });
+    setTimeout(() => {
+      window.print();
+    }, 500);
   };
 
   const handleSimulateAI = () => {

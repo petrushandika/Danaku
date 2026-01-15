@@ -51,6 +51,11 @@ import {
 import { getAchievements, AchievementProgress } from "@/lib/api/achievements";
 import { inviteMember, InviteMemberRequest } from "@/lib/api/members";
 import { format } from "date-fns";
+import {
+  profileSchema,
+  passwordChangeSchema,
+  inviteMemberSchema,
+} from "@/lib/schemas";
 
 export default function ProfilePage() {
   const { language, setLanguage } = useLanguageStore();
@@ -154,6 +159,14 @@ export default function ProfilePage() {
   };
 
   const handleSaveProfile = async () => {
+    const result = profileSchema.safeParse(profileForm);
+    if (!result.success) {
+      toast.error("Validation Error", {
+        description: result.error.issues[0].message,
+      });
+      return;
+    }
+
     setIsSaving(true);
     try {
       const updated = await updateProfile({
@@ -191,8 +204,15 @@ export default function ProfilePage() {
   };
 
   const handleInvite = async () => {
-    if (!inviteForm.name || !inviteForm.email) {
-      toast.error("Please fill in required fields");
+    const result = inviteMemberSchema.safeParse({
+      name: inviteForm.name,
+      email: inviteForm.email,
+    });
+
+    if (!result.success) {
+      toast.error("Validation Error", {
+        description: result.error.issues[0].message,
+      });
       return;
     }
     setIsInviting(true);
@@ -218,12 +238,11 @@ export default function ProfilePage() {
   };
 
   const handleChangePassword = async () => {
-    if (passwordForm.newPassword !== passwordForm.confirmPassword) {
-      toast.error("Passwords do not match");
-      return;
-    }
-    if (!passwordForm.currentPassword || !passwordForm.newPassword) {
-      toast.error("Please fill all password fields");
+    const result = passwordChangeSchema.safeParse(passwordForm);
+    if (!result.success) {
+      toast.error("Validation Error", {
+        description: result.error.issues[0].message,
+      });
       return;
     }
 
@@ -396,7 +415,7 @@ export default function ProfilePage() {
                       onChange={(e) =>
                         setProfileForm({ ...profileForm, name: e.target.value })
                       }
-                      className="rounded-2xl"
+                      className="rounded-2xl h-12"
                     />
                   </div>
                   <div className="space-y-2">
@@ -409,7 +428,7 @@ export default function ProfilePage() {
                           phoneNumber: e.target.value,
                         })
                       }
-                      className="rounded-2xl"
+                      className="rounded-2xl h-12"
                       placeholder="+62..."
                     />
                   </div>
@@ -418,7 +437,7 @@ export default function ProfilePage() {
                     <Input
                       value={userProfile?.email || ""}
                       readOnly
-                      className="rounded-2xl opacity-70"
+                      className="rounded-2xl opacity-70 h-12"
                     />
                   </div>
                   <div className="space-y-2">
@@ -432,7 +451,7 @@ export default function ProfilePage() {
                           birthDate: e.target.value,
                         })
                       }
-                      className="rounded-2xl"
+                      className="rounded-2xl h-12"
                     />
                   </div>
                   <div className="space-y-2">
@@ -443,7 +462,7 @@ export default function ProfilePage() {
                         setProfileForm({ ...profileForm, gender: v })
                       }
                     >
-                      <SelectTrigger className="rounded-2xl">
+                      <SelectTrigger className="rounded-2xl h-12">
                         <SelectValue placeholder="Select Gender" />
                       </SelectTrigger>
                       <SelectContent>
@@ -480,6 +499,7 @@ export default function ProfilePage() {
                               currentPassword: e.target.value,
                             })
                           }
+                          className="rounded-2xl h-12"
                         />
                       </div>
                       <div className="space-y-2">
@@ -492,6 +512,7 @@ export default function ProfilePage() {
                               newPassword: e.target.value,
                             })
                           }
+                          className="rounded-2xl h-12"
                         />
                       </div>
                       <div className="space-y-2">
@@ -504,6 +525,7 @@ export default function ProfilePage() {
                               confirmPassword: e.target.value,
                             })
                           }
+                          className="rounded-2xl h-12"
                         />
                       </div>
                       <Button
@@ -827,7 +849,7 @@ export default function ProfilePage() {
                                 name: e.target.value,
                               })
                             }
-                            className="rounded-2xl h-11"
+                            className="rounded-2xl h-12"
                           />
                         </div>
                         <div className="grid gap-2">
@@ -845,7 +867,7 @@ export default function ProfilePage() {
                                 email: e.target.value,
                               })
                             }
-                            className="rounded-2xl h-11"
+                            className="rounded-2xl h-12"
                           />
                         </div>
                         <div className="grid grid-cols-2 gap-4">
@@ -862,7 +884,7 @@ export default function ProfilePage() {
                                 setInviteForm({ ...inviteForm, relation: val })
                               }
                             >
-                              <SelectTrigger className="rounded-2xl h-11">
+                              <SelectTrigger className="rounded-2xl h-12">
                                 <SelectValue placeholder="Select" />
                               </SelectTrigger>
                               <SelectContent className="rounded-2xl">
@@ -884,7 +906,7 @@ export default function ProfilePage() {
                                 setInviteForm({ ...inviteForm, role: val })
                               }
                             >
-                              <SelectTrigger className="rounded-2xl h-11">
+                              <SelectTrigger className="rounded-2xl h-12">
                                 <SelectValue placeholder="Select" />
                               </SelectTrigger>
                               <SelectContent className="rounded-2xl">
@@ -909,7 +931,7 @@ export default function ProfilePage() {
                                 monthlyLimit: Number(e.target.value),
                               })
                             }
-                            className="rounded-2xl h-11"
+                            className="rounded-2xl h-12"
                           />
                         </div>
                         <Button

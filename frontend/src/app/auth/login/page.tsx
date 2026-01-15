@@ -3,7 +3,6 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { PasswordInput } from "@/components/ui/password-input";
-import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
 import Link from "next/link";
 import { toast } from "sonner";
@@ -12,6 +11,17 @@ import { useRouter } from "next/navigation";
 import api from "@/lib/api";
 import { useAuthStore } from "@/store/use-auth-store";
 import { Loader2 } from "lucide-react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { loginSchema, LoginSchema } from "@/lib/schemas";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 
 const GoogleIcon = () => (
   <svg
@@ -57,14 +67,20 @@ export default function LoginPage() {
   const router = useRouter();
   const { setUser } = useAuthStore();
   const [loading, setLoading] = useState(false);
-  const [formData, setFormData] = useState({ email: "", password: "" });
 
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const form = useForm<LoginSchema>({
+    resolver: zodResolver(loginSchema),
+    defaultValues: {
+      email: "",
+      password: "",
+    },
+  });
+
+  const onSubmit = async (data: LoginSchema) => {
     setLoading(true);
 
     try {
-      const response = await api.post("/auth/login", formData);
+      const response = await api.post("/auth/login", data);
       const { user, accessToken } = response.data;
 
       localStorage.setItem("token", accessToken);
@@ -93,68 +109,73 @@ export default function LoginPage() {
     <div className="w-full">
       <Card className="rounded-3xl bg-card border border-border">
         <CardContent className="p-6 md:p-8">
-          <form onSubmit={handleLogin} className="space-y-4">
-            <div className="space-y-1.5">
-              <Label
-                htmlFor="email"
-                className="font-bold text-sm text-foreground ml-1"
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+              <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem className="space-y-1.5">
+                    <FormLabel className="font-bold text-sm text-foreground ml-1">
+                      Email
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="name@example.com"
+                        className="h-12 rounded-2xl border-border focus:ring-primary bg-muted/30 px-5 font-medium"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="password"
+                render={({ field }) => (
+                  <FormItem className="space-y-1.5">
+                    <div className="flex items-center justify-between ml-1">
+                      <FormLabel
+                        title="password"
+                        className="font-bold text-sm text-foreground"
+                      >
+                        Password
+                      </FormLabel>
+                      <Link
+                        href="/auth/forgot-password"
+                        title="forgot-password"
+                        className="text-xs font-bold text-primary hover:underline"
+                      >
+                        Forgot password?
+                      </Link>
+                    </div>
+                    <FormControl>
+                      <PasswordInput
+                        placeholder="••••••••"
+                        className="tracking-widest"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <Button
+                type="submit"
+                disabled={loading}
+                className="w-full h-12 rounded-2xl bg-primary hover:bg-primary/90 text-primary-foreground font-black text-lg transition-all active:scale-95 mt-2 border-none"
               >
-                Email
-              </Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="name@example.com"
-                required
-                value={formData.email}
-                onChange={(e) =>
-                  setFormData({ ...formData, email: e.target.value })
-                }
-                className="h-12 rounded-2xl border-border focus:ring-primary bg-muted/30 px-5 font-medium"
-              />
-            </div>
-
-            <div className="space-y-1.5">
-              <div className="flex items-center justify-between ml-1">
-                <Label
-                  htmlFor="password"
-                  title="password"
-                  className="font-bold text-sm text-foreground"
-                >
-                  Password
-                </Label>
-                <Link
-                  href="/auth/forgot-password"
-                  title="forgot-password"
-                  className="text-xs font-bold text-primary hover:underline"
-                >
-                  Forgot password?
-                </Link>
-              </div>
-              <PasswordInput
-                id="password"
-                placeholder="••••••••"
-                required
-                value={formData.password}
-                onChange={(e) =>
-                  setFormData({ ...formData, password: e.target.value })
-                }
-                className="tracking-widest"
-              />
-            </div>
-
-            <Button
-              type="submit"
-              disabled={loading}
-              className="w-full h-12 rounded-2xl bg-primary hover:bg-primary/90 text-primary-foreground font-black text-lg transition-all active:scale-95 mt-2 border-none"
-            >
-              {loading ? (
-                <Loader2 className="w-6 h-6 animate-spin" />
-              ) : (
-                "Sign In"
-              )}
-            </Button>
-          </form>
+                {loading ? (
+                  <Loader2 className="w-6 h-6 animate-spin" />
+                ) : (
+                  "Sign In"
+                )}
+              </Button>
+            </form>
+          </Form>
 
           <div className="relative my-6">
             <div className="absolute inset-0 flex items-center">
@@ -169,6 +190,7 @@ export default function LoginPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             <Button
+              type="button"
               variant="outline"
               onClick={() => handleSocial("Google")}
               className="rounded-2xl h-12 border-border hover:bg-accent font-bold text-foreground px-6 transition-all"
@@ -176,6 +198,7 @@ export default function LoginPage() {
               <GoogleIcon /> Google
             </Button>
             <Button
+              type="button"
               variant="outline"
               onClick={() => handleSocial("Facebook")}
               className="rounded-2xl h-12 border-border hover:bg-accent font-bold text-foreground px-6 transition-all"

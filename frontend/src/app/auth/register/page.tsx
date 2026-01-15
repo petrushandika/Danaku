@@ -3,7 +3,6 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { PasswordInput } from "@/components/ui/password-input";
-import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
 import Link from "next/link";
 import { toast } from "sonner";
@@ -11,6 +10,17 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import api from "@/lib/api";
 import { Loader2 } from "lucide-react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { registerSchema, RegisterSchema } from "@/lib/schemas";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 
 const GoogleIcon = () => (
   <svg
@@ -55,21 +65,24 @@ const FacebookIcon = () => (
 export default function RegisterPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    password: "",
+
+  const form = useForm<RegisterSchema>({
+    resolver: zodResolver(registerSchema),
+    defaultValues: {
+      name: "",
+      email: "",
+      password: "",
+    },
   });
 
-  const handleRegister = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const onSubmit = async (data: RegisterSchema) => {
     setLoading(true);
 
     try {
-      await api.post("/auth/register", formData);
+      await api.post("/auth/register", data);
 
       // Save email to localStorage for resend verification
-      localStorage.setItem("pendingVerificationEmail", formData.email);
+      localStorage.setItem("pendingVerificationEmail", data.email);
 
       toast.success("Account created!", {
         description: "Please check your email to verify your account.",
@@ -96,78 +109,84 @@ export default function RegisterPage() {
     <div className="w-full">
       <Card className="rounded-3xl bg-card border border-border">
         <CardContent className="p-6 md:p-8">
-          <form onSubmit={handleRegister} className="space-y-4">
-            <div className="space-y-1.5">
-              <Label
-                htmlFor="fullname"
-                className="font-bold text-sm text-foreground ml-1"
-              >
-                Full Name
-              </Label>
-              <Input
-                id="fullname"
-                placeholder="John Doe"
-                required
-                value={formData.name}
-                onChange={(e) =>
-                  setFormData({ ...formData, name: e.target.value })
-                }
-                className="h-12 rounded-2xl border-border focus:ring-primary bg-muted/30 px-5 font-medium"
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+              <FormField
+                control={form.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem className="space-y-1.5">
+                    <FormLabel className="font-bold text-sm text-foreground ml-1">
+                      Full Name
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="John Doe"
+                        className="h-12 rounded-2xl border-border focus:ring-primary bg-muted/30 px-5 font-medium"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
               />
-            </div>
 
-            <div className="space-y-1.5">
-              <Label
-                htmlFor="email"
-                className="font-bold text-sm text-foreground ml-1"
-              >
-                Email
-              </Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="name@example.com"
-                required
-                value={formData.email}
-                onChange={(e) =>
-                  setFormData({ ...formData, email: e.target.value })
-                }
-                className="h-12 rounded-2xl border-border focus:ring-primary bg-muted/30 px-5 font-medium"
+              <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem className="space-y-1.5">
+                    <FormLabel className="font-bold text-sm text-foreground ml-1">
+                      Email
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="name@example.com"
+                        className="h-12 rounded-2xl border-border focus:ring-primary bg-muted/30 px-5 font-medium"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
               />
-            </div>
 
-            <div className="space-y-1.5">
-              <Label
-                htmlFor="password"
-                title="password"
-                className="font-bold text-sm text-foreground ml-1"
-              >
-                Password
-              </Label>
-              <PasswordInput
-                id="password"
-                placeholder="••••••••"
-                required
-                value={formData.password}
-                onChange={(e) =>
-                  setFormData({ ...formData, password: e.target.value })
-                }
-                className="tracking-widest"
+              <FormField
+                control={form.control}
+                name="password"
+                render={({ field }) => (
+                  <FormItem className="space-y-1.5">
+                    <FormLabel
+                      title="password"
+                      className="font-bold text-sm text-foreground ml-1"
+                    >
+                      Password
+                    </FormLabel>
+                    <FormControl>
+                      <PasswordInput
+                        placeholder="••••••••"
+                        className="tracking-widest"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
               />
-            </div>
 
-            <Button
-              type="submit"
-              disabled={loading}
-              className="w-full h-12 rounded-2xl bg-primary hover:bg-primary/90 text-primary-foreground font-black text-lg transition-all active:scale-95 mt-2 border-none"
-            >
-              {loading ? (
-                <Loader2 className="w-6 h-6 animate-spin" />
-              ) : (
-                "Register"
-              )}
-            </Button>
-          </form>
+              <Button
+                type="submit"
+                disabled={loading}
+                className="w-full h-12 rounded-2xl bg-primary hover:bg-primary/90 text-primary-foreground font-black text-lg transition-all active:scale-95 mt-2 border-none"
+              >
+                {loading ? (
+                  <Loader2 className="w-6 h-6 animate-spin" />
+                ) : (
+                  "Register"
+                )}
+              </Button>
+            </form>
+          </Form>
 
           <div className="relative my-6">
             <div className="absolute inset-0 flex items-center">
@@ -182,6 +201,7 @@ export default function RegisterPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             <Button
+              type="button"
               variant="outline"
               onClick={() => handleSocial("Google")}
               className="rounded-2xl h-12 border-border hover:bg-accent font-bold text-foreground px-6 transition-all"
@@ -189,6 +209,7 @@ export default function RegisterPage() {
               <GoogleIcon /> Google
             </Button>
             <Button
+              type="button"
               variant="outline"
               onClick={() => handleSocial("Facebook")}
               className="rounded-2xl h-12 border-border hover:bg-accent font-bold text-foreground px-6 transition-all"

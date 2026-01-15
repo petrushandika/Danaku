@@ -14,12 +14,14 @@ import { useLanguageStore, translations } from "@/store/use-language-store";
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { initiatePayment } from "@/lib/api/payments";
+import { useRouter } from "next/navigation";
 
 export default function SubscriptionPage() {
   const { language } = useLanguageStore();
   const t = translations[language].dashboard.subscription;
   const [mounted, setMounted] = useState(false);
   const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
+  const router = useRouter();
 
   useEffect(() => {
     setMounted(true);
@@ -123,9 +125,48 @@ export default function SubscriptionPage() {
     setLoadingPlan(plan.name);
     try {
       const result = await initiatePayment(plan.name, amount);
-      if (result && result.redirect_url) {
-        toast.success("Redirecting to payment...");
-        window.location.href = result.redirect_url;
+      if (result && result.token) {
+        // Load Snap Script dynamically
+        const scriptUrl = result.isProduction
+          ? "https://app.midtrans.com/snap/snap.js"
+          : "https://app.sandbox.midtrans.com/snap/snap.js";
+
+        // Helper to load script
+        const loadScript = () =>
+          new Promise((resolve) => {
+            if (document.querySelector(`script[src="${scriptUrl}"]`)) {
+              resolve(true);
+              return;
+            }
+            const script = document.createElement("script");
+            script.src = scriptUrl;
+            script.setAttribute("data-client-key", result.clientKey);
+            script.onload = () => resolve(true);
+            document.body.appendChild(script);
+          });
+
+        await loadScript();
+
+        // Trigger Snap Popup
+        if ((window as any).snap) {
+          (window as any).snap.pay(result.token, {
+            onSuccess: function (result: any) {
+              toast.success("Payment Successful!");
+              router.refresh();
+            },
+            onPending: function (result: any) {
+              toast.info("Payment Pending... Please check your dashboard.");
+            },
+            onError: function (result: any) {
+              toast.error("Payment Failed");
+            },
+            onClose: function () {
+              toast.warning("Payment window closed");
+            },
+          });
+        } else {
+          toast.error("Failed to load payment module. Please try again.");
+        }
       } else {
         toast.error("Failed to initiate payment");
       }

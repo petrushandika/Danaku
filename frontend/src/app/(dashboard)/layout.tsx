@@ -223,11 +223,11 @@ export default function DashboardLayout({
       await api.post("/auth/logout");
       logout();
       toast.success(translations[language].auth.signedOut);
-      router.push("/auth/login");
+      router.push("/");
     } catch (error) {
       console.error("Logout failed:", error);
       logout(); // Force logout local state anyway
-      router.push("/auth/login");
+      router.push("/");
     }
   };
 
