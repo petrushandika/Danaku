@@ -17,6 +17,7 @@ import {
   PieChart,
   ShieldCheck,
   Heart,
+  Loader2,
 } from "lucide-react";
 import { ResponsiveModal } from "@/components/responsive-modal";
 import { Input } from "@/components/ui/input";
@@ -32,14 +33,14 @@ import { toast } from "sonner";
 import { useLanguageStore, translations } from "@/store/use-language-store";
 import { cn } from "@/lib/utils";
 import { useEffect, useState } from "react";
-import { Loader2 } from "lucide-react";
 import { useSetupStore } from "@/store/use-setup-store";
 import { useBudgetStore } from "@/store/use-budget-store";
-import { getSpending } from "@/lib/api/spending";
+import { getSpending, Spending } from "@/lib/api/spending";
 
 export default function BudgetingPage() {
   const { language } = useLanguageStore();
-  const t = translations[language].dashboard.budgeting;
+  const langKey = language as keyof typeof translations;
+  const t = translations[langKey].dashboard.budgeting;
   const [mounted, setMounted] = useState(false);
   const [selectedMonth, setSelectedMonth] = useState<string>("current");
   const [spentByItem, setSpentByItem] = useState<Record<string, number>>({});
@@ -77,7 +78,7 @@ export default function BudgetingPage() {
 
       // Aggregate spending by item name (category field in Spending) - Treating ALL amounts as usage (magnitude)
       const aggregated: Record<string, number> = {};
-      spendingData.spending.forEach((s: any) => {
+      spendingData.spending.forEach((s: Spending) => {
         // User request: "mau minus atau plus ... berarti pengeluaran"
         // Treat both positive and negative amounts as expenditure magnitude
         aggregated[s.category] =
@@ -108,7 +109,7 @@ export default function BudgetingPage() {
       // Initialize income with setup sources (default 0)
       const initialIncome: Record<string, number> = {};
       if (setup?.incomeSources) {
-        setup.incomeSources.forEach((source) => {
+        setup.incomeSources.forEach((source: string) => {
           initialIncome[source] = 0;
         });
       } else {
@@ -311,7 +312,7 @@ export default function BudgetingPage() {
             </div>
           </CardHeader>
           <CardContent className="px-6 pb-6 md:px-10 md:pb-8 pt-0">
-            <div className="space-y-4 lg:max-h-[500px] overflow-y-auto pr-4 emerald-scrollbar">
+            <div className="space-y-4 lg:max-h-[400px] overflow-y-auto pr-4 emerald-scrollbar">
               {isLoading ? (
                 <div className="flex flex-col items-center justify-center py-20 text-slate-400">
                   <Loader2 className="w-10 h-10 animate-spin mb-4 text-emerald-500" />
@@ -339,7 +340,7 @@ export default function BudgetingPage() {
                         {t.incomeSources}
                       </p>
                       <div className="space-y-3">
-                        {setup?.incomeSources?.map((source) => (
+                        {setup?.incomeSources?.map((source: string) => (
                           <div key={source} className="flex flex-col gap-1.5">
                             <span className="text-xs font-bold text-slate-600 dark:text-slate-400 pl-1">
                               {source}
@@ -373,8 +374,8 @@ export default function BudgetingPage() {
                         </span>
                         <span className="text-lg font-black text-emerald-700 dark:text-emerald-300">
                           Rp{" "}
-                          {Object.values(currentBudget.income || {})
-                            .reduce((a, b) => a + b, 0)
+                          {(Object.values(currentBudget.income || {}) as number[])
+                            .reduce((a: number, b: number) => a + b, 0)
                             .toLocaleString()}
                         </span>
                       </div>
@@ -414,7 +415,7 @@ export default function BudgetingPage() {
                       icon: ShieldCheck,
                       bg: "bg-emerald-50 dark:bg-emerald-950/20",
                     },
-                  ].map((cat) => (
+                  ].map((cat: { title: string; items: string[]; color: string; icon: any; bg: string }) => (
                     <div key={cat.title} className="space-y-3">
                       <div className="flex items-center gap-2 px-2">
                         <div
@@ -429,12 +430,12 @@ export default function BudgetingPage() {
                           {t.noSetup}
                         </p>
                       ) : (
-                        cat.items.map((itemName) => {
+                        cat.items.map((itemName: string) => {
                           const allocated =
                             (cat.title === t.savingsCat
                               ? currentBudget.savingsAllocation?.[itemName]
                               : currentBudget.expenses?.[itemName]) || 0;
-                          const spent = Math.abs(spentByItem[itemName] || 0);
+                          const spent = Math.abs((spentByItem as Record<string, number>)[itemName] || 0);
                           const percent =
                             allocated > 0 ? (spent / allocated) * 100 : 0;
 

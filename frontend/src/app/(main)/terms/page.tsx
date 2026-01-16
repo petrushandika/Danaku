@@ -7,7 +7,8 @@ import { FileText } from "lucide-react"
 
 export default function TermsPage() {
   const { language } = useLanguageStore()
-  const t = translations[language].legal.terms
+  const langKey = language as keyof typeof translations;
+  const t = translations[langKey].legal.terms;
   const [activeSection, setActiveSection] = useState(0)
 
   return (

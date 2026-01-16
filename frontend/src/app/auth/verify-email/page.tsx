@@ -4,12 +4,12 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { CheckCircle, Loader2, XCircle, Mail } from "lucide-react";
 import { toast } from "sonner";
-import { useState, useEffect } from "react";
-import Link from "next/link";
+import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import Link from "next/link";
 import axios from "axios";
 
-export default function VerifyEmailPage() {
+function VerifyEmailContent() {
   const [isVerifying, setIsVerifying] = useState(false);
   const [verificationStatus, setVerificationStatus] = useState<
     "idle" | "loading" | "success" | "error"
@@ -22,6 +22,9 @@ export default function VerifyEmailPage() {
   const searchParams = useSearchParams();
   const token = searchParams.get("token");
 
+  const API_URL =
+    process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
+
   // Countdown timer effect
   useEffect(() => {
     if (countdown > 0) {
@@ -31,22 +34,19 @@ export default function VerifyEmailPage() {
   }, [countdown]);
 
   useEffect(() => {
-    if (token) {
+    if (token && verificationStatus === "idle") {
       verifyEmail(token);
     }
-  }, [token]);
+  }, [token, verificationStatus]);
 
   const verifyEmail = async (verificationToken: string) => {
     setIsVerifying(true);
     setVerificationStatus("loading");
 
     try {
-      const response = await axios.post(
-        "http://localhost:8000/api/auth/verify-email",
-        {
-          token: verificationToken,
-        }
-      );
+      const response = await axios.post(`${API_URL}/auth/verify-email`, {
+        token: verificationToken,
+      });
 
       if (response.data.success) {
         setVerificationStatus("success");
@@ -78,7 +78,6 @@ export default function VerifyEmailPage() {
     setIsResending(true);
 
     try {
-      // You'll need to get the email from somewhere (localStorage, or ask user to input)
       const email = localStorage.getItem("pendingVerificationEmail");
 
       if (!email) {
@@ -89,7 +88,7 @@ export default function VerifyEmailPage() {
         return;
       }
 
-      await axios.post("http://localhost:8000/api/auth/resend-verification", {
+      await axios.post(`${API_URL}/auth/resend-verification`, {
         email,
       });
 
@@ -103,7 +102,6 @@ export default function VerifyEmailPage() {
       const message =
         error.response?.data?.message || "Could not resend verification email.";
 
-      // Check if error message contains wait time
       const waitMatch = message.match(/(\d+) seconds/);
       if (waitMatch) {
         const waitSeconds = parseInt(waitMatch[1]);
@@ -258,5 +256,28 @@ export default function VerifyEmailPage() {
         </CardContent>
       </Card>
     </div>
+  );
+}
+
+export default function VerifyEmailPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="w-full">
+          <Card className="rounded-3xl bg-white border border-slate-200">
+            <CardContent className="p-6 md:p-8">
+              <div className="flex flex-col items-center justify-center py-8 space-y-4">
+                <Loader2 className="h-16 w-16 text-emerald-600 animate-spin" />
+                <p className="text-sm text-slate-500">
+                  Loading verification page...
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      }
+    >
+      <VerifyEmailContent />
+    </Suspense>
   );
 }

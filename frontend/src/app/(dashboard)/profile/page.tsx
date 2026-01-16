@@ -61,7 +61,8 @@ export default function ProfilePage() {
   const { language, setLanguage } = useLanguageStore();
   const { theme, setTheme } = useTheme();
   const { user: authUser, setUser: setAuthUser } = useAuthStore();
-  const t = translations[language].dashboard.profile;
+  const langKey = language as keyof typeof translations;
+  const t = translations[langKey].dashboard.profile;
   const [mounted, setMounted] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [activeTab, setActiveTab] = useState("personal");

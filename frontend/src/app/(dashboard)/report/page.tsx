@@ -47,7 +47,8 @@ import { getSpending, Spending } from "@/lib/api/spending";
 
 export default function ReportPage() {
   const { language } = useLanguageStore();
-  const t = translations[language].dashboard.report;
+  const langKey = language as keyof typeof translations;
+  const t = translations[langKey].dashboard.report;
   const [isGenerating, setIsGenerating] = useState(false);
   const [mounted, setMounted] = useState(false);
   const [selectedMonthIndex, setSelectedMonthIndex] = useState(
@@ -194,7 +195,7 @@ export default function ReportPage() {
               </div>
             </SelectTrigger>
             <SelectContent className="rounded-2xl border-border bg-white dark:bg-slate-900 max-h-64 overflow-y-auto no-scrollbar min-w-(--radix-select-trigger-width)">
-              {translations[language].months.map((month, index) => (
+              {translations[langKey].months.map((month, index) => (
                 <SelectItem
                   key={index}
                   value={index.toString()}

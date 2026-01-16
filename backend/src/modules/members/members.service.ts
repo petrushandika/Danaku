@@ -118,14 +118,14 @@ export class MembersService {
 
     // 3. Send Email
     const inviter = await this.prisma.user.findUnique({ where: { id: userId } });
-    const inviteUrl = `${this.configService.get('FRONTEND_URL')}/members/accept?token=${newMember.id}`;
+    const inviteUrl = `${this.configService.get('NEXT_PUBLIC_APP_URL')}/members/accept?token=${newMember.id}`;
 
     await this.mailerService.sendMail({
         to: data.email,
         subject: `Group Invitation from ${inviter.name}`,
         template: 'member-invite',
         context: {
-            frontendUrl: this.configService.get('FRONTEND_URL'),
+            frontendUrl: this.configService.get('NEXT_PUBLIC_APP_URL'),
             inviterName: inviter.name,
             role: data.role,
             url: inviteUrl

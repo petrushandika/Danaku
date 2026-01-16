@@ -86,13 +86,13 @@ export class AchievementsService {
           if (!user) return;
 
           // Send Email
-          const dashboardUrl = `${this.configService.get('FRONTEND_URL')}/dashboard`;
+          const dashboardUrl = `${this.configService.get('NEXT_PUBLIC_APP_URL')}/dashboard`;
           await this.mailerService.sendMail({
               to: user.email,
               subject: `🏆 Achievement Unlocked: ${achievement.title}`,
               template: 'achievement-unlocked',
               context: {
-                  frontendUrl: this.configService.get('FRONTEND_URL'), // header logo link
+                  frontendUrl: this.configService.get('NEXT_PUBLIC_APP_URL'), // header logo link
                   name: user.name,
                   badgeIcon: achievement.icon,
                   badgeTitle: achievement.title,

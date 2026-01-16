@@ -40,7 +40,8 @@ import { Loader2 } from "lucide-react";
 
 export default function AssetsPage() {
   const { language } = useLanguageStore();
-  const t = translations[language].dashboard.assets;
+  const langKey = language as keyof typeof translations;
+  const t = translations[langKey].dashboard.assets;
   const { query: searchQuery } = useSearchStore();
   const [mounted, setMounted] = useState(false);
 
@@ -76,7 +77,7 @@ export default function AssetsPage() {
 
   const filteredAssets = useMemo(() => {
     return assets.filter(
-      (asset) =>
+      (asset: Asset) =>
         asset.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
         asset.type.toLowerCase().includes(searchQuery.toLowerCase())
     );
@@ -263,7 +264,7 @@ export default function AssetsPage() {
                     <SelectValue placeholder="Select account" />
                   </SelectTrigger>
                   <SelectContent className="rounded-2xl border-border dark:bg-slate-900">
-                    {(setup?.accountAssets || []).map((acc) => (
+                    {(setup?.accountAssets || []).map((acc: string) => (
                       <SelectItem
                         key={acc}
                         value={acc}
@@ -366,7 +367,7 @@ export default function AssetsPage() {
               <p className="font-medium">Loading assets...</p>
             </div>
           ) : filteredAssets.length > 0 ? (
-            filteredAssets.map((item, idx) => {
+            filteredAssets.map((item: Asset) => {
               const isLiquid = item.type === "LIQUID";
               const IconComp = isLiquid ? Landmark : Briefcase;
               const colorClass = isLiquid
@@ -518,7 +519,7 @@ export default function AssetsPage() {
                   <SelectValue placeholder="Select account" />
                 </SelectTrigger>
                 <SelectContent className="rounded-2xl border-border dark:bg-slate-900">
-                  {(setup?.accountAssets || []).map((acc) => (
+                  {(setup?.accountAssets || []).map((acc: string) => (
                     <SelectItem
                       key={acc}
                       value={acc}
@@ -585,7 +586,21 @@ export default function AssetsPage() {
   );
 }
 
-function AssetMiniCard({ title, amount, icon: Icon, color, bg, border }: any) {
+function AssetMiniCard({
+  title,
+  amount,
+  icon: Icon,
+  color,
+  bg,
+  border,
+}: {
+  title: string;
+  amount: string;
+  icon: any;
+  color: string;
+  bg: string;
+  border: string;
+}) {
   return (
     <Card
       className={cn(

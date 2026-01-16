@@ -136,7 +136,7 @@ export class AuthController {
   async googleLoginCallback(@Req() req, @Res() res) {
     const result = await this.authService.validateSocialUser(req.user);
     this.setCookies(res, result.accessToken, result.refreshToken);
-    res.redirect(`${process.env.FRONTEND_URL}/auth/callback?token=${result.accessToken}`);
+    res.redirect(`${process.env.NEXT_PUBLIC_APP_URL}/auth/callback?token=${result.accessToken}`);
   }
 
   @Public()
@@ -154,7 +154,7 @@ export class AuthController {
   async facebookLoginCallback(@Req() req, @Res() res) {
     const result = await this.authService.validateSocialUser(req.user);
     this.setCookies(res, result.accessToken, result.refreshToken);
-    res.redirect(`${process.env.FRONTEND_URL}/auth/callback?token=${result.accessToken}`);
+    res.redirect(`${process.env.NEXT_PUBLIC_APP_URL}/auth/callback?token=${result.accessToken}`);
   }
 
   @Post('logout')

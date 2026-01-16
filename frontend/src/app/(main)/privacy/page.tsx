@@ -7,7 +7,8 @@ import { Shield } from "lucide-react"
 
 export default function PrivacyPage() {
   const { language } = useLanguageStore()
-  const t = translations[language].legal.privacy
+  const langKey = language as keyof typeof translations;
+  const t = translations[langKey].legal.privacy;
   const [activeSection, setActiveSection] = useState(0)
 
   return (

@@ -59,8 +59,8 @@ import { toast } from "sonner";
 import { useLanguageStore, translations } from "@/store/use-language-store";
 import { useSearchStore } from "@/store/use-search-store";
 import { useMemo } from "react";
-import { getBudget, getBudgets } from "@/lib/api/budgets";
-import { getSpending, createSpending } from "@/lib/api/spending";
+import { getBudget, getBudgets, Budget } from "@/lib/api/budgets";
+import { getSpending, createSpending, Spending } from "@/lib/api/spending";
 import { getAssets } from "@/lib/api/assets";
 import { getNotifications } from "@/lib/api/notifications";
 import { format } from "date-fns";
@@ -81,7 +81,8 @@ const chartConfig = {
 
 export default function DashboardPage() {
   const { language } = useLanguageStore();
-  const t = translations[language].dashboard.summary;
+  const langKey = language as keyof typeof translations;
+  const t = translations[langKey].dashboard.summary;
   const { query: searchQuery } = useSearchStore();
   const [mounted, setMounted] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -130,15 +131,15 @@ export default function DashboardPage() {
   const categoryOptions = useMemo(() => {
     if (!setup) return [];
     return [
-      ...setup.incomeSources.map((s) => ({
+      ...setup.incomeSources.map((s: string) => ({
         label: s,
         value: s,
         type: "Income",
       })),
-      ...setup.needs.map((n) => ({ label: n, value: n, type: "Needs" })),
-      ...setup.wants.map((w) => ({ label: w, value: w, type: "Wants" })),
-      ...setup.savings.map((s) => ({ label: s, value: s, type: "Savings" })),
-      ...setup.accountAssets.map((a) => ({
+      ...setup.needs.map((n: string) => ({ label: n, value: n, type: "Needs" })),
+      ...setup.wants.map((w: string) => ({ label: w, value: w, type: "Wants" })),
+      ...setup.savings.map((s: string) => ({ label: s, value: s, type: "Savings" })),
+      ...setup.accountAssets.map((a: string) => ({
         label: a,
         value: a,
         type: "Assets",
@@ -153,9 +154,9 @@ export default function DashboardPage() {
   // I will include processChartHistory in the replacement to be safe and ensure order.
 
   const processChartHistory = (
-    budgets: any[],
+    budgets: Budget[],
     range: string,
-    transactions: any[] = []
+    transactions: Spending[] = []
   ) => {
     const now = new Date();
     const currentYear = now.getFullYear();
@@ -242,7 +243,7 @@ export default function DashboardPage() {
 
       // 2. Process Summary Stats
       const currentMonthBudget = allBudgets.find(
-        (b: any) => b.yearMonth === currentMonthStr
+        (b: Budget) => b.yearMonth === currentMonthStr
       );
       const budgetedIncome = currentMonthBudget?.summary?.totalIncome || 0;
 
@@ -283,7 +284,7 @@ export default function DashboardPage() {
 
       // Build Income Breakdown
       const incomeMap = currentMonthBudget?.income || {};
-      const breakdown = (setup?.incomeSources || []).map((source) => ({
+      const breakdown = (setup?.incomeSources || []).map((source: string) => ({
         label: source,
         amount: incomeMap[source] || 0,
       }));
@@ -758,36 +759,37 @@ export default function DashboardPage() {
               </Link>
             </div>
           </CardHeader>
-          <CardContent className="p-6 md:px-10 md:pt-4 md:pb-8 space-y-4">
-            {isLoading ? (
-              <div className="h-40 flex items-center justify-center">
-                <Loader2 className="h-8 w-8 animate-spin text-emerald-500" />
-              </div>
-            ) : filteredActivity.length > 0 ? (
-              filteredActivity.map((item, idx) => {
-                const isIncome = !!setup?.incomeSources?.includes(
-                  item.category
-                );
-                const isSavings = !!setup?.savings?.includes(item.category);
-                const isAsset =
-                  !!setup?.accountAssets?.includes(item.category) ||
-                  item.category === "ASSET";
-                const isBudget = item.category === "BUDGET";
-                const isSystem = item.category === "SYSTEM";
+          <CardContent className="p-6 md:px-10 md:pt-4 md:pb-8">
+            <div className="max-h-[385px] overflow-y-auto pr-2 emerald-scrollbar space-y-4">
+              {isLoading ? (
+                <div className="h-40 flex items-center justify-center">
+                  <Loader2 className="h-8 w-8 animate-spin text-emerald-500" />
+                </div>
+              ) : filteredActivity.length > 0 ? (
+                filteredActivity.map((item: any, idx: number) => {
+                  const isIncome = !!setup?.incomeSources?.includes(
+                    item.category
+                  );
+                  const isSavings = !!setup?.savings?.includes(item.category);
+                  const isAsset =
+                    !!setup?.accountAssets?.includes(item.category) ||
+                    item.category === "ASSET";
+                  const isBudget = item.category === "BUDGET";
+                  const isSystem = item.category === "SYSTEM";
 
-                // Colors based on category type
-                let typeColor = "text-rose-600 dark:text-rose-400";
-                if (isIncome) typeColor = "text-emerald-600";
-                if (isSavings) typeColor = "text-sky-600";
-                if (isAsset) typeColor = "text-violet-600";
-                if (isBudget) typeColor = "text-amber-600";
-                if (isSystem) typeColor = "text-slate-600";
+                  // Colors based on category type
+                  let typeColor = "text-rose-600 dark:text-rose-400";
+                  if (isIncome) typeColor = "text-emerald-600";
+                  if (isSavings) typeColor = "text-sky-600";
+                  if (isAsset) typeColor = "text-violet-600";
+                  if (isBudget) typeColor = "text-amber-600";
+                  if (isSystem) typeColor = "text-slate-600";
 
-                return (
-                  <div
-                    key={idx}
-                    className="flex items-center group cursor-pointer border-b border-slate-50 dark:border-slate-800 pb-4 last:border-0 last:pb-0 transition-all duration-300"
-                  >
+                  return (
+                    <div
+                      key={idx}
+                      className="flex items-center group cursor-pointer border-b border-slate-50 dark:border-slate-800 pb-4 last:border-0 last:pb-0 transition-all duration-300"
+                    >
                     <div className="mr-4 shrink-0">
                       <TransactionIcon
                         category={item.category}
@@ -854,6 +856,7 @@ export default function DashboardPage() {
                 <p>No activity found</p>
               </div>
             )}
+            </div>
           </CardContent>
         </Card>
       </div>

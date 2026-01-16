@@ -36,7 +36,8 @@ export default function MainLayout({
     }
   }, [user, checkSession])
 
-  const t = translations[language]
+  const langKey = language as keyof typeof translations;
+  const t = translations[langKey];
   const [showScrollTop, setShowScrollTop] = useState(false)
 
   useEffect(() => {

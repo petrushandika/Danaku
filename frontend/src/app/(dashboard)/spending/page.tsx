@@ -51,7 +51,8 @@ import { transactionSchema } from "@/lib/schemas";
 
 export default function SpendingPage() {
   const { language } = useLanguageStore();
-  const t = translations[language].dashboard.spending;
+  const langKey = language as keyof typeof translations;
+  const t = translations[langKey].dashboard.spending;
 
   const {
     query: searchQuery,
@@ -109,7 +110,7 @@ export default function SpendingPage() {
   }, [setup]);
 
   const filteredTransactions = useMemo(() => {
-    return spending.filter((item) => {
+    return spending.filter((item: Spending) => {
       const matchesSearch = item.description
         .toLowerCase()
         .includes(searchQuery.toLowerCase());
@@ -374,7 +375,7 @@ export default function SpendingPage() {
                   <p className="font-medium">Loading history...</p>
                 </div>
               ) : filteredTransactions.length > 0 ? (
-                filteredTransactions.map((item, idx) => {
+                filteredTransactions.map((item: Spending) => {
                   // Logic to determine icon and color based on category/amount
                   // If it's in incomeSources -> Income (+), otherwise Expense (-)
                   const isIncome = !!setup?.incomeSources?.includes(
@@ -420,15 +421,15 @@ export default function SpendingPage() {
                             )}
                           >
                             {isIncome
-                              ? translations[language].dashboard.summary
+                              ? translations[langKey].dashboard.summary
                                   .badgeIncome
                               : isSavings
-                              ? translations[language].dashboard.summary
+                              ? translations[langKey].dashboard.summary
                                   .badgeSavings
                               : isAsset
-                              ? translations[language].dashboard.summary
+                              ? translations[langKey].dashboard.summary
                                   .badgeAsset
-                              : translations[language].dashboard.summary
+                              : translations[langKey].dashboard.summary
                                   .badgeSpending}
                           </span>
                           <p className="text-xs text-slate-400 dark:text-slate-500 font-bold uppercase tracking-widest leading-none">
@@ -526,21 +527,36 @@ function TransactionForm({
 }: {
   t: any;
   setup: SetupConfig | null;
-  formData: any;
-  setFormData: any;
+  formData: {
+    description: string;
+    amount: string;
+    category: string;
+    date: string;
+  };
+  setFormData: (data: {
+    description: string;
+    amount: string;
+    category: string;
+    date: string;
+  }) => void;
 }) {
   const categoryOptions = useMemo(() => {
     if (!setup) return [];
+    interface CategoryOption {
+      label: string;
+      value: string;
+      type: string;
+    }
     return [
-      ...setup.incomeSources.map((s) => ({
+      ...setup.incomeSources.map((s: string): CategoryOption => ({
         label: s,
         value: s,
         type: "Income",
       })),
-      ...setup.needs.map((n) => ({ label: n, value: n, type: "Needs" })),
-      ...setup.wants.map((w) => ({ label: w, value: w, type: "Wants" })),
-      ...setup.savings.map((s) => ({ label: s, value: s, type: "Savings" })),
-      ...setup.accountAssets.map((a) => ({
+      ...setup.needs.map((n: string): CategoryOption => ({ label: n, value: n, type: "Needs" })),
+      ...setup.wants.map((w: string): CategoryOption => ({ label: w, value: w, type: "Wants" })),
+      ...setup.savings.map((s: string): CategoryOption => ({ label: s, value: s, type: "Savings" })),
+      ...setup.accountAssets.map((a: string): CategoryOption => ({
         label: a,
         value: a,
         type: "Assets",
@@ -606,7 +622,7 @@ function TransactionForm({
               <SelectValue placeholder="Category" />
             </SelectTrigger>
             <SelectContent className="rounded-2xl border-border dark:bg-slate-900 max-h-60">
-              {categoryOptions.map((opt) => (
+              {categoryOptions.map((opt: { label: string; value: string; type: string }) => (
                 <SelectItem
                   key={`${opt.type}-${opt.value}`}
                   value={opt.value}

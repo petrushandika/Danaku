@@ -50,7 +50,7 @@ export class AuthService {
       },
     });
 
-    const verificationUrl = `${this.configService.get('FRONTEND_URL')}/auth/verify-email?token=${verificationToken}`;
+    const verificationUrl = `${this.configService.get('NEXT_PUBLIC_APP_URL')}/auth/verify-email?token=${verificationToken}`;
 
     try {
       await this.mailerService.sendMail({
@@ -253,7 +253,7 @@ export class AuthService {
       },
     });
 
-    const resetUrl = `${this.configService.get('FRONTEND_URL')}/auth/reset-password?token=${token}`;
+    const resetUrl = `${this.configService.get('NEXT_PUBLIC_APP_URL')}/auth/reset-password?token=${token}`;
 
     await this.mailerService.sendMail({
       to: email,
@@ -318,13 +318,13 @@ export class AuthService {
       },
     });
 
-    const dashboardUrl = `${this.configService.get('FRONTEND_URL')}/dashboard`;
+    const dashboardUrl = `${this.configService.get('NEXT_PUBLIC_APP_URL')}/dashboard`;
     await this.mailerService.sendMail({
       to: user.email,
       subject: 'Welcome to Home Sweet Loan! 🏠',
       template: 'welcome',
       context: {
-        frontendUrl: this.configService.get('FRONTEND_URL'),
+        frontendUrl: this.configService.get('NEXT_PUBLIC_APP_URL'),
         name: user.name,
         url: dashboardUrl,
       },
@@ -370,7 +370,7 @@ export class AuthService {
       },
     });
 
-    const verificationUrl = `${this.configService.get('FRONTEND_URL')}/auth/verify-email?token=${verificationToken}`;
+    const verificationUrl = `${this.configService.get('NEXT_PUBLIC_APP_URL')}/auth/verify-email?token=${verificationToken}`;
 
     try {
       await this.mailerService.sendMail({

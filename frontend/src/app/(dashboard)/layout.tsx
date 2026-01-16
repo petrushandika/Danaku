@@ -48,8 +48,9 @@ export default function DashboardLayout({
   const router = useRouter();
   const { user, logout } = useAuthStore();
   const { language } = useLanguageStore();
-  const t = translations[language].dashboard;
-  const tn = translations[language].notificationPanel;
+  const langKey = language as keyof typeof translations;
+  const t = translations[langKey].dashboard;
+  const tn = translations[langKey].notificationPanel;
   const { query, setQuery } = useSearchStore();
   const [open, setOpen] = useState(false); // Mobile sheet state
   const [isSidebarOpen, setIsSidebarOpen] = useState(true); // Desktop sidebar state
@@ -240,7 +241,7 @@ export default function DashboardLayout({
     try {
       await api.post("/auth/logout");
       logout();
-      toast.success(translations[language].auth.signedOut);
+      toast.success(translations[langKey].auth.signedOut);
       router.push("/");
     } catch (error) {
       console.error("Logout failed:", error);
@@ -297,7 +298,7 @@ export default function DashboardLayout({
                       type="text"
                       value={query}
                       onChange={(e) => setQuery(e.target.value)}
-                      placeholder={translations[language].search.placeholder}
+                      placeholder={translations[langKey].search.placeholder}
                       className="bg-transparent border-none outline-none text-sm font-medium w-64 text-slate-600 dark:text-slate-300 placeholder:text-slate-400"
                     />
                     <kbd className="hidden lg:inline-flex h-5 select-none items-center gap-1 rounded border border-border bg-slate-50 dark:bg-slate-900 px-1.5 font-mono text-[10px] font-medium text-slate-400 opacity-100">
@@ -346,7 +347,7 @@ export default function DashboardLayout({
                               </p>
                             </div>
                           ) : (
-                            notifications.map((notif) => (
+                            notifications.map((notif: any) => (
                               <div
                                 key={notif.id}
                                 onClick={() =>
@@ -454,7 +455,7 @@ export default function DashboardLayout({
                               </p>
                             </div>
                           ) : (
-                            notifications.map((notif) => (
+                            notifications.map((notif: any) => (
                               <div
                                 key={notif.id}
                                 onClick={() =>
@@ -702,8 +703,8 @@ export default function DashboardLayout({
                 </div>
               </header>
 
-              <div className="flex-1 overflow-y-auto p-5 md:p-10 bg-background dark:bg-slate-950 transition-colors duration-500 emerald-scrollbar">
-                <div className="max-w-7xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+              <div className="flex-1 overflow-y-auto p-5 md:p-8 bg-background dark:bg-slate-950 transition-colors duration-500 emerald-scrollbar">
+                <div className="max-w-7xl mx-auto space-y-6 md:space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
                   {children}
                 </div>
               </div>

@@ -14,6 +14,7 @@ import {
   Edit2,
   Check,
   Trash2,
+  Loader2,
 } from "lucide-react";
 import { ResponsiveModal } from "@/components/responsive-modal";
 import { Input } from "@/components/ui/input";
@@ -29,11 +30,11 @@ import { toast } from "sonner";
 import { useLanguageStore, translations } from "@/store/use-language-store";
 import { useSetupStore } from "@/store/use-setup-store";
 import { useEffect, useState } from "react";
-import { Loader2 } from "lucide-react";
 
 export default function SetupPage() {
   const { language } = useLanguageStore();
-  const t = translations[language].dashboard.setup;
+  const langKey = language as keyof typeof translations;
+  const t = translations[langKey].dashboard.setup;
   const [mounted, setMounted] = useState(false);
 
   // Use global store
@@ -89,7 +90,7 @@ export default function SetupPage() {
       assets: "accountAssets",
     };
 
-    const storeKey = categoryMap[addFormData.type];
+    const storeKey = categoryMap[addFormData.type as keyof typeof categoryMap];
 
     if (!storeKey) {
       toast.error("Invalid Type", {
@@ -188,7 +189,16 @@ export default function SetupPage() {
 
   if (!mounted) return null;
 
-  const setupItems = [
+  interface SetupItem {
+    id: string;
+    title: string;
+    icon: any;
+    color: string;
+    bg: string;
+    borderColor: string;
+  }
+
+  const setupItems: SetupItem[] = [
     {
       id: "accountSummary",
       title: t.items.account,
@@ -337,7 +347,7 @@ export default function SetupPage() {
             <p className="font-medium">Loading your setup...</p>
           </div>
         ) : (
-          setupItems.map((item) => {
+          setupItems.map((item: SetupItem) => {
             const itemList =
               (setup[item.id as keyof typeof setup] as string[]) || [];
 
@@ -352,7 +362,7 @@ export default function SetupPage() {
                   <Card
                     className={`border-border shadow-none rounded-3xl bg-white dark:bg-slate-900 overflow-hidden group transition-all cursor-pointer border hover:shadow-md ${item.borderColor}`}
                   >
-                    <CardHeader className="p-6 md:p-8">
+                    <CardHeader className="p-5 md:p-6">
                       <div className="flex items-center gap-5">
                         <div
                           className={`w-14 h-14 rounded-2xl ${item.bg} flex items-center justify-center transition-all border border-transparent group-hover:border-slate-100 dark:group-hover:border-slate-700 group-hover:scale-105 shadow-xs`}
@@ -369,8 +379,8 @@ export default function SetupPage() {
                         </div>
                       </div>
                     </CardHeader>
-                    <CardContent className="p-6 md:p-8 pt-0">
-                      <div className="p-6 md:p-10 flex flex-col items-center justify-center border-2 border-dashed border-slate-100 dark:border-slate-800 rounded-3xl text-sm text-slate-400 dark:text-slate-500 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 font-medium italic bg-slate-50/50 dark:bg-slate-950/20 group-hover:bg-white dark:group-hover:bg-slate-800 transition-all">
+                    <CardContent className="p-5 md:p-6 pt-0">
+                      <div className="p-5 md:p-8 flex flex-col items-center justify-center border-2 border-dashed border-slate-100 dark:border-slate-800 rounded-3xl text-sm text-slate-400 dark:text-slate-500 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 font-medium italic bg-slate-50/50 dark:bg-slate-950/20 group-hover:bg-white dark:group-hover:bg-slate-800 transition-all">
                         <span className="text-2xl font-black mb-1">
                           {itemList.length}
                         </span>
@@ -383,7 +393,7 @@ export default function SetupPage() {
                 }
               >
                 <div className="flex flex-col h-full">
-                  <div className="flex-1 space-y-3 max-h-[300px] md:max-h-[400px] overflow-y-auto emerald-scrollbar pr-2">
+                  <div className="flex-1 space-y-3 max-h-[224px] overflow-y-auto emerald-scrollbar pr-2">
                     {itemList.length === 0 ? (
                       <div className="flex flex-col items-center justify-center p-8 text-center">
                         <p className="text-slate-400 dark:text-slate-500 text-sm font-medium">
@@ -391,7 +401,7 @@ export default function SetupPage() {
                         </p>
                       </div>
                     ) : (
-                      itemList.map((itemName, index) => (
+                      itemList.map((itemName: string, index: number) => (
                         <div
                           key={index}
                           className="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800 hover:border-slate-200 dark:hover:border-slate-700 transition-all group"

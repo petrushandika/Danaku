@@ -18,7 +18,8 @@ import { useRouter } from "next/navigation";
 
 export default function SubscriptionPage() {
   const { language } = useLanguageStore();
-  const t = translations[language].dashboard.subscription;
+  const langKey = language as keyof typeof translations;
+  const t = translations[langKey].dashboard.subscription;
   const [mounted, setMounted] = useState(false);
   const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
   const router = useRouter();
