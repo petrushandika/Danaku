@@ -144,9 +144,20 @@ export class BudgetsService {
       activityMsg = `Updated savings plan for ${yearMonth}`;
     }
 
+    // Extract the specific value being updated for the notification
+    let updatedValue = 0;
+    if (updateBudgetDto.income) {
+      updatedValue = Object.values(updateBudgetDto.income)[0] as number;
+    } else if (updateBudgetDto.expenses) {
+      updatedValue = Object.values(updateBudgetDto.expenses)[0] as number;
+    } else if (updateBudgetDto.savingsAllocation) {
+      updatedValue = Object.values(updateBudgetDto.savingsAllocation)[0] as number;
+    }
+
     await this.notifications.create(userId, activityTitle, activityMsg, 'BUDGET', {
       yearMonth,
       update: updateBudgetDto,
+      value: updatedValue,
     });
 
     return updated;

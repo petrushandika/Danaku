@@ -131,19 +131,8 @@ export default function DashboardPage() {
   const categoryOptions = useMemo(() => {
     if (!setup) return [];
     return [
-      ...setup.incomeSources.map((s: string) => ({
-        label: s,
-        value: s,
-        type: "Income",
-      })),
       ...setup.needs.map((n: string) => ({ label: n, value: n, type: "Needs" })),
       ...setup.wants.map((w: string) => ({ label: w, value: w, type: "Wants" })),
-      ...setup.savings.map((s: string) => ({ label: s, value: s, type: "Savings" })),
-      ...setup.accountAssets.map((a: string) => ({
-        label: a,
-        value: a,
-        type: "Assets",
-      })),
     ];
   }, [setup]);
 
@@ -301,41 +290,137 @@ export default function DashboardPage() {
         incomeBreakdown: breakdown,
       });
 
-      // 3. Process Activity
-      // Merge Transactions and Notifications/Events
-      const txActivities = (spendingRes.spending || []).map((s: any) => ({
-        ...s,
-        isEvent: false,
-      }));
+      // 3. Process Activity - COMPLETE REWRITE FOR PROPER DEDUPLICATION
+      // Get latest setup state
+      const currentSetup = useSetupStore.getState().setup;
+      
+      // Build comprehensive item tracking
+      const activeItems = {
+        incomeSources: new Set(currentSetup?.incomeSources || []),
+        needs: new Set(currentSetup?.needs || []),
+        wants: new Set(currentSetup?.wants || []),
+        savings: new Set(currentSetup?.savings || []),
+        assets: new Set(currentSetup?.accountAssets || []),
+      };
 
-      const eventActivities = (notifications || [])
-        .filter((n: any) => ["BUDGET", "ASSET", "SYSTEM"].includes(n.type))
-        .map((n: any) => ({
-          id: n.id,
-          date: n.createdAt,
-          description: n.message,
-          category: n.type,
-          amount: Number(n.metadata?.value || 0),
-          isEvent: true,
-          type: n.type,
+      // Process Spending Transactions
+      const txActivities = (spendingRes.spending || [])
+        .filter((s: any) => Math.abs(Number(s.amount)) > 0)
+        .map((s: any) => ({
+          id: s.id,
+          date: s.date,
+          description: s.description,
+          category: s.category,
+          amount: s.amount,
+          isEvent: false,
+          type: "SPENDING",
         }));
 
-      console.log("📊 Dashboard Activity Debug:", {
-        spendingCount: txActivities.length,
-        notificationsCount: eventActivities.length,
-        totalNotifications: notifications?.length || 0,
-        sampleSpending: txActivities.slice(0, 2),
-        sampleNotifications: eventActivities.slice(0, 2),
-        allNotificationTypes: notifications?.map((n: any) => n.type) || [],
-      });
-
-      const combined = [...txActivities, ...eventActivities].sort(
-        (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+      // Process Notifications with Smart Deduplication
+      const activityMap = new Map<string, any>();
+      
+      // Sort notifications by date (newest first)
+      const sortedNotifs = [...(notifications || [])].sort(
+        (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
       );
 
-      console.log("✅ Combined activities:", combined.length, "items");
+      for (const notif of sortedNotifs) {
+        if (!["BUDGET", "ASSET"].includes(notif.type)) continue;
 
-      setRecentActivity(combined.slice(0, 15));
+        let itemName = "";
+        let itemCategory = "";
+        let amount = 0;
+        let activityType = notif.type;
+        let uniqueKey = "";
+
+        // Extract Budget Activities (Income, Needs, Wants, Savings)
+        if (notif.type === "BUDGET" && notif.metadata?.update) {
+          const update = notif.metadata.update;
+          
+          if (update.income) {
+            const source = Object.keys(update.income)[0];
+            itemName = source;
+            itemCategory = source;
+            amount = Number(update.income[source]);
+            uniqueKey = `INCOME-${source}`;
+            
+            // Check if still exists
+            if (!activeItems.incomeSources.has(source)) continue;
+          } 
+          else if (update.expenses) {
+            const item = Object.keys(update.expenses)[0];
+            itemName = item;
+            itemCategory = item;
+            amount = Number(update.expenses[item]);
+            
+            // Determine if Needs or Wants
+            if (activeItems.needs.has(item)) {
+              uniqueKey = `NEEDS-${item}`;
+            } else if (activeItems.wants.has(item)) {
+              uniqueKey = `WANTS-${item}`;
+            } else {
+              continue; // Item deleted
+            }
+          } 
+          else if (update.savingsAllocation) {
+            const item = Object.keys(update.savingsAllocation)[0];
+            itemName = item;
+            itemCategory = item;
+            amount = Number(update.savingsAllocation[item]);
+            uniqueKey = `SAVINGS-${item}`;
+            
+            // Check if still exists
+            if (!activeItems.savings.has(item)) continue;
+          }
+        }
+        // Extract Asset Activities
+        else if (notif.type === "ASSET" && notif.metadata?.itemName) {
+          itemName = notif.metadata.itemName;
+          itemCategory = notif.metadata.itemName;
+          amount = Number(notif.metadata?.value || 0);
+          uniqueKey = `ASSET-${itemName}`;
+          
+          // Check if still exists (asset could be in accountAssets or be a description)
+          // For assets, we check the description field
+          const assetExists = notif.metadata?.description && 
+            (activeItems.assets.has(notif.metadata.description) || 
+             notif.metadata?.assetId); // If has assetId, it's a real asset
+          
+          if (!assetExists && !notif.metadata?.assetId) continue;
+        }
+
+        // Skip if no amount
+        if (Math.abs(amount) <= 0) continue;
+
+        // Deduplication: Only keep the LATEST entry for each unique item
+        if (!activityMap.has(uniqueKey)) {
+          activityMap.set(uniqueKey, {
+            id: notif.id,
+            date: notif.createdAt,
+            description: itemName,
+            category: itemCategory,
+            amount: amount,
+            isEvent: true,
+            type: activityType,
+          });
+        }
+      }
+
+      const eventActivities = Array.from(activityMap.values());
+
+      // Combine and sort all activities
+      const combined = [...txActivities, ...eventActivities]
+        .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+
+      console.log("✅ Recent Activity Summary:", {
+        spending: txActivities.length,
+        budgetingAndAssets: eventActivities.length,
+        total: combined.length,
+        showing: Math.min(5, combined.length)
+      });
+
+      // Keep only 5 most recent
+      setRecentActivity(combined.slice(0, 5));
     } catch (error) {
       console.error("Failed to load dashboard", error);
       toast.error("Failed to load dashboard data");
@@ -767,23 +852,44 @@ export default function DashboardPage() {
                 </div>
               ) : filteredActivity.length > 0 ? (
                 filteredActivity.map((item: any, idx: number) => {
-                  const isIncome = !!setup?.incomeSources?.includes(
-                    item.category
-                  );
-                  const isSavings = !!setup?.savings?.includes(item.category);
-                  const isAsset =
-                    !!setup?.accountAssets?.includes(item.category) ||
-                    item.category === "ASSET";
-                  const isBudget = item.category === "BUDGET";
-                  const isSystem = item.category === "SYSTEM";
+                  // Determine activity type for proper badge and color
+                  const isIncome = !!setup?.incomeSources?.includes(item.description) || 
+                                   !!setup?.incomeSources?.includes(item.category);
+                  const isNeeds = !!setup?.needs?.includes(item.description) || 
+                                  !!setup?.needs?.includes(item.category);
+                  const isWants = !!setup?.wants?.includes(item.description) || 
+                                  !!setup?.wants?.includes(item.category);
+                  const isSavings = !!setup?.savings?.includes(item.description) || 
+                                    !!setup?.savings?.includes(item.category);
+                  const isAsset = item.type === "ASSET";
+                  const isSpending = item.type === "SPENDING";
 
-                  // Colors based on category type
+                  // Determine badge label and color
+                  let badgeLabel = t.badgeSpending;
+                  let badgeColor = "bg-rose-100 text-rose-700";
                   let typeColor = "text-rose-600 dark:text-rose-400";
-                  if (isIncome) typeColor = "text-emerald-600";
-                  if (isSavings) typeColor = "text-sky-600";
-                  if (isAsset) typeColor = "text-violet-600";
-                  if (isBudget) typeColor = "text-amber-600";
-                  if (isSystem) typeColor = "text-slate-600";
+
+                  if (isIncome) {
+                    badgeLabel = t.badgeIncome;
+                    badgeColor = "bg-emerald-100 text-emerald-700";
+                    typeColor = "text-emerald-600";
+                  } else if (isNeeds) {
+                    badgeLabel = "Needs";
+                    badgeColor = "bg-orange-100 text-orange-700";
+                    typeColor = "text-orange-600";
+                  } else if (isWants) {
+                    badgeLabel = "Wants";
+                    badgeColor = "bg-pink-100 text-pink-700";
+                    typeColor = "text-pink-600";
+                  } else if (isSavings) {
+                    badgeLabel = t.badgeSavings;
+                    badgeColor = "bg-sky-100 text-sky-700";
+                    typeColor = "text-sky-600";
+                  } else if (isAsset) {
+                    badgeLabel = t.badgeAsset;
+                    badgeColor = "bg-violet-100 text-violet-700";
+                    typeColor = "text-violet-600";
+                  }
 
                   return (
                     <div
@@ -804,30 +910,10 @@ export default function DashboardPage() {
                         <span
                           className={cn(
                             "text-[9px] font-black uppercase px-1.5 py-0.5 rounded",
-                            isIncome
-                              ? "bg-emerald-100 text-emerald-700"
-                              : isSavings
-                              ? "bg-sky-100 text-sky-700"
-                              : isAsset
-                              ? "bg-violet-100 text-violet-700"
-                              : isBudget
-                              ? "bg-amber-100 text-amber-700"
-                              : isSystem
-                              ? "bg-slate-100 text-slate-700"
-                              : "bg-rose-100 text-rose-700"
+                            badgeColor
                           )}
                         >
-                          {isIncome
-                            ? t.badgeIncome
-                            : isSavings
-                            ? t.badgeSavings
-                            : isAsset
-                            ? t.badgeAsset
-                            : isBudget
-                            ? t.badgeBudget
-                            : isSystem
-                            ? "System"
-                            : t.badgeSpending}
+                          {badgeLabel}
                         </span>
                         <p className="text-xs text-slate-400 dark:text-slate-500 font-bold uppercase tracking-widest leading-none">
                           {item.category} •{" "}
@@ -838,11 +924,7 @@ export default function DashboardPage() {
                     <div
                       className={cn(
                         "font-black text-sm text-right transition-colors duration-300",
-                        isIncome
-                          ? "text-emerald-600"
-                          : isBudget
-                          ? "text-amber-600"
-                          : typeColor
+                        typeColor
                       )}
                     >
                       {item.amount > 0 ? "+" : "-"} Rp{" "}

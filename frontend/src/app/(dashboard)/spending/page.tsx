@@ -99,8 +99,6 @@ export default function SpendingPage() {
     const categories = [
       ...setup.needs,
       ...setup.wants,
-      ...setup.savings,
-      ...setup.accountAssets,
     ].sort();
 
     // Remove duplicates
@@ -548,19 +546,8 @@ function TransactionForm({
       type: string;
     }
     return [
-      ...setup.incomeSources.map((s: string): CategoryOption => ({
-        label: s,
-        value: s,
-        type: "Income",
-      })),
       ...setup.needs.map((n: string): CategoryOption => ({ label: n, value: n, type: "Needs" })),
       ...setup.wants.map((w: string): CategoryOption => ({ label: w, value: w, type: "Wants" })),
-      ...setup.savings.map((s: string): CategoryOption => ({ label: s, value: s, type: "Savings" })),
-      ...setup.accountAssets.map((a: string): CategoryOption => ({
-        label: a,
-        value: a,
-        type: "Assets",
-      })),
     ];
   }, [setup]);
 

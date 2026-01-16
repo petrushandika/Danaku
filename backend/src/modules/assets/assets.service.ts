@@ -57,9 +57,15 @@ export class AssetsService {
     await this.notifications.create(
       userId,
       'Asset Registered',
-      `Registered a new asset: ${data.description}`,
+      data.description,
       'ASSET',
-      { assetId: asset.id, value: data.value, type: data.type },
+      { 
+        assetId: asset.id, 
+        value: data.value, 
+        type: data.type,
+        description: data.description,
+        itemName: data.description
+      },
     );
 
     return asset;
@@ -75,9 +81,15 @@ export class AssetsService {
     await this.notifications.create(
       userId,
       'Asset Updated',
-      `Updated asset details: ${asset.description}`,
+      asset.description,
       'ASSET',
-      { assetId: asset.id, value: asset.value, type: asset.type },
+      { 
+        assetId: asset.id, 
+        value: asset.value, 
+        type: asset.type,
+        description: asset.description,
+        itemName: asset.description
+      },
     );
 
     return asset;
