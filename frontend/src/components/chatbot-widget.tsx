@@ -146,58 +146,108 @@ export function ChatbotWidget() {
             <div className="space-y-4">
                 {messages.map((message, index) => (
                     <div key={index} className={cn(
-                        "flex gap-3",
+                        "flex gap-3 animate-in fade-in slide-in-from-bottom-2 duration-300",
                         message.role === "user" ? "justify-end" : "justify-start"
                     )}>
                         {message.role === "assistant" && (
-                            <div className="w-8 h-8 rounded-full bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center shrink-0 border border-emerald-200 dark:border-emerald-800">
+                            <div className="w-8 h-8 rounded-full bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center shrink-0 border border-emerald-200 dark:border-emerald-800 shadow-sm">
                                 <Sparkles className="w-4 h-4 text-emerald-600 dark:text-emerald-400 fill-current" />
                             </div>
                         )}
                         <div className={cn(
-                            "max-w-[85%] p-3.5 rounded-2xl shadow-sm",
+                            "max-w-[85%] p-3.5 rounded-2xl shadow-sm border transition-shadow hover:shadow-md",
                             message.role === "user"
-                                ? "bg-emerald-600 text-white rounded-tr-none"
-                                : "bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-border rounded-tl-none"
+                                ? "bg-emerald-600 text-white rounded-tr-none border-emerald-500/20"
+                                : "bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 border-slate-200 dark:border-slate-700 rounded-tl-none"
                         )}>
                             <div className="text-sm leading-relaxed">
                                 {message.content.split('\n').map((line, i) => {
+                                    const trimmedLine = line.trim();
+                                    
+                                    // Handle H3 headings (### Heading)
+                                    if (trimmedLine.startsWith('###')) {
+                                        return (
+                                            <h3 key={i} className={cn(
+                                                "text-base font-bold mt-4 mb-2 first:mt-0 flex items-center gap-2",
+                                                message.role === "user" ? "text-white" : "text-emerald-700 dark:text-emerald-400"
+                                            )}>
+                                                <span className={cn("w-1 h-4 rounded-full", message.role === "user" ? "bg-emerald-200" : "bg-emerald-500")} />
+                                                {trimmedLine.replace(/^###\s+/, '')}
+                                            </h3>
+                                        )
+                                    }
+
+                                    // Handle H2 headings (## Heading)
+                                    if (trimmedLine.startsWith('##')) {
+                                        return (
+                                            <h2 key={i} className={cn(
+                                                "text-lg font-bold mt-5 mb-3 first:mt-0 border-b pb-1",
+                                                message.role === "user" ? "text-white border-white/20" : "text-slate-900 dark:text-slate-100 border-slate-100 dark:border-slate-700"
+                                            )}>
+                                                {trimmedLine.replace(/^##\s+/, '')}
+                                            </h2>
+                                        )
+                                    }
+
                                     // Handle numbered lists (1. 2. 3.)
-                                    if (/^\d+\.\s/.test(line)) {
+                                    if (/^\d+\.\s/.test(trimmedLine)) {
+                                        const boldFormatted = trimmedLine.split(/(\*\*.*?\*\*)/).map((part, j) => {
+                                            if (part.startsWith('**') && part.endsWith('**')) {
+                                                return <strong key={j} className="font-bold">{part.slice(2, -2)}</strong>
+                                            }
+                                            return part
+                                        })
                                         return (
-                                            <div key={i} className="flex gap-2 mb-2">
-                                                <span className="font-bold shrink-0">{line.match(/^\d+\./)?.[0]}</span>
-                                                <span>{line.replace(/^\d+\.\s/, '')}</span>
+                                            <div key={i} className="flex gap-2 mb-2 ml-1">
+                                                <span className={cn("font-bold shrink-0", message.role === "user" ? "text-emerald-50" : "text-emerald-600 dark:text-emerald-400")}>
+                                                    {trimmedLine.match(/^\d+\./)?.[0]}
+                                                </span>
+                                                <span className="flex-1">{boldFormatted.slice(1)}</span>
                                             </div>
                                         )
                                     }
-                                    // Handle bullet points (- or •)
-                                    if (/^[-•]\s/.test(line)) {
+
+                                    // Handle bullet points (*, -, •)
+                                    if (/^[*•-]\s/.test(trimmedLine)) {
+                                        const content = trimmedLine.replace(/^[*•-]\s/, '');
+                                        const boldFormatted = content.split(/(\*\*.*?\*\*)/).map((part, j) => {
+                                            if (part.startsWith('**') && part.endsWith('**')) {
+                                                return <strong key={j} className="font-bold">{part.slice(2, -2)}</strong>
+                                            }
+                                            return part
+                                        })
                                         return (
-                                            <div key={i} className="flex gap-2 mb-1.5 ml-2">
-                                                <span className="text-emerald-500 shrink-0">•</span>
-                                                <span>{line.replace(/^[-•]\s/, '')}</span>
+                                            <div key={i} className="flex gap-2 mb-1.5 ml-3">
+                                                <span className={cn("shrink-0 select-none", message.role === "user" ? "text-emerald-200" : "text-emerald-500")}>•</span>
+                                                <span className="flex-1">{boldFormatted}</span>
                                             </div>
                                         )
                                     }
-                                    // Handle bold text (**text**)
+
+                                    // Handle bold text (**text**) in regular paragraphs
                                     const boldFormatted = line.split(/(\*\*.*?\*\*)/).map((part, j) => {
                                         if (part.startsWith('**') && part.endsWith('**')) {
-                                            return <strong key={j}>{part.slice(2, -2)}</strong>
+                                            return <strong key={j} className="font-bold">{part.slice(2, -2)}</strong>
                                         }
                                         return part
                                     })
+
                                     // Regular paragraphs
-                                    return line.trim() ? (
-                                        <p key={i} className="mb-2 last:mb-0">{boldFormatted}</p>
+                                    return trimmedLine ? (
+                                        <p key={i} className={cn(
+                                            "mb-2 last:mb-0",
+                                            message.role === "user" ? "text-white" : "text-slate-700 dark:text-slate-300"
+                                        )}>
+                                            {boldFormatted}
+                                        </p>
                                     ) : (
-                                        <br key={i} />
+                                        <div key={i} className="h-2" />
                                     )
                                 })}
                             </div>
                             <p className={cn(
-                                "text-[10px] mt-1.5 font-medium",
-                                message.role === "user" ? "text-emerald-100" : "text-slate-400"
+                                "text-[10px] mt-2 font-medium opacity-70 flex items-center gap-1",
+                                message.role === "user" ? "text-emerald-50 justify-end" : "text-slate-400"
                             )}>
                                 {message.timestamp.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
                             </p>
@@ -206,15 +256,17 @@ export function ChatbotWidget() {
                 ))}
 
                 {isLoading && (
-                    <div className="flex gap-3">
-                        <div className="w-8 h-8 rounded-full bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center shrink-0 border border-emerald-200 dark:border-emerald-800">
+                    <div className="flex gap-3 animate-in fade-in slide-in-from-bottom-2 duration-300">
+                        <div className="w-8 h-8 rounded-full bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center shrink-0 border border-emerald-200 dark:border-emerald-800 shadow-sm animate-pulse">
                             <Sparkles className="w-4 h-4 text-emerald-600 dark:text-emerald-400 fill-current" />
                         </div>
-                        <div className="bg-white dark:bg-slate-800 p-3.5 rounded-2xl rounded-tl-none border border-border shadow-sm">
-                            <div className="flex items-center gap-2">
-                                <Loader2 className="w-4 h-4 animate-spin text-emerald-600" />
-                                <span className="text-sm text-slate-600 dark:text-slate-300">Thinking...</span>
+                        <div className="bg-white dark:bg-slate-800 p-3.5 rounded-2xl rounded-tl-none border border-border shadow-sm flex items-center gap-3">
+                            <div className="flex gap-1">
+                                <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-bounce [animation-delay:-0.3s]" />
+                                <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-bounce [animation-delay:-0.15s]" />
+                                <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-bounce" />
                             </div>
+                            <span className="text-xs font-bold text-slate-500 dark:text-slate-400 tracking-wide uppercase">AI Strategist is thinking...</span>
                         </div>
                     </div>
                 )}
