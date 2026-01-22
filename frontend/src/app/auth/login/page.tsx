@@ -91,9 +91,19 @@ export default function LoginPage() {
       router.push("/dashboard");
     } catch (error: any) {
       console.error("Login error:", error);
-      const message =
-        error.response?.data?.message || "Invalid email or password";
-      toast.error("Login failed", { description: message });
+      const message = error.response?.data?.message;
+
+      if (message === "EMAIL_NOT_VERIFIED") {
+        localStorage.setItem("pendingVerificationEmail", data.email);
+        toast.info("Account not verified", {
+          description: "Please verify your email to continue.",
+        });
+        router.push("/auth/verify-email");
+        return;
+      }
+
+      const displayMessage = message || "Invalid email or password";
+      toast.error("Login failed", { description: displayMessage });
     } finally {
       setLoading(false);
     }

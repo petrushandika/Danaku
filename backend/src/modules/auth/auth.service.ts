@@ -28,6 +28,9 @@ export class AuthService {
     });
 
     if (existingUser) {
+      if (!existingUser.isVerified) {
+        throw new BadRequestException('EMAIL_NOT_VERIFIED');
+      }
       throw new BadRequestException('User already exists');
     }
 
@@ -97,7 +100,7 @@ export class AuthService {
     }
 
     if (!user.isVerified) {
-      throw new UnauthorizedException('Please verify your email before logging in');
+      throw new UnauthorizedException('EMAIL_NOT_VERIFIED');
     }
 
     const tokens = await this.getTokens(user.id, user.email);

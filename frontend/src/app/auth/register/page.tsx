@@ -90,10 +90,20 @@ export default function RegisterPage() {
       router.push("/auth/verify-email");
     } catch (error: any) {
       console.error("Registration error:", error);
-      const message =
-        error.response?.data?.message ||
-        "Registration failed. Please try again.";
-      toast.error("Error", { description: message });
+      const message = error.response?.data?.message;
+
+      if (message === "EMAIL_NOT_VERIFIED") {
+        localStorage.setItem("pendingVerificationEmail", data.email);
+        toast.info("Account already exists", {
+          description: "Please verify your email to continue.",
+        });
+        router.push("/auth/verify-email");
+        return;
+      }
+
+      const displayMessage =
+        message || "Registration failed. Please try again.";
+      toast.error("Error", { description: displayMessage });
     } finally {
       setLoading(false);
     }

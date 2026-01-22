@@ -120,14 +120,14 @@ function VerifyEmailContent() {
   if (token && verificationStatus === "loading") {
     return (
       <div className="w-full">
-        <Card className="rounded-3xl bg-white border border-slate-200">
+        <Card className="rounded-3xl bg-card border border-border">
           <CardContent className="p-6 md:p-8 space-y-6">
             <div className="flex flex-col items-center justify-center py-8 space-y-4">
-              <Loader2 className="h-16 w-16 text-emerald-600 animate-spin" />
-              <h2 className="text-xl font-bold text-slate-700">
+              <Loader2 className="h-16 w-16 text-primary animate-spin" />
+              <h2 className="text-xl font-bold text-foreground">
                 Verifying your email...
               </h2>
-              <p className="text-sm text-slate-500">
+              <p className="text-sm text-muted-foreground">
                 Please wait while we verify your email address.
               </p>
             </div>
@@ -141,19 +141,19 @@ function VerifyEmailContent() {
   if (verificationStatus === "success") {
     return (
       <div className="w-full">
-        <Card className="rounded-3xl bg-white border border-slate-200">
+        <Card className="rounded-3xl bg-card border border-border">
           <CardContent className="p-6 md:p-8 space-y-6">
             <div className="flex flex-col items-center justify-center py-8 space-y-4">
-              <CheckCircle className="h-16 w-16 text-emerald-600" />
-              <h2 className="text-xl font-bold text-slate-700">
+              <CheckCircle className="h-16 w-16 text-primary" />
+              <h2 className="text-xl font-bold text-foreground">
                 Email Verified!
               </h2>
-              <p className="text-sm text-slate-500 text-center">
+              <p className="text-sm text-muted-foreground text-center">
                 Your email has been verified successfully. You will be
                 redirected to login shortly.
               </p>
               <Link href="/auth/login">
-                <Button className="mt-4 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold">
+                <Button className="mt-4 rounded-2xl bg-primary hover:bg-primary/90 text-white font-bold border-none transition-all active:scale-95">
                   Go to Login
                 </Button>
               </Link>
@@ -168,14 +168,14 @@ function VerifyEmailContent() {
   if (verificationStatus === "error") {
     return (
       <div className="w-full">
-        <Card className="rounded-3xl bg-white border border-slate-200">
+        <Card className="rounded-3xl bg-card border border-border">
           <CardContent className="p-6 md:p-8 space-y-6">
             <div className="flex flex-col items-center justify-center py-8 space-y-4">
-              <XCircle className="h-16 w-16 text-red-600" />
-              <h2 className="text-xl font-bold text-slate-700">
+              <XCircle className="h-16 w-16 text-destructive" />
+              <h2 className="text-xl font-bold text-foreground">
                 Verification Failed
               </h2>
-              <p className="text-sm text-slate-500 text-center">
+              <p className="text-sm text-muted-foreground text-center">
                 {errorMessage}
               </p>
 
@@ -183,19 +183,19 @@ function VerifyEmailContent() {
                 <Button
                   onClick={handleResend}
                   disabled={isResending || countdown > 0}
-                  className="w-full h-12 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-lg transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full h-12 rounded-2xl bg-primary hover:bg-primary/90 text-white font-black text-lg transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed border-none shadow-none"
                 >
                   {isResending
                     ? "Resending..."
                     : countdown > 0
-                    ? `Wait ${countdown}s`
-                    : "Resend Verification Link"}
+                      ? `Wait ${countdown}s`
+                      : "Resend Verification Link"}
                 </Button>
 
                 <Link href="/auth/login" className="block">
                   <Button
                     variant="outline"
-                    className="w-full h-12 rounded-2xl border-slate-200 hover:bg-slate-50 font-bold uppercase tracking-widest text-xs text-slate-500"
+                    className="w-full h-12 rounded-2xl border-border hover:bg-muted font-bold uppercase tracking-widest text-xs text-muted-foreground transition-all"
                   >
                     Back to Login
                   </Button>
@@ -208,19 +208,18 @@ function VerifyEmailContent() {
     );
   }
 
-  // Default: Show resend email UI (no token in URL)
   return (
     <div className="w-full">
-      <Card className="rounded-3xl bg-white border border-slate-200">
+      <Card className="rounded-3xl bg-card border border-border">
         <CardContent className="p-6 md:p-8 space-y-6">
           <div className="flex flex-col items-center space-y-4">
-            <Mail className="h-16 w-16 text-emerald-600" />
-            <h2 className="text-xl font-bold text-slate-700">
+            <Mail className="h-16 w-16 text-primary" />
+            <h2 className="text-xl font-bold text-foreground text-center">
               Check Your Email
             </h2>
           </div>
 
-          <div className="p-4 bg-slate-50/80 rounded-2xl border border-slate-100 italic text-sm text-center font-bold text-slate-400">
+          <div className="p-4 bg-muted/30 rounded-2xl border border-border italic text-sm text-center font-bold text-muted-foreground">
             Didn't receive the email? Check your spam folder or resend below.
           </div>
 
@@ -228,27 +227,27 @@ function VerifyEmailContent() {
             <Button
               onClick={handleResend}
               disabled={isResending || countdown > 0}
-              className="w-full h-12 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-lg transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full h-12 rounded-2xl bg-primary hover:bg-primary/90 text-white font-black text-lg transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed border-none shadow-none"
             >
               {isResending
                 ? "Resending..."
                 : countdown > 0
-                ? `Wait ${countdown}s`
-                : "Resend Link"}
+                  ? `Wait ${countdown}s`
+                  : "Resend Link"}
             </Button>
 
             <Button
               variant="outline"
-              className="w-full h-12 rounded-2xl border-slate-200 hover:bg-slate-50 font-bold uppercase tracking-widest text-xs text-slate-500 group bg-white hover:border-emerald-200 transition-all px-0"
+              className="w-full h-12 rounded-2xl border-border hover:bg-muted font-bold uppercase tracking-widest text-xs text-muted-foreground group bg-transparent transition-all px-0"
             >
               Change Email
             </Button>
           </div>
 
-          <div className="pt-6 border-t border-slate-50 text-center">
+          <div className="pt-6 border-t border-border text-center">
             <Link
               href="/auth/login"
-              className="text-sm font-bold text-slate-400 hover:text-emerald-600"
+              className="text-sm font-bold text-muted-foreground hover:text-primary transition-colors"
             >
               Back to Login
             </Link>
@@ -264,11 +263,11 @@ export default function VerifyEmailPage() {
     <Suspense
       fallback={
         <div className="w-full">
-          <Card className="rounded-3xl bg-white border border-slate-200">
+          <Card className="rounded-3xl bg-card border border-border">
             <CardContent className="p-6 md:p-8">
               <div className="flex flex-col items-center justify-center py-8 space-y-4">
-                <Loader2 className="h-16 w-16 text-emerald-600 animate-spin" />
-                <p className="text-sm text-slate-500">
+                <Loader2 className="h-16 w-16 text-primary animate-spin" />
+                <p className="text-sm text-muted-foreground">
                   Loading verification page...
                 </p>
               </div>

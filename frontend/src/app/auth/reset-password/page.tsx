@@ -70,7 +70,7 @@ function ResetPasswordForm() {
                 id="pass"
                 placeholder="••••••••"
                 required
-                className="tracking-widest shadow-sm"
+                className="tracking-widest"
               />
             </div>
             <div className="space-y-1.5">
@@ -84,14 +84,14 @@ function ResetPasswordForm() {
                 id="confirm"
                 placeholder="••••••••"
                 required
-                className="tracking-widest shadow-sm"
+                className="tracking-widest"
               />
             </div>
 
             <Button
               type="submit"
               disabled={loading}
-              className="w-full h-12 rounded-2xl bg-primary hover:bg-primary/90 text-primary-foreground font-black text-lg transition-all hover:scale-[1.02] active:scale-95 mt-2"
+              className="w-full h-12 rounded-2xl bg-primary hover:bg-primary/90 text-primary-foreground font-black text-lg transition-all active:scale-95 mt-2 border-none"
             >
               {loading ? (
                 <>

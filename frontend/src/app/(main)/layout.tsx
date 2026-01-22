@@ -76,7 +76,7 @@ export default function MainLayout({
         <header className="fixed top-0 left-0 right-0 z-50 bg-white/80 dark:bg-slate-950/80 backdrop-blur-md border-b border-slate-100 dark:border-slate-800 transition-colors">
           <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
             <Link href="/" className="flex items-center gap-2 group">
-              <span className="text-xl font-black tracking-tighter text-slate-900 dark:text-white">
+              <span className="text-xl font-black tracking-tighter text-emerald-600">
                 Danaku
               </span>
             </Link>
@@ -230,7 +230,7 @@ export default function MainLayout({
           <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-12">
             <div className="space-y-6">
               <Link href="/" className="flex items-center gap-2 group">
-                <span className="text-xl font-black tracking-tighter text-slate-900 dark:text-white">
+                <span className="text-xl font-black tracking-tighter text-emerald-600">
                   Danaku
                 </span>
               </Link>

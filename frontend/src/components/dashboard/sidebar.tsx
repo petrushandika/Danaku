@@ -147,7 +147,7 @@ export function Sidebar({
             isCollapsed ? "w-0 opacity-0" : "w-auto opacity-100 mr-2",
           )}
         >
-          <span className="text-xl font-black tracking-tighter text-slate-900 dark:text-white whitespace-nowrap leading-none">
+          <span className="text-xl font-black tracking-tighter text-emerald-600 whitespace-nowrap leading-none">
             Danaku
           </span>
         </div>
