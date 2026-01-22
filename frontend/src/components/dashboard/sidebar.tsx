@@ -46,7 +46,7 @@ export function Sidebar({
       try {
         const now = new Date();
         const yearMonth = `${now.getFullYear()}-${String(
-          now.getMonth() + 1
+          now.getMonth() + 1,
         ).padStart(2, "0")}`;
 
         const startDate = `${yearMonth}-01`;
@@ -66,13 +66,13 @@ export function Sidebar({
         if (budget && budget.income) {
           totalIncome = Object.values(budget.income).reduce(
             (a: number, b: number) => a + b,
-            0
+            0,
           );
         }
 
         const totalSpent = spendingData.spending.reduce(
           (sum: number, tx: any) => sum + Math.abs(tx.amount),
-          0
+          0,
         );
 
         let percent = 0;
@@ -132,23 +132,23 @@ export function Sidebar({
       className={cn(
         "flex flex-col h-full bg-white dark:bg-slate-900 border-r border-border transition-all duration-300 ease-in-out overflow-y-auto no-scrollbar",
         isCollapsed ? "w-[80px]" : "w-[280px]",
-        className
+        className,
       )}
     >
       <div
         className={cn(
           "flex items-center h-20 transition-all duration-300 border-b border-transparent shrink-0",
-          isCollapsed ? "justify-center" : "justify-between px-6"
+          isCollapsed ? "justify-center" : "justify-between px-6",
         )}
       >
         <div
           className={cn(
             "flex items-center overflow-hidden transition-all duration-300 ease-in-out",
-            isCollapsed ? "w-0 opacity-0" : "w-auto opacity-100 mr-2"
+            isCollapsed ? "w-0 opacity-0" : "w-auto opacity-100 mr-2",
           )}
         >
           <span className="text-xl font-black tracking-tighter text-slate-900 dark:text-white whitespace-nowrap leading-none">
-            Home Sweet <span className="text-emerald-600">Loan</span>
+            Danaku
           </span>
         </div>
 
@@ -158,7 +158,7 @@ export function Sidebar({
             onClick={onToggleCollapse}
             className={cn(
               "text-slate-400 hover:text-emerald-600 transition-all duration-300 p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center justify-center",
-              isCollapsed ? "mx-auto" : "ml-auto"
+              isCollapsed ? "mx-auto" : "ml-auto",
             )}
             title={isCollapsed ? "Expand Sidebar" : "Collapse Sidebar"}
           >
@@ -197,13 +197,13 @@ export function Sidebar({
                   : "justify-between px-4 py-3",
                 isActive
                   ? "bg-linear-to-r from-emerald-600 to-emerald-700 text-white border-emerald-800/20 shadow-lg shadow-emerald-500/20"
-                  : "text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:border-slate-200 dark:hover:border-slate-700"
+                  : "text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:border-slate-200 dark:hover:border-slate-700",
               )}
             >
               <div
                 className={cn(
                   "flex items-center transition-all duration-300",
-                  isCollapsed ? "justify-center w-full gap-0" : "gap-3"
+                  isCollapsed ? "justify-center w-full gap-0" : "gap-3",
                 )}
               >
                 <item.icon
@@ -211,13 +211,13 @@ export function Sidebar({
                     "transition-all duration-300 shrink-0 w-5 h-5",
                     isActive
                       ? "text-white"
-                      : "text-slate-400 group-hover:text-emerald-500"
+                      : "text-slate-400 group-hover:text-emerald-500",
                   )}
                 />
                 <span
                   className={cn(
                     "whitespace-nowrap overflow-hidden transition-all duration-300 ease-in-out",
-                    isCollapsed ? "w-0 opacity-0" : "w-auto opacity-100"
+                    isCollapsed ? "w-0 opacity-0" : "w-auto opacity-100",
                   )}
                   style={{ transitionDelay: isCollapsed ? "0ms" : "100ms" }}
                 >
@@ -228,7 +228,7 @@ export function Sidebar({
                 <div
                   className={cn(
                     "absolute right-4 overflow-hidden transition-all duration-300",
-                    isCollapsed ? "w-0 opacity-0" : "w-4 opacity-100"
+                    isCollapsed ? "w-0 opacity-0" : "w-4 opacity-100",
                   )}
                 >
                   <ChevronRight className="w-4 h-4 text-white/70" />
@@ -242,7 +242,7 @@ export function Sidebar({
       <div
         className={cn(
           "p-4 border-t border-border mt-auto transition-all duration-300",
-          isCollapsed ? "p-2" : "p-4"
+          isCollapsed ? "p-2" : "p-4",
         )}
       >
         <div
@@ -256,19 +256,19 @@ export function Sidebar({
               "block rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-border cursor-pointer hover:bg-white dark:hover:bg-slate-800 hover:border-emerald-500/20 hover:shadow-sm transition-all duration-300 group/profile overflow-hidden relative",
               isCollapsed
                 ? "p-0 flex justify-center items-center h-[60px] w-[60px] mx-auto"
-                : "p-4"
+                : "p-4",
             )}
           >
             <div
               className={cn(
                 "flex items-center transition-all duration-300",
-                isCollapsed ? "justify-center w-full" : "gap-3 mb-3"
+                isCollapsed ? "justify-center w-full" : "gap-3 mb-3",
               )}
             >
               <div
                 className={cn(
                   "rounded-full border border-emerald-100 dark:border-emerald-800 p-0.5 overflow-hidden bg-white dark:bg-slate-900 transition-all duration-300 shrink-0 relative z-10",
-                  "w-10 h-10"
+                  "w-10 h-10",
                 )}
               >
                 <img
@@ -285,7 +285,7 @@ export function Sidebar({
                   "flex flex-col overflow-hidden transition-all duration-300 ease-in-out",
                   isCollapsed
                     ? "w-0 opacity-0 absolute"
-                    : "w-auto opacity-100 relative"
+                    : "w-auto opacity-100 relative",
                 )}
               >
                 <span className="text-sm font-bold text-slate-800 dark:text-white transition-colors duration-300 truncate">
@@ -300,14 +300,16 @@ export function Sidebar({
             <div
               className={cn(
                 "transition-all duration-300 overflow-hidden",
-                isCollapsed ? "h-0 opacity-0 mt-0" : "h-auto opacity-100 mt-2"
+                isCollapsed ? "h-0 opacity-0 mt-0" : "h-auto opacity-100 mt-2",
               )}
             >
               <div className="h-1.5 w-full bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden transition-colors duration-300">
                 <div
                   className={cn(
                     "h-full transition-all duration-1000",
-                    budgetStats.percent > 100 ? "bg-rose-500" : "bg-emerald-600"
+                    budgetStats.percent > 100
+                      ? "bg-rose-500"
+                      : "bg-emerald-600",
                   )}
                   style={{ width: `${Math.min(budgetStats.percent, 100)}%` }}
                 />

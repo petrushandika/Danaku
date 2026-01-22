@@ -1,0 +1,16 @@
+#!/usr/bin/env sh
+echo "--- Danaku Pre-commit Checks ---"
+
+if [ -d "backend" ]; then
+    echo "Checking Backend..."
+    cd backend && npx lint-staged
+    cd ..
+fi
+
+if [ -d "frontend" ]; then
+    echo "Checking Frontend..."
+    cd frontend && npx lint-staged
+    cd ..
+fi
+
+echo "--- All Checks Passed ---"

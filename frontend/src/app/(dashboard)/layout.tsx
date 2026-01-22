@@ -151,7 +151,7 @@ export default function DashboardLayout({
       document.addEventListener("mousemove", handleMove as EventListener);
       document.addEventListener("mouseup", handleEnd);
     },
-    []
+    [],
   );
 
   // Drag handlers for user menu sheet
@@ -215,7 +215,7 @@ export default function DashboardLayout({
       document.addEventListener("mousemove", handleMove as EventListener);
       document.addEventListener("mouseup", handleEnd);
     },
-    []
+    [],
   );
 
   const [mounted, setMounted] = useState(false);
@@ -385,7 +385,7 @@ export default function DashboardLayout({
                                       {
                                         addSuffix: true,
                                         locale: language === "id" ? id : enUS,
-                                      }
+                                      },
                                     )}
                                   </p>
                                 </div>
@@ -427,7 +427,7 @@ export default function DashboardLayout({
                           <div
                             className={cn(
                               "bottom-sheet-handle mt-3 cursor-grab active:cursor-grabbing",
-                              notifDragging && "bg-slate-400 dark:bg-slate-600"
+                              notifDragging && "bg-slate-400 dark:bg-slate-600",
                             )}
                             onTouchStart={handleNotifDrag}
                             onMouseDown={handleNotifDrag}
@@ -491,7 +491,7 @@ export default function DashboardLayout({
                                         {
                                           addSuffix: true,
                                           locale: language === "id" ? id : enUS,
-                                        }
+                                        },
                                       )}
                                     </span>
                                   </div>
@@ -523,7 +523,7 @@ export default function DashboardLayout({
                         <div className="flex items-center gap-3 pl-3 pr-1 py-1 rounded-2xl border border-border bg-white/50 dark:bg-slate-800/30 hover:bg-white dark:hover:bg-slate-800 hover:border-emerald-500/30 hover:shadow-sm transition-all duration-300 cursor-pointer group active:scale-[0.98]">
                           <div className="flex flex-col items-end">
                             <span className="text-[11px] font-black text-slate-900 dark:text-white uppercase tracking-tight">
-                              {user?.name || "User HSL"}
+                              {user?.name || "User"}
                             </span>
                             <span className="text-[9px] font-bold text-emerald-600 dark:text-emerald-500 bg-emerald-50 dark:bg-emerald-500/10 px-1.5 rounded-md leading-tight">
                               {user?.plan || "FREE"}
@@ -612,7 +612,7 @@ export default function DashboardLayout({
                             className={cn(
                               "bottom-sheet-handle cursor-grab active:cursor-grabbing",
                               userMenuDragging &&
-                                "bg-slate-400 dark:bg-slate-600"
+                                "bg-slate-400 dark:bg-slate-600",
                             )}
                             onTouchStart={handleUserMenuDrag}
                             onMouseDown={handleUserMenuDrag}
@@ -633,7 +633,7 @@ export default function DashboardLayout({
                               </div>
                               <div className="flex flex-col">
                                 <span className="text-lg font-black text-slate-900 dark:text-white uppercase tracking-tight">
-                                  {user?.name || "User HSL"}
+                                  {user?.name || "User"}
                                 </span>
                                 <span className="text-xs font-bold text-emerald-600 dark:text-emerald-500 bg-emerald-50 dark:bg-emerald-500/10 px-2 py-0.5 rounded-lg leading-tight w-fit mt-1">
                                   {user?.plan || "FREE"} PLAN

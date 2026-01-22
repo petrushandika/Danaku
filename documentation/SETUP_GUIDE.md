@@ -294,7 +294,7 @@ NEXTAUTH_URL=http://localhost:3050
 NEXTAUTH_SECRET=your-super-secret-key-change-this-in-production
 
 # Database (if using Prisma in frontend)
-DATABASE_URL="postgresql://user:password@localhost:5432/homesweet"
+DATABASE_URL="postgresql://user:password@localhost:5432/danaku"
 ```
 
 ### 6. Next.js Config (next.config.ts)
@@ -479,7 +479,7 @@ enum AssetType {
 
 ```env
 # Database
-DATABASE_URL="postgresql://user:password@localhost:5432/homesweet?schema=public"
+DATABASE_URL="postgresql://user:password@localhost:5432/danaku?schema=public"
 
 # JWT
 JWT_SECRET=your-jwt-secret-key-change-this
@@ -571,12 +571,12 @@ brew install postgresql@15
 brew services start postgresql@15
 
 # Create database
-createdb homesweet
+createdb danaku
 
 # Create user
 psql postgres
-CREATE USER homesweet_user WITH PASSWORD 'your_password';
-GRANT ALL PRIVILEGES ON DATABASE homesweet TO homesweet_user;
+CREATE USER danaku_user WITH PASSWORD 'your_password';
+GRANT ALL PRIVILEGES ON DATABASE danaku TO danaku_user;
 ```
 
 ### Option 2: Docker PostgreSQL
@@ -588,11 +588,11 @@ version: "3.8"
 services:
   postgres:
     image: postgres:15-alpine
-    container_name: homesweet-db
+    container_name: danaku-db
     environment:
-      POSTGRES_USER: homesweet_user
+      POSTGRES_USER: danaku_user
       POSTGRES_PASSWORD: your_password
-      POSTGRES_DB: homesweet
+      POSTGRES_DB: danaku
     ports:
       - "5432:5432"
     volumes:
@@ -806,7 +806,7 @@ npx prisma generate
 pg_isready
 
 # Test connection
-psql -h localhost -U homesweet_user -d homesweet
+psql -h localhost -U danaku_user -d danaku
 ```
 
 ### Module Not Found

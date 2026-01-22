@@ -849,7 +849,7 @@ npm run dev
 
 ```env
 # Database
-DATABASE_URL="postgresql://user:password@localhost:5432/homesweet"
+DATABASE_URL="postgresql://user:password@localhost:5432/danaku"
 
 # Authentication
 NEXTAUTH_URL="http://localhost:3050"
