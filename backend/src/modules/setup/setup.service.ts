@@ -87,7 +87,7 @@ export class SetupService {
     return {
       category,
       itemName,
-      items: updatedSetup[category],
+      items: updatedItems,
     };
   }
 
@@ -124,7 +124,7 @@ export class SetupService {
     return {
       category,
       itemName,
-      items: updatedSetup[category],
+      items: updatedItems,
     };
   }
 
@@ -165,7 +165,7 @@ export class SetupService {
       category,
       oldItemName,
       newItemName,
-      items: updatedSetup[category],
+      items: updatedItems,
     };
   }
 

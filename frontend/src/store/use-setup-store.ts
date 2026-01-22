@@ -79,11 +79,13 @@ export const useSetupStore = create<SetupStore>((set, get) => ({
 
     try {
       const result = await apiAddItem(category, itemName);
-      set((state) => ({
-        setup: state.setup
-          ? { ...state.setup, [category]: result.items }
-          : null,
-      }));
+      if (result && Array.isArray(result.items)) {
+        set((state) => ({
+          setup: state.setup
+            ? { ...state.setup, [category]: result.items }
+            : null,
+        }));
+      }
     } catch (error: any) {
       set({ setup: previousSetup });
       throw error;
@@ -108,11 +110,13 @@ export const useSetupStore = create<SetupStore>((set, get) => ({
 
     try {
       const result = await apiDeleteItem(category, itemName);
-      set((state) => ({
-        setup: state.setup
-          ? { ...state.setup, [category]: result.items }
-          : null,
-      }));
+      if (result && Array.isArray(result.items)) {
+        set((state) => ({
+          setup: state.setup
+            ? { ...state.setup, [category]: result.items }
+            : null,
+        }));
+      }
     } catch (error: any) {
       set({ setup: previousSetup });
       throw error;
@@ -137,11 +141,13 @@ export const useSetupStore = create<SetupStore>((set, get) => ({
 
     try {
       const result = await apiUpdateItem(category, oldName, newName);
-      set((state) => ({
-        setup: state.setup
-          ? { ...state.setup, [category]: result.items }
-          : null,
-      }));
+      if (result && Array.isArray(result.items)) {
+        set((state) => ({
+          setup: state.setup
+            ? { ...state.setup, [category]: result.items }
+            : null,
+        }));
+      }
     } catch (error: any) {
       set({ setup: previousSetup });
       throw error;

@@ -23,45 +23,29 @@ export class SetupController {
 
   @Put()
   @ApiOperation({ summary: 'Update setup configuration' })
+  @ResponseMessage('Setup updated successfully')
   async updateSetup(@CurrentUser() user: any, @Body() updateSetupDto: UpdateSetupDto) {
-    const setup = await this.setupService.updateSetup(user.id, updateSetupDto);
-    return {
-      success: true,
-      data: setup,
-      message: 'Setup updated successfully',
-    };
+    return this.setupService.updateSetup(user.id, updateSetupDto);
   }
 
   @Post('items')
   @ApiOperation({ summary: 'Add item to a category' })
+  @ResponseMessage('Item added successfully')
   async addItem(@CurrentUser() user: any, @Body() addItemDto: AddItemDto) {
-    const result = await this.setupService.addItem(user.id, addItemDto);
-    return {
-      success: true,
-      data: result,
-      message: `Item "${result.itemName}" added to ${result.category} successfully`,
-    };
+    return this.setupService.addItem(user.id, addItemDto);
   }
 
   @Delete('items')
   @ApiOperation({ summary: 'Delete item from a category' })
+  @ResponseMessage('Item deleted successfully')
   async deleteItem(@CurrentUser() user: any, @Body() deleteItemDto: DeleteItemDto) {
-    const result = await this.setupService.deleteItem(user.id, deleteItemDto);
-    return {
-      success: true,
-      data: result,
-      message: `Item "${result.itemName}" deleted from ${result.category} successfully`,
-    };
+    return this.setupService.deleteItem(user.id, deleteItemDto);
   }
 
   @Post('items/update')
   @ApiOperation({ summary: 'Update item in a category' })
+  @ResponseMessage('Item updated successfully')
   async updateItem(@CurrentUser() user: any, @Body() updateItemDto: UpdateItemDto) {
-    const result = await this.setupService.updateItem(user.id, updateItemDto);
-    return {
-      success: true,
-      data: result,
-      message: `Item "${result.oldItemName}" renamed to "${result.newItemName}" in ${result.category} successfully`,
-    };
+    return this.setupService.updateItem(user.id, updateItemDto);
   }
 }
