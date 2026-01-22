@@ -1,6 +1,6 @@
 # Technical Specification Document
 
-# Home Sweet Loan App
+# Danaku App
 
 **Version**: 1.0  
 **Date**: 10 January 2026  
@@ -187,7 +187,7 @@ interface UserPreferences {
 ```javascript
 class StorageManager {
   constructor() {
-    this.prefix = "homeSweetLoan_";
+    this.prefix = "danaku_";
   }
 
   // Generic methods
@@ -345,7 +345,7 @@ class BudgetCalculator {
   static calculateAllocatedPercentage(
     totalIncome,
     totalSavings,
-    totalExpenses
+    totalExpenses,
   ) {
     if (totalIncome === 0) return 0;
     return ((totalSavings + totalExpenses) / totalIncome) * 100;
@@ -374,12 +374,12 @@ class BudgetCalculator {
     const allocatedPercentage = this.calculateAllocatedPercentage(
       totalIncome,
       totalSavings,
-      totalExpenses
+      totalExpenses,
     );
     const nonAllocated = this.calculateNonAllocated(
       totalIncome,
       totalSavings,
-      totalExpenses
+      totalExpenses,
     );
 
     return {
@@ -949,7 +949,7 @@ class VirtualScroll {
       "scroll",
       throttle(() => {
         this.update();
-      }, 100)
+      }, 100),
     );
 
     this.update();
@@ -1067,7 +1067,7 @@ describe("BudgetCalculator", () => {
     const result = BudgetCalculator.calculateAllocatedPercentage(
       totalIncome,
       totalSavings,
-      totalExpenses
+      totalExpenses,
     );
     expect(result).toBeCloseTo(82.43, 2);
   });

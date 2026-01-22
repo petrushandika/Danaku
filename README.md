@@ -1,10 +1,10 @@
-# 🏠 Home Sweet Loan App
+# 🏠 Danaku App
 
-> Personal Finance Management Application - Inspired by "Home Sweet Loan" Movie
+> Personal Finance Management Application - Inspired by "Danaku" Movie
 
 ## 📋 Overview
 
-**Home Sweet Loan App** adalah aplikasi manajemen keuangan pribadi yang terinspirasi dari film "Home Sweet Loan". Aplikasi ini dirancang untuk membantu pengguna mengelola budget bulanan, melacak pengeluaran, memantau aset, dan membuat laporan keuangan secara otomatis.
+**Danaku App** adalah aplikasi manajemen keuangan pribadi yang terinspirasi dari film "Danaku". Aplikasi ini dirancang untuk membantu pengguna mengelola budget bulanan, melacak pengeluaran, memantau aset, dan membuat laporan keuangan secara otomatis.
 
 ## 🎯 Problem Statement
 
@@ -830,10 +830,10 @@ Git
 
 ```bash
 # Clone repository
-git clone https://github.com/yourusername/home-sweet-loan-app.git
+git clone https://github.com/yourusername/danaku.git
 
 # Navigate to project
-cd home-sweet-loan-app
+cd danaku
 
 # Install dependencies
 npm install
@@ -875,7 +875,7 @@ MIT License - feel free to use this project for personal or commercial purposes.
 
 ## 📞 Support
 
-For support, email support@homesweetloan.com or join our Slack channel.
+For support, email support@danaku.com or join our Slack channel.
 
 ---
 

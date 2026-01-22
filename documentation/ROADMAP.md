@@ -1,6 +1,6 @@
 # 🗺️ Product Roadmap
 
-# Home Sweet Loan App
+# Danaku App
 
 **Version**: 1.0  
 **Last Updated**: 10 January 2026  
@@ -542,19 +542,16 @@ Ideas for future exploration:
 ### How We Prioritize Features
 
 1. **User Feedback** (40%)
-
    - User surveys
    - Feature requests
    - Support tickets
 
 2. **Data & Analytics** (30%)
-
    - Usage metrics
    - Engagement data
    - Drop-off points
 
 3. **Business Goals** (20%)
-
    - Revenue potential
    - Market differentiation
    - Competitive advantage
@@ -566,7 +563,7 @@ Ideas for future exploration:
 
 ### Feedback Channels
 
-- 📧 Email: feedback@homesweetloan.com
+- 📧 Email: feedback@danaku.com
 - 💬 In-app feedback form
 - 🐛 GitHub Issues
 - 📊 User surveys (quarterly)

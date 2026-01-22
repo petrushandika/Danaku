@@ -1,7 +1,7 @@
 {
-  "name": "home-sweet-loan-backend",
+  "name": "danaku-backend",
   "version": "1.0.0",
-  "description": "Backend API for Home Sweet Loan App - Personal Finance Management",
+  "description": "Backend API for Danaku App - Personal Finance Management",
   "author": "Petrus Handika",
   "private": true,
   "license": "MIT",

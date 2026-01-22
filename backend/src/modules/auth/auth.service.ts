@@ -55,7 +55,7 @@ export class AuthService {
     try {
       await this.mailerService.sendMail({
         to: email,
-        subject: 'Verify your email for Home Sweet Loan',
+        subject: 'Verify your email for Danaku',
         template: 'verification',
         context: {
           name: user.name,
@@ -257,7 +257,7 @@ export class AuthService {
 
     await this.mailerService.sendMail({
       to: email,
-      subject: 'Reset your password for Home Sweet Loan',
+      subject: 'Reset your password for Danaku',
       template: 'notification',
       context: {
         name: user.name,
@@ -321,7 +321,7 @@ export class AuthService {
     const dashboardUrl = `${this.configService.get('NEXT_PUBLIC_APP_URL')}/dashboard`;
     await this.mailerService.sendMail({
       to: user.email,
-      subject: 'Welcome to Home Sweet Loan! 🏠',
+      subject: 'Welcome to Danaku! 🏠',
       template: 'welcome',
       context: {
         frontendUrl: this.configService.get('NEXT_PUBLIC_APP_URL'),
@@ -375,7 +375,7 @@ export class AuthService {
     try {
       await this.mailerService.sendMail({
         to: email,
-        subject: 'Verify your email for Home Sweet Loan',
+        subject: 'Verify your email for Danaku',
         template: 'verification',
         context: {
           name: user.name,

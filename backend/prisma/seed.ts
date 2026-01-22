@@ -15,10 +15,10 @@ async function main() {
 
   // Create demo user
   const user = await prisma.user.upsert({
-    where: { email: 'demo@homesweetloan.com' },
+    where: { email: 'demo@danaku.com' },
     update: {},
     create: {
-      email: 'demo@homesweetloan.com',
+      email: 'demo@danaku.com',
       password: hashedPassword,
       name: 'Demo User',
     },
@@ -59,22 +59,22 @@ async function main() {
       income: {
         'Monthly Salary': 6430000,
         'Monthly Intensive': 0,
-        'Bonus': 0,
+        Bonus: 0,
       },
       savingsAllocation: {
         'General Savings': 1000000,
         'Emergency Funds': 500000,
-        'Deposits': 300000,
+        Deposits: 300000,
       },
       expenses: {
         'Home Rent': 1700000,
-        'Course': 150000,
-        'Lecture': 500000,
-        'Utilities': 300000,
-        'Transportation': 400000,
-        'Groceries': 800000,
-        'Shopping': 200000,
-        'Entertainment': 150000,
+        Course: 150000,
+        Lecture: 500000,
+        Utilities: 300000,
+        Transportation: 400000,
+        Groceries: 800000,
+        Shopping: 200000,
+        Entertainment: 150000,
       },
     },
   });
@@ -210,7 +210,7 @@ async function main() {
   console.log(`   - Assets: ${liquidAssets.length + nonLiquidAssets.length}`);
   console.log(`   - User Settings: 1`);
   console.log('\n🔐 Demo Credentials:');
-  console.log(`   Email: demo@homesweetloan.com`);
+  console.log(`   Email: demo@danaku.com`);
   console.log(`   Password: password123`);
 }
 

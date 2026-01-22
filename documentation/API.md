@@ -1,6 +1,6 @@
 # API Documentation
 
-# Home Sweet Loan App
+# Danaku App
 
 **Version**: 1.0  
 **Date**: 10 January 2026  
@@ -20,15 +20,15 @@ Untuk **Phase 2+**, akan ada REST API dengan database backend.
 
 ### Storage Keys
 
-Semua keys menggunakan prefix `homeSweetLoan_`:
+Semua keys menggunakan prefix `danaku_`:
 
-| Key                         | Type   | Description          |
-| --------------------------- | ------ | -------------------- |
-| `homeSweetLoan_setup`       | Object | Setup configuration  |
-| `homeSweetLoan_budgets`     | Object | All budgets data     |
-| `homeSweetLoan_spending`    | Array  | All spending entries |
-| `homeSweetLoan_assets`      | Object | Assets data          |
-| `homeSweetLoan_preferences` | Object | User preferences     |
+| Key                  | Type   | Description          |
+| -------------------- | ------ | -------------------- |
+| `danaku_setup`       | Object | Setup configuration  |
+| `danaku_budgets`     | Object | All budgets data     |
+| `danaku_spending`    | Array  | All spending entries |
+| `danaku_assets`      | Object | Assets data          |
+| `danaku_preferences` | Object | User preferences     |
 
 ### Data Structures
 
@@ -97,8 +97,8 @@ Semua keys menggunakan prefix `homeSweetLoan_`:
 ### Base URL
 
 ```
-Production: https://api.homesweetloan.com/v1
-Staging: https://staging-api.homesweetloan.com/v1
+Production: https://api.danaku.com/v1
+Staging: https://staging-api.danaku.com/v1
 Development: http://localhost:3050/api/v1
 ```
 
@@ -805,11 +805,11 @@ Update assets target
 ### JavaScript
 
 ```javascript
-import HomeSweetLoanAPI from "@homesweetloan/sdk";
+import DanakuAPI from "@danaku/sdk";
 
-const client = new HomeSweetLoanAPI({
+const client = new DanakuAPI({
   apiKey: "your_api_key",
-  baseURL: "https://api.homesweetloan.com/v1",
+  baseURL: "https://api.danaku.com/v1",
 });
 
 // Get budgets

@@ -1,6 +1,6 @@
 # 📚 Documentation Index
 
-# Home Sweet Loan App
+# Danaku App
 
 **Last Updated**: 10 January 2026  
 **Version**: 1.0
@@ -399,7 +399,7 @@ Tools:     npm 10.x, Turbopack, Biome, Vitest 2.x, Playwright 1.49
 **Semua dokumentasi sudah tersimpan di**:
 
 ```
-c:\Project\Home-Sweet-Loan-App\
+d:\Learning\Danaku\
 ├── README.md
 ├── index.html (yang tadi dibuat, bisa dihapus)
 └── documentation\

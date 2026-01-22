@@ -1,46 +1,99 @@
-<!DOCTYPE html>
 <html>
-<head>
+  <head>
     <style>
-        body { font-family: 'Helvetica', sans-serif; background-color: #f8fafc; margin: 0; padding: 0; }
-        .container { max-width: 600px; margin: 40px auto; background: #ffffff; padding: 40px; border-radius: 16px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
-        .header { text-align: center; margin-bottom: 30px; }
-        .logo { font-size: 24px; font-weight: bold; color: #059669; text-decoration: none; }
-        .content { color: #334155; line-height: 1.6; font-size: 16px; text-align: center; }
-        .button { display: inline-block; background-color: #059669; color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; font-weight: bold; margin-top: 20px; transition: background-color 0.3s; }
-        .button:hover { background-color: #047857; }
-        .footer { margin-top: 30px; text-align: center; font-size: 12px; color: #94a3b8; }
-        .badge-icon { font-size: 64px; margin: 20px 0; display: block; }
-        .xp-text { font-size: 14px; font-weight: bold; color: #d97706; background: #fef3c7; padding: 4px 12px; border-radius: 999px; display: inline-block; }
+      body {
+        font-family: 'Helvetica', sans-serif;
+        background-color: #f8fafc;
+        margin: 0;
+        padding: 0;
+      }
+      .container {
+        max-width: 600px;
+        margin: 40px auto;
+        background: #ffffff;
+        padding: 40px;
+        border-radius: 16px;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      }
+      .header {
+        text-align: center;
+        margin-bottom: 30px;
+      }
+      .logo {
+        font-size: 24px;
+        font-weight: bold;
+        color: #059669;
+        text-decoration: none;
+      }
+      .content {
+        color: #334155;
+        line-height: 1.6;
+        font-size: 16px;
+        text-align: center;
+      }
+      .button {
+        display: inline-block;
+        background-color: #059669;
+        color: white;
+        padding: 12px 24px;
+        text-decoration: none;
+        border-radius: 8px;
+        font-weight: bold;
+        margin-top: 20px;
+        transition: background-color 0.3s;
+      }
+      .button:hover {
+        background-color: #047857;
+      }
+      .footer {
+        margin-top: 30px;
+        text-align: center;
+        font-size: 12px;
+        color: #94a3b8;
+      }
+      .badge-icon {
+        font-size: 64px;
+        margin: 20px 0;
+        display: block;
+      }
+      .xp-text {
+        font-size: 14px;
+        font-weight: bold;
+        color: #d97706;
+        background: #fef3c7;
+        padding: 4px 12px;
+        border-radius: 999px;
+        display: inline-block;
+      }
     </style>
-</head>
-<body>
-    <div class="container">
-        <div class="header">
-            <a href="{{frontendUrl}}" class="logo">Home Sweet Loan</a>
-        </div>
-        <div class="content">
-            <h2>🏆 Achievement Unlocked!</h2>
-            <p>Congratulations, {{name}}! You've just unlocked a new badge.</p>
-            
-            <div class="badge-icon">
-                {{badgeIcon}}
-            </div>
-            
-            <h3 style="color: #059669; font-size: 24px; margin: 10px 0;">{{badgeTitle}}</h3>
-            <p>{{badgeDescription}}</p>
-            
-            <div style="margin-top: 15px;">
-                <span class="xp-text">+{{xp}} XP</span>
-            </div>
+  </head>
+  <body>
+    <div class='container'>
+      <div class='header'>
+        <a href='{{frontendUrl}}' class='logo'>Danaku</a>
+      </div>
+      <div class='content'>
+        <h2>🏆 Achievement Unlocked!</h2>
+        <p>Congratulations, {{name}}! You've just unlocked a new badge.</p>
 
-            <div style="text-align: center; margin-top: 30px;">
-                <a href="{{url}}" class="button">View My Achievements</a>
-            </div>
+        <div class='badge-icon'>
+          {{badgeIcon}}
         </div>
-        <div class="footer">
-            <p>&copy; 2026 Home Sweet Loan. All rights reserved.</p>
+
+        <h3 style='color: #059669; font-size: 24px; margin: 10px 0;'>{{badgeTitle}}</h3>
+        <p>{{badgeDescription}}</p>
+
+        <div style='margin-top: 15px;'>
+          <span class='xp-text'>+{{xp}} XP</span>
         </div>
+
+        <div style='text-align: center; margin-top: 30px;'>
+          <a href='{{url}}' class='button'>View My Achievements</a>
+        </div>
+      </div>
+      <div class='footer'>
+        <p>&copy; 2026 Danaku. All rights reserved.</p>
+      </div>
     </div>
-</body>
+  </body>
 </html>

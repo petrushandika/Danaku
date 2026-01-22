@@ -1,6 +1,6 @@
 # MVP (Minimum Viable Product) Specification
 
-# Home Sweet Loan App
+# Danaku App
 
 **Version**: 1.0  
 **Date**: 10 January 2026  
@@ -239,7 +239,7 @@ JavaScript (Vanilla ES6+)
 ### File Structure
 
 ```
-home-sweet-loan-app/
+danaku/
 ├── index.html              # Main HTML file
 ├── styles.css              # All styles
 ├── app.js                  # Main application logic
@@ -566,24 +566,20 @@ home-sweet-loan-app/
 ### Known Limitations
 
 1. **Single User Only**
-
    - No authentication
    - No multi-device sync
    - Data stored locally only
 
 2. **LocalStorage Constraints**
-
    - Max ~10MB storage
    - Data can be cleared by user
    - No backup/restore
 
 3. **No Real-time Collaboration**
-
    - Cannot share with family members
    - No multi-user budgeting
 
 4. **Limited Analytics**
-
    - Basic charts only
    - No trend analysis
    - No predictions
@@ -736,7 +732,7 @@ An MVP is considered **DONE** when:
 
 ### User Support Channels
 
-- **Email**: support@homesweetloan.com
+- **Email**: support@danaku.com
 - **GitHub Issues**: For bug reports
 - **FAQ**: Self-service documentation
 - **Response Time**: <24 hours

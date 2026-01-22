@@ -9,7 +9,7 @@ export class CloudinaryService {
     return new Promise<CloudinaryResponse>((resolve, reject) => {
       const uploadStream = cloudinary.uploader.upload_stream(
         {
-           folder: 'home-sweet-loan/avatars',
+          folder: 'danaku',
         },
         (error, result) => {
           if (error) return reject(error);

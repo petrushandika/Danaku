@@ -1,6 +1,6 @@
 # Product Requirements Document (PRD)
 
-# Home Sweet Loan App
+# Danaku App
 
 **Version**: 1.0  
 **Last Updated**: 10 January 2026  
@@ -13,7 +13,7 @@
 
 ### 1.1 Product Overview
 
-Home Sweet Loan App adalah aplikasi manajemen keuangan pribadi yang membantu pengguna untuk mengatur budget bulanan, melacak pengeluaran, memantau aset, dan mendapatkan insight keuangan melalui dashboard dan laporan yang interaktif.
+Danaku App adalah aplikasi manajemen keuangan pribadi yang membantu pengguna untuk mengatur budget bulanan, melacak pengeluaran, memantau aset, dan mendapatkan insight keuangan melalui dashboard dan laporan yang interaktif.
 
 ### 1.2 Product Vision
 
@@ -613,7 +613,7 @@ accountPercentage = (accountTotal / totalAssetsValue) * 100
 
 ### 11.2 References
 
-- Inspiration: "Home Sweet Loan" Movie
+- Inspiration: "Danaku" Movie
 - Excel Template: User's personal finance spreadsheet
 - Similar Apps: YNAB, Mint, PocketGuard, Goodbudget
 

@@ -18,8 +18,8 @@ export const useLanguageStore = create<LanguageStore>()(
     }),
     {
       name: "language-storage",
-    }
-  )
+    },
+  ),
 );
 
 export const translations = {
@@ -451,7 +451,7 @@ export const translations = {
           {
             title: "1. Penerimaan Ketentuan",
             content:
-              "Dengan mengakses dan menggunakan Home Sweet Loan, Anda setuju untuk terikat oleh Syarat Ketentuan Layanan ini. Jika Anda tidak setuju, mohon untuk tidak menggunakan layanan kami.",
+              "Dengan mengakses dan menggunakan Danaku, Anda setuju untuk terikat oleh Syarat Ketentuan Layanan ini. Jika Anda tidak setuju, mohon untuk tidak menggunakan layanan kami.",
           },
           {
             title: "2. Akun Pengguna",
@@ -461,7 +461,7 @@ export const translations = {
           {
             title: "3. Layanan Keuangan",
             content:
-              "Home Sweet Loan menyediakan alat manajemen keuangan. Kami bukan penasihat keuangan berlisensi. Harap konsultasikan dengan profesional sebelum membuat keputusan keuangan besar.",
+              "Danaku menyediakan alat manajemen keuangan. Kami bukan penasihat keuangan berlisensi. Harap konsultasikan dengan profesional sebelum membuat keputusan keuangan besar.",
           },
           {
             title: "4. Batasan Tanggung Jawab",
@@ -933,7 +933,7 @@ export const translations = {
           {
             title: "1. Acceptance of Terms",
             content:
-              "By accessing and using Home Sweet Loan, you agree to be bound by these Terms of Service. If you do not agree, please do not use our services.",
+              "By accessing and using Danaku, you agree to be bound by these Terms of Service. If you do not agree, please do not use our services.",
           },
           {
             title: "2. User Accounts",
@@ -943,7 +943,7 @@ export const translations = {
           {
             title: "3. Financial Services",
             content:
-              "Home Sweet Loan provides financial management tools. We are not licensed financial advisors. Please consult with a professional before making major financial decisions.",
+              "Danaku provides financial management tools. We are not licensed financial advisors. Please consult with a professional before making major financial decisions.",
           },
           {
             title: "4. Limitation of Liability",

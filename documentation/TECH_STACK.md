@@ -1,6 +1,6 @@
 # 🛠️ Tech Stack Reference
 
-# Home Sweet Loan App
+# Danaku App
 
 **Version**: 3.0 (Latest Stable + Cutting Edge)  
 **Date**: 10 January 2026  
@@ -398,7 +398,7 @@ export function CategoryPieChart() {
 ## 📁 Project Structure (npm + Next.js 16)
 
 ```
-home-sweet-loan/
+danaku/
 ├── frontend/
 │   ├── src/
 │   │   ├── app/

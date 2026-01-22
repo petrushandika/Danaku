@@ -1,6 +1,6 @@
-# Home Sweet Loan App - Frontend
+# Danaku App - Frontend
 
-Frontend application for Home Sweet Loan, built with the latest bleeding-edge tech stack.
+Frontend application for Danaku, built with the latest bleeding-edge tech stack.
 
 ## 🛠️ Tech Stack
 
@@ -56,4 +56,4 @@ The project uses a clean architecture with the Next.js App Router:
 
 ---
 
-_Inspired by "Home Sweet Loan" Movie_
+_Inspired by "Danaku" Movie_

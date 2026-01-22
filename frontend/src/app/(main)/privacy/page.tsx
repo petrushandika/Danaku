@@ -1,15 +1,15 @@
-"use client"
+"use client";
 
-import { useLanguageStore, translations } from "@/store/use-language-store"
-import { useState } from "react"
-import { cn } from "@/lib/utils"
-import { Shield } from "lucide-react"
+import { useLanguageStore, translations } from "@/store/use-language-store";
+import { useState } from "react";
+import { cn } from "@/lib/utils";
+import { Shield } from "lucide-react";
 
 export default function PrivacyPage() {
-  const { language } = useLanguageStore()
+  const { language } = useLanguageStore();
   const langKey = language as keyof typeof translations;
   const t = translations[langKey].legal.privacy;
-  const [activeSection, setActiveSection] = useState(0)
+  const [activeSection, setActiveSection] = useState(0);
 
   return (
     <div className="min-h-screen bg-white dark:bg-slate-950 py-20 px-6 transition-colors">
@@ -38,7 +38,7 @@ export default function PrivacyPage() {
                       "w-full text-left px-4 py-3 rounded-2xl font-bold text-sm transition-all border",
                       activeSection === idx
                         ? "bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 border-emerald-100 dark:border-emerald-800 shadow-sm"
-                        : "text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-900 border-transparent hover:border-slate-100 dark:hover:border-slate-800"
+                        : "text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-900 border-transparent hover:border-slate-100 dark:hover:border-slate-800",
                     )}
                   >
                     {section.title}
@@ -56,7 +56,9 @@ export default function PrivacyPage() {
                     key={idx}
                     className={cn(
                       "mb-10 pb-10 border-b border-slate-100 dark:border-slate-800 last:border-0 last:mb-0 last:pb-0 transition-all",
-                      activeSection === idx ? "opacity-100" : "opacity-40 hover:opacity-70"
+                      activeSection === idx
+                        ? "opacity-100"
+                        : "opacity-40 hover:opacity-70",
                     )}
                   >
                     <h2 className="text-2xl font-black text-slate-900 dark:text-white mb-4 tracking-tight">
@@ -72,14 +74,14 @@ export default function PrivacyPage() {
 
             <div className="mt-8 p-6 bg-slate-50 dark:bg-slate-900/50 rounded-2xl border border-slate-100 dark:border-slate-800">
               <p className="text-sm text-slate-500 dark:text-slate-400 font-medium leading-relaxed">
-                {language === "id" 
-                  ? "Jika Anda memiliki pertanyaan tentang Kebijakan Privasi ini, silakan hubungi kami di privacy@homesweetloan.com"
-                  : "If you have any questions about this Privacy Policy, please contact us at privacy@homesweetloan.com"}
+                {language === "id"
+                  ? "Jika Anda memiliki pertanyaan tentang Kebijakan Privasi ini, silakan hubungi kami di privacy@danaku.com"
+                  : "If you have any questions about this Privacy Policy, please contact us at privacy@danaku.com"}
               </p>
             </div>
           </main>
         </div>
       </div>
     </div>
-  )
+  );
 }

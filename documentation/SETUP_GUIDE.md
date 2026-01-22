@@ -1,6 +1,6 @@
 # Tech Stack Setup Guide
 
-# Home Sweet Loan App
+# Danaku App
 
 **Version**: 1.0  
 **Date**: 10 January 2026  
@@ -76,7 +76,7 @@ Git >= 2.x
 ## 📁 Project Structure
 
 ```
-home-sweet-loan/
+danaku/
 ├── frontend/                    # Next.js application
 │   ├── src/
 │   │   ├── app/                # App Router pages
@@ -536,12 +536,12 @@ async function bootstrap() {
       whitelist: true,
       forbidNonWhitelisted: true,
       transform: true,
-    })
+    }),
   );
 
   // Swagger Documentation
   const config = new DocumentBuilder()
-    .setTitle("Home Sweet Loan API")
+    .setTitle("Danaku API")
     .setDescription("Personal Finance Management API")
     .setVersion("1.0")
     .addBearerAuth()

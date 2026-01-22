@@ -1,32 +1,61 @@
-<!DOCTYPE html>
 <html>
-<head>
+  <head>
     <style>
-        body { font-family: 'Helvetica', sans-serif; background-color: #f9fafb; padding: 20px; }
-        .container { max-width: 600px; margin: 0 auto; background-color: #ffffff; padding: 30px; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
-        .header { text-align: center; margin-bottom: 20px; }
-        .logo { font-size: 24px; font-weight: 900; color: #0f172a; }
-        .logo span { color: #10b981; }
-        .content { color: #334155; line-height: 1.6; }
-        .footer { padding-top: 20px; border-top: 1px solid #e2e8f0; margin-top: 30px; text-align: center; font-size: 12px; color: #64748b; }
+      body {
+        font-family: 'Helvetica', sans-serif;
+        background-color: #f9fafb;
+        padding: 20px;
+      }
+      .container {
+        max-width: 600px;
+        margin: 0 auto;
+        background-color: #ffffff;
+        padding: 30px;
+        border-radius: 12px;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      }
+      .header {
+        text-align: center;
+        margin-bottom: 20px;
+      }
+      .logo {
+        font-size: 24px;
+        font-weight: 900;
+        color: #0f172a;
+      }
+      .logo span {
+        color: #10b981;
+      }
+      .content {
+        color: #334155;
+        line-height: 1.6;
+      }
+      .footer {
+        padding-top: 20px;
+        border-top: 1px solid #e2e8f0;
+        margin-top: 30px;
+        text-align: center;
+        font-size: 12px;
+        color: #64748b;
+      }
     </style>
-</head>
-<body>
-    <div class="container">
-        <div class="header">
-             <div class="logo">Home Sweet <span>Loan</span></div>
-        </div>
-        <div class="content">
-            <h2>{{title}}</h2>
-            <p>Hi {{name}},</p>
-            <p>{{message}}</p>
-            {{#if link}}
-                <p><a href="{{link}}">View Details</a></p>
-            {{/if}}
-        </div>
-        <div class="footer">
-            &copy; 2026 Home Sweet Loan. All rights reserved.
-        </div>
+  </head>
+  <body>
+    <div class='container'>
+      <div class='header'>
+        <div class='logo'>Home Sweet <span>Loan</span></div>
+      </div>
+      <div class='content'>
+        <h2>{{title}}</h2>
+        <p>Hi {{name}},</p>
+        <p>{{message}}</p>
+        {{#if link}}
+          <p><a href='{{link}}'>View Details</a></p>
+        {{/if}}
+      </div>
+      <div class='footer'>
+        &copy; 2026 Danaku. All rights reserved.
+      </div>
     </div>
-</body>
+  </body>
 </html>

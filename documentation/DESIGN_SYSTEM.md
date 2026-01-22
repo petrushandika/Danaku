@@ -1,6 +1,6 @@
 # Design System
 
-# Home Sweet Loan App
+# Danaku App
 
 **Version**: 1.0  
 **Date**: 10 January 2026  
@@ -13,19 +13,16 @@
 ### Core Principles
 
 1. **Trust & Security** 💚
-
    - Warna hijau memberikan rasa aman dan terpercaya
    - Konsisten dengan tema keuangan dan pertumbuhan
    - Menciptakan psychological safety untuk user
 
 2. **Clarity & Simplicity** ✨
-
    - Interface yang clean dan tidak overwhelming
    - Informasi penting mudah ditemukan
    - Hierarki visual yang jelas
 
 3. **Motivation & Engagement** 📈
-
    - Warna yang energizing dan optimis
    - Progress visualization yang encouraging
    - Micro-interactions yang delightful
@@ -171,7 +168,12 @@ background: radial-gradient(circle at top right, #10b981 0%, transparent 70%);
 
 ```css
 /* Primary Font - Inter */
-font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+font-family:
+  "Inter",
+  -apple-system,
+  BlinkMacSystemFont,
+  "Segoe UI",
+  sans-serif;
 
 /* Monospace - Numbers, code */
 font-family: "JetBrains Mono", "Fira Code", monospace;

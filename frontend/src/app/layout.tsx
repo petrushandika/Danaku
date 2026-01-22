@@ -1,4 +1,3 @@
-
 import type { Metadata } from "next";
 import { Roboto } from "next/font/google";
 import "./globals.css";
@@ -11,8 +10,8 @@ const roboto = Roboto({
 });
 
 export const metadata: Metadata = {
-  title: "Home Sweet Loan App",
-  description: "Personal Finance Management Application inspired by Home Sweet Loan",
+  title: "Danaku App",
+  description: "Personal Finance Management Application inspired by Danaku",
 };
 
 import { ThemeProvider } from "@/components/theme-provider";

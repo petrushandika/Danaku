@@ -23,7 +23,7 @@ async function bootstrap() {
   });
 
   app.useGlobalFilters(new HttpExceptionFilter(), new PrismaClientExceptionFilter());
-  
+
   app.useGlobalInterceptors(new ResponseInterceptor(app.get(Reflector)));
 
   app.useGlobalPipes(
@@ -38,8 +38,8 @@ async function bootstrap() {
   );
 
   const config = new DocumentBuilder()
-    .setTitle('Home Sweet Loan API')
-    .setDescription('Personal Finance Management API - Inspired by Home Sweet Loan Movie')
+    .setTitle('Danaku API')
+    .setDescription('Personal Finance Management API - Inspired by Danaku Movie')
     .setVersion('1.0')
     .addTag('auth', 'Authentication endpoints')
     .addTag('users', 'User management')

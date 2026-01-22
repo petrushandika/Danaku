@@ -1,6 +1,6 @@
 # User Guide
 
-# Home Sweet Loan App
+# Danaku App
 
 **Version**: 1.0  
 **Last Updated**: 10 January 2026
@@ -25,9 +25,9 @@
 
 ## Pengenalan
 
-### Apa itu Home Sweet Loan App?
+### Apa itu Danaku App?
 
-Home Sweet Loan App adalah aplikasi manajemen keuangan pribadi yang membantu Anda:
+Danaku App adalah aplikasi manajemen keuangan pribadi yang membantu Anda:
 
 - ✅ Mengatur budget bulanan dengan terstruktur
 - ✅ Melacak pengeluaran harian
@@ -762,10 +762,10 @@ Tabel menampilkan summary 12 bulan:
 
 ### Butuh Bantuan?
 
-- 📧 Email: support@homesweetloan.com
+- 📧 Email: support@danaku.com
 - 🐛 Report Bug: GitHub Issues
 - 💬 Community: Discord/Slack (coming soon)
-- 📚 Documentation: docs.homesweetloan.com
+- 📚 Documentation: docs.danaku.com
 
 ### Feedback
 
