@@ -801,20 +801,15 @@ export default {
 
 ## 📦 Deployment
 
-### Frontend Deployment Options
+Aplikasi ini dideploy secara mandiri (Self-hosted) menggunakan infrastruktur server sendiri.
 
-- **Vercel** (Recommended for Next.js)
-- **Netlify**
-- **GitHub Pages** (for static sites)
-- **AWS S3 + CloudFront**
+**Tech Stack Deployment:**
 
-### Backend Deployment Options
-
-- **Vercel** (Serverless functions)
-- **Railway**
-- **Render**
-- **AWS EC2/ECS**
-- **DigitalOcean**
+- **Frontend**: Next.js (Node.js server)
+- **Backend**: NestJS (Node.js server)
+- **Database**: PostgreSQL (Self-hosted)
+- **Process Manager**: PM2
+- **CI**: GitHub Actions (Linting, Building, Testing)
 
 ## 🚀 Getting Started
 

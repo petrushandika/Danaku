@@ -33,14 +33,13 @@
 
 ### DevOps & Tools
 
-- **Vercel** - Frontend deployment
-- **Railway/Render** - Backend deployment
-- **Neon/Supabase** - PostgreSQL hosting
-- **GitHub Actions** - CI/CD
+- **Custom Server** - Application deployment (Frontend & Backend)
+- **Local/Self-hosted PostgreSQL** - Database hosting
+- **GitHub Actions** - CI (Continuous Integration)
 - **ESLint + Prettier** - Code quality
 - **Husky** - Git hooks
-- **Vitest** - Unit testing
-- **Playwright** - E2E testing
+- **Jest** - Unit testing (Backend)
+- **Playwright** - E2E testing (Optional)
 
 ---
 
@@ -695,55 +694,43 @@ npx prisma db seed
 
 ## 🚢 Deployment
 
-### Frontend (Vercel)
+Aplikasi Danaku dideploy ke server mandiri (Self-hosted).
+
+### Persiapan Production
+
+1. **Build Frontend**:
+
+   ```bash
+   cd frontend
+   npm run build
+   ```
+
+   Hasil build akan berada di folder `.next`. Gunakan PM2 atau server statis untuk menjalankannya.
+
+2. **Build Backend**:
+
+   ```bash
+   cd backend
+   npm run build
+   ```
+
+   Hasil build akan berada di folder `dist`. Jalankan menggunakan `node dist/main.js` atau PM2.
+
+3. **Database Migration**:
+   ```bash
+   cd backend
+   npx prisma migrate deploy
+   ```
+
+### Running with PM2 (Recommended)
 
 ```bash
-# Install Vercel CLI
-npm install -g vercel
+# Backend
+pm2 start dist/main.js --name "danaku-api"
 
-# Deploy
-cd frontend
-vercel
-
-# Production deployment
-vercel --prod
+# Frontend
+pm2 start npm --name "danaku-frontend" -- start
 ```
-
-**Environment Variables in Vercel**:
-
-- `NEXT_PUBLIC_API_URL`
-- `NEXTAUTH_URL`
-- `NEXTAUTH_SECRET`
-- `DATABASE_URL` (if using Prisma)
-
-### Backend (Railway)
-
-```bash
-# Install Railway CLI
-npm install -g @railway/cli
-
-# Login
-railway login
-
-# Initialize
-cd backend
-railway init
-
-# Deploy
-railway up
-
-# Add environment variables
-railway variables set DATABASE_URL=...
-railway variables set JWT_SECRET=...
-```
-
-### Database (Neon)
-
-1. Create account at https://neon.tech
-2. Create new project
-3. Copy connection string
-4. Update `DATABASE_URL` in both frontend and backend
-5. Run migrations: `npx prisma migrate deploy`
 
 ---
 
