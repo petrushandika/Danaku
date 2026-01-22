@@ -393,52 +393,54 @@ export default function SpendingPage() {
                   return (
                     <div
                       key={item.id}
-                      className="flex items-center group cursor-pointer border-b border-slate-50 dark:border-slate-800 pb-4 last:border-0 last:pb-0"
+                      className="flex flex-col sm:flex-row sm:items-center group cursor-pointer border-b border-slate-50 dark:border-slate-800 pb-4 last:border-0 last:pb-0 gap-3 sm:gap-0"
                     >
-                      <div className="mr-4 shrink-0">
-                        <TransactionIcon
-                          category={item.category}
-                          isIncome={isIncome}
-                        />
-                      </div>
-                      <div className="flex-1">
-                        <h4 className="font-bold text-sm text-slate-800 dark:text-white leading-none mb-1 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors uppercase tracking-tight">
-                          {item.description}
-                        </h4>
-                        <div className="flex items-center gap-2 mt-1">
-                          <span
-                            className={cn(
-                              "text-[9px] font-black uppercase px-1.5 py-0.5 rounded",
-                              isIncome
-                                ? "bg-emerald-100 text-emerald-700"
-                                : isSavings
-                                ? "bg-sky-100 text-sky-700"
-                                : isAsset
-                                ? "bg-violet-100 text-violet-700"
-                                : "bg-rose-100 text-rose-700"
-                            )}
-                          >
-                            {isIncome
-                              ? translations[langKey].dashboard.summary
-                                  .badgeIncome
+                      <div className="flex items-center w-full sm:w-auto sm:flex-1">
+                        <div className="mr-4 shrink-0">
+                          <TransactionIcon
+                            category={item.category}
+                            isIncome={isIncome}
+                          />
+                        </div>
+                        <div className="flex-1">
+                          <h4 className="font-bold text-sm text-slate-800 dark:text-white leading-none mb-1 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors uppercase tracking-tight">
+                            {item.description}
+                          </h4>
+                          <div className="flex items-center gap-2 mt-1">
+                            <span
+                              className={cn(
+                                "text-[9px] font-black uppercase px-1.5 py-0.5 rounded",
+                                isIncome
+                                  ? "bg-emerald-100 text-emerald-700"
+                                  : isSavings
+                                  ? "bg-sky-100 text-sky-700"
+                                  : isAsset
+                                  ? "bg-violet-100 text-violet-700"
+                                  : "bg-rose-100 text-rose-700"
+                              )}
+                            >
+                              {isIncome
+                                ? translations[langKey].dashboard.summary
+                                    .badgeIncome
                               : isSavings
-                              ? translations[langKey].dashboard.summary
-                                  .badgeSavings
+                                ? translations[langKey].dashboard.summary
+                                    .badgeSavings
                               : isAsset
-                              ? translations[langKey].dashboard.summary
-                                  .badgeAsset
+                                ? translations[langKey].dashboard.summary
+                                    .badgeAsset
                               : translations[langKey].dashboard.summary
                                   .badgeSpending}
-                          </span>
-                          <p className="text-xs text-slate-400 dark:text-slate-500 font-bold uppercase tracking-widest leading-none">
-                            {item.category} •{" "}
-                            {format(new Date(item.date), "dd MMMM yyyy")}
-                          </p>
+                            </span>
+                            <p className="text-xs text-slate-400 dark:text-slate-500 font-bold uppercase tracking-widest leading-none">
+                              {item.category} •{" "}
+                              {format(new Date(item.date), "dd MMMM yyyy")}
+                            </p>
+                          </div>
                         </div>
                       </div>
                       <div
                         className={cn(
-                          "font-black text-sm text-right flex items-center gap-4 transition-colors duration-300",
+                          "font-black text-sm w-full sm:w-auto flex items-center justify-between sm:justify-end gap-4 transition-colors duration-300 pl-16 sm:pl-0",
                           typeColor
                         )}
                       >
@@ -447,7 +449,7 @@ export default function SpendingPage() {
                           {Math.abs(item.amount).toLocaleString()}
                         </div>
 
-                        <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <div className="flex items-center gap-1 opacity-100 sm:opacity-0 group-hover:opacity-100 transition-opacity">
                           <Button
                             variant="ghost"
                             size="icon"
