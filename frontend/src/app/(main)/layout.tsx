@@ -3,11 +3,11 @@
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import {
-  Facebook,
-  Twitter,
-  Instagram,
-  Linkedin,
-  Github,
+  Globe,
+  MessageSquare,
+  Camera,
+  Link2,
+  Gift,
   LayoutDashboard,
   ArrowUp,
   Menu,
@@ -323,11 +323,11 @@ export default function MainLayout({
             </p>
             <div className="flex items-center gap-3">
               {[
-                { icon: Facebook, href: "#" },
-                { icon: Twitter, href: "#" },
-                { icon: Instagram, href: "#" },
-                { icon: Linkedin, href: "#" },
-                { icon: Github, href: "#" },
+                { icon: Globe, href: "#" },
+                { icon: MessageSquare, href: "#" },
+                { icon: Camera, href: "#" },
+                { icon: Link2, href: "#" },
+                { icon: Gift, href: "#" },
               ].map((social, i) => (
                 <Link
                   key={i}
